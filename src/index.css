@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #0b1220;
+  color: #e6edf3;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+/* Hide scrollbars but keep scroll on the map/board */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Landing CTA: soft attention pulse */
+@keyframes ctaPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(245, 179, 1, 0.5), 0 10px 26px rgba(0, 0, 0, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 28px 7px rgba(245, 179, 1, 0.32), 0 10px 26px rgba(0, 0, 0, 0.55);
+  }
+}
+
+@keyframes floatY {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* List items cascade up from the bottom (fast stagger) */
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.rise {
+  animation: riseIn 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Neon glow text highlight */
+@keyframes neonGlow {
+  0%,
+  100% {
+    text-shadow: 0 0 6px rgba(245, 179, 1, 0.5), 0 0 2px rgba(245, 179, 1, 0.8);
+  }
+  50% {
+    text-shadow: 0 0 15px rgba(245, 179, 1, 0.9), 0 0 5px rgba(245, 179, 1, 1);
+  }
+}
+
+/* Tab / view switch (opacity only — a transform here would break fixed FAB positioning) */
+@keyframes tabFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.tabfade {
+  animation: tabFade 0.2s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [style*='ctaPulse'],
+  [style*='floatY'],
+  [style*='neonGlow'],
+  .rise,
+  .tabfade {
+    animation: none !important;
+  }
+}
