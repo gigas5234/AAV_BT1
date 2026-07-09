@@ -368,6 +368,10 @@ export function calcGuide(lang: Lang): string[] {
 export type Slot = { n: number; title: string; purpose: string; infK: number; cavK: number; arcK: number; note?: string }
 export type SlotCardData = { title: string; tag: string; slots: Slot[] }
 export type SlotsContent = {
+  howTitle: string
+  howBody: string
+  howSteps: string[]
+  howNote: string
   cards: SlotCardData[]
   notesTitle: string
   notes: string[]
@@ -383,6 +387,15 @@ export type SlotsContent = {
 export function slotsContent(lang: Lang): SlotsContent {
   if (lang === 'ko')
     return {
+      howTitle: '퀵슬롯이 뭔가요?',
+      howBody: '퀵슬롯 = 병력 편성을 미리 저장해 두는 슬롯이에요. 곰덫에서 매번 병력을 고를 필요 없이 저장된 편성을 바로 꺼내 씁니다.',
+      howSteps: [
+        '좌측 상단 내 프로필(사진)을 누른다',
+        "하단 4개 메뉴 중 '부대'를 고른다",
+        "'부대편성'을 누른다",
+        '처음엔 1·2·3·4·5·6 숫자로 되어 있어요. 이게 퀵슬롯이며, 이름으로 바꿀 수 있습니다.',
+      ],
+      howNote: '여기에 아래 구성대로 병력을 저장해 두면 곰덫에서 바로 꺼내 씁니다.',
       cards: [
         {
           title: '메인 집결자',
@@ -435,6 +448,15 @@ export function slotsContent(lang: Lang): SlotsContent {
       checkExample: '예) 첸코 + 하워드 + 퀸 · 20/30/50 → 자원 타일로 발송',
     }
   return {
+    howTitle: 'What is a quick slot?',
+    howBody: 'A quick slot is a saved troop formation. Instead of picking troops every time at the bear trap, you pull up a saved slot instantly.',
+    howSteps: [
+      'Tap your profile (photo) in the top-left',
+      "Choose 'Troops' from the four bottom menus",
+      "Tap 'Formation'",
+      'They start as 1·2·3·4·5·6 by default. Those are your quick slots — you can rename them.',
+    ],
+    howNote: 'Save the formations below into these slots, then pull them up at the bear trap.',
     cards: [
       {
         title: 'Main leader',

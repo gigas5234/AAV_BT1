@@ -1,8 +1,24 @@
+import { useState } from 'react'
 import { slotsContent, useLang, useT, type Slot } from '../i18n'
 
 const INF = '#8b98a5'
 const CAV = '#4c9be8'
 const ARC = '#f5b301'
+
+function Chevron({ open, className }: { open: boolean; className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={`h-4 w-4 shrink-0 transition-transform ${open ? 'rotate-180' : ''} ${className ?? ''}`}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      aria-hidden="true"
+    >
+      <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
 
 function BanIcon() {
   return (
@@ -73,6 +89,8 @@ export default function SlotsTab() {
   const t = useT()
   const lang = useLang()
   const content = slotsContent(lang)
+  const [howOpen, setHowOpen] = useState(false) // niche onboarding — collapsed by default
+  const [banOpen, setBanOpen] = useState(true) // everyone must read this — open by default
 
   return (
     <div className="space-y-3 px-4 pb-24 pt-5">
@@ -84,21 +102,49 @@ export default function SlotsTab() {
         </p>
       </div>
 
-      <div className="space-y-3 rounded-xl border-2 border-red-500 bg-red-500/10 px-4 py-3">
-        <div>
-          <p className="flex items-center gap-2 text-[16px] font-bold text-red-300">
-            <BanIcon />
-            {content.forbiddenTitle}
-          </p>
-          <p className="mt-2 text-[16px] font-semibold leading-relaxed text-red-200">
-            {content.forbidden.join(' · ')}
-          </p>
-          <p className="mt-1.5 text-[12px] leading-relaxed text-red-200/70">{content.forbiddenNote}</p>
-        </div>
-        <p className="flex items-center gap-2 border-t border-red-500/30 pt-2.5 text-[15px] font-bold text-red-300">
+      {/* what is a quick slot + how to set it up (collapsible) */}
+      <section className="overflow-hidden rounded-2xl border border-sky-400/25 bg-sky-400/[0.06]">
+        <button onClick={() => setHowOpen((v) => !v)} className="flex w-full items-center gap-2 p-4 text-left">
+          <svg viewBox="0 0 24 24" className="h-5 w-5 shrink-0 text-sky-300" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 11v5" strokeLinecap="round" />
+            <circle cx="12" cy="7.5" r="1" fill="currentColor" stroke="none" />
+          </svg>
+          <h3 className="flex-1 font-semibold text-white">{content.howTitle}</h3>
+          <Chevron open={howOpen} className="text-sky-300" />
+        </button>
+        {howOpen && (
+          <div className="px-4 pb-4">
+            <p className="text-[13px] leading-relaxed text-slate-300">{content.howBody}</p>
+            <ol className="mt-2.5 list-decimal space-y-1.5 pl-5 text-[13px] leading-relaxed text-slate-300">
+              {content.howSteps.map((s, i) => (
+                <li key={i}>{s}</li>
+              ))}
+            </ol>
+            <p className="mt-2.5 rounded-lg bg-black/30 px-3 py-2 text-[12px] text-sky-200">{content.howNote}</p>
+          </div>
+        )}
+      </section>
+
+      {/* forbidden heroes / troops (collapsible) */}
+      <div className="overflow-hidden rounded-xl border-2 border-red-500 bg-red-500/10">
+        <button onClick={() => setBanOpen((v) => !v)} className="flex w-full items-center gap-2 px-4 py-3 text-left text-red-300">
           <BanIcon />
-          {content.troopBan}
-        </p>
+          <span className="flex-1 text-[16px] font-bold">{content.forbiddenTitle}</span>
+          <Chevron open={banOpen} />
+        </button>
+        {banOpen && (
+          <div className="space-y-3 px-4 pb-3">
+            <div>
+              <p className="text-[16px] font-semibold leading-relaxed text-red-200">{content.forbidden.join(' · ')}</p>
+              <p className="mt-1.5 text-[12px] leading-relaxed text-red-200/70">{content.forbiddenNote}</p>
+            </div>
+            <p className="flex items-center gap-2 border-t border-red-500/30 pt-2.5 text-[15px] font-bold text-red-300">
+              <BanIcon />
+              {content.troopBan}
+            </p>
+          </div>
+        )}
       </div>
 
       {content.cards.map((c) => (
