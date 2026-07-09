@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useLang, useT } from '../i18n'
+import { calcGuide, useLang, useT } from '../i18n'
 
 type Role = 'main' | 'support' | 'general'
 type Kind = 'inf' | 'cav' | 'arc'
@@ -33,6 +33,7 @@ export default function CalcTab() {
   const [capK, setCapK] = useState(100)
   const [slots, setSlots] = useState(4)
   const [heroBySlot, setHeroBySlot] = useState<Record<number, string>>({})
+  const [showGuide, setShowGuide] = useState(false)
   const [alloc, setAlloc] = useState<Record<string, number>>({})
 
   const total: Record<Kind, number> = {
@@ -142,6 +143,34 @@ export default function CalcTab() {
           </div>
         </div>
       )}
+
+      {/* role check banner + usage guide */}
+      <div>
+        <div className="flex items-start gap-2 rounded-xl border border-amber-400/40 bg-amber-400/10 px-3 py-2.5">
+          <span className="flex-1 text-[13px] font-semibold leading-relaxed text-amber-200">
+            {t('calc.roleCheck')}
+          </span>
+          <button
+            onClick={() => setShowGuide((v) => !v)}
+            aria-label={t('calc.guideTitle')}
+            className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[13px] font-bold ${
+              showGuide ? 'border-transparent bg-amber-400 text-[#3a2600]' : 'border-amber-300 text-amber-200'
+            }`}
+          >
+            !
+          </button>
+        </div>
+        {showGuide && (
+          <div className="mt-2 rounded-xl border border-white/10 bg-white/[0.04] p-3">
+            <p className="mb-1.5 text-[13px] font-medium text-white">{t('calc.guideTitle')}</p>
+            <ul className="list-disc space-y-1 pl-4 text-[12px] leading-relaxed text-slate-300">
+              {calcGuide(lang).map((g, i) => (
+                <li key={i}>{g}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
 
       {/* role */}
       <div className="flex gap-1.5">

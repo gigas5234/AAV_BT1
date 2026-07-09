@@ -22,6 +22,11 @@ const STR: Record<string, Entry> = {
   'calc.header': { en: 'Troop calculator', ko: '병종 계산기' },
   'calc.sub': { en: 'Enter your troops to auto-fill quick slots.', ko: '병종을 입력하면 퀵슬롯을 자동으로 채웁니다.' },
   'calc.role': { en: 'Role', ko: '역할' },
+  'calc.roleCheck': {
+    en: 'Check whether you are assigned Main, Support, or General — your setup depends on it.',
+    ko: '자신이 메인 / 서브 / 일반 중 무엇에 편성됐는지 먼저 확인하세요. 역할에 따라 구성이 달라집니다.',
+  },
+  'calc.guideTitle': { en: 'How to use', ko: '사용법' },
   'calc.main': { en: 'Main', ko: '메인' },
   'calc.support': { en: 'Support', ko: '서브' },
   'calc.general': { en: 'General', ko: '일반' },
@@ -303,6 +308,25 @@ export function guideSections(lang: Lang): GuideSection[] {
         'Group 2 keeps at least 100K for its own rally.',
       ],
     },
+  ]
+}
+
+// ---- Calculator usage guide ----
+export function calcGuide(lang: Lang): string[] {
+  if (lang === 'ko')
+    return [
+      '역할(메인 / 서브 / 일반)에 따라 슬롯 구성과 비율이 달라집니다.',
+      '슬롯은 최소 4개이며, 필요하면 더 추가할 수 있습니다.',
+      '보병 위주의 병력 구성은 좋지 않습니다 — 보병은 최소로, 궁병·기병 위주로.',
+      '보유 병종을 입력하고 각 슬롯에 병력을 수기로 배분하세요. 상단 "남은 병종"을 넘지 않게 하면 됩니다.',
+      '집결 참여 시 1번 영웅은 첸코·연우·아마네만 사용하세요.',
+    ]
+  return [
+    'Your slot setup and ratios depend on your role (Main / Support / General).',
+    'There are at least 4 slots; add more if you need them.',
+    'An infantry-heavy build is weak — keep infantry low, lean on archers and cavalry.',
+    'Enter your troops, then split them into slots by hand — stay within "Remaining troops" at the top.',
+    'Join hero (slot 1): use only Chenko / Yeonwoo / Amane.',
   ]
 }
 
