@@ -86,6 +86,7 @@ const STR: Record<string, Entry> = {
   'plan.min': { en: '{n} min', ko: '{n}분' },
   'plan.main': { en: 'Main', ko: '메인' },
   'plan.support': { en: 'Support', ko: '서브' },
+  'plan.reserve': { en: 'Reserve', ko: '예비' },
   'plan.startOffset': { en: 'start T+{n}s', ko: '시작 T+{n}s' },
   'plan.simulate': { en: 'Simulate {group} →', ko: '{group} 배치 →' },
   'plan.covers': {

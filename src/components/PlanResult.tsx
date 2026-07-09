@@ -22,6 +22,7 @@ function buildCopyText(plan: Plan, s: Settings): string {
     lines.push(`【 GROUP ${i + 1} 】  launch T+${i * s.waveOffsetSec}s`)
     lines.push(`▸ Main: ${names(w.main)}`)
     lines.push(`▸ Support: ${names(w.support)}`)
+    if (w.reserve.length > 0) lines.push(`▸ Reserve: ${names(w.reserve)}`)
   })
   return lines.join('\n')
 }
@@ -96,6 +97,9 @@ export default function PlanResult({ plan, settings, onBack, onSimulate }: Props
 
               <RallyRow label={t('plan.main')} color="#f5b301" list={names(w.main)} />
               <RallyRow label={t('plan.support')} color="#2dd4bf" list={names(w.support)} />
+              {w.reserve.length > 0 && (
+                <RallyRow label={t('plan.reserve')} color="#94a3b8" list={names(w.reserve)} />
+              )}
 
               <p className="mt-1.5 text-[11px] text-slate-500">
                 {short

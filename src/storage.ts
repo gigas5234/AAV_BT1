@@ -12,7 +12,7 @@ const VERSION = 1
  * changes so clients pick up the new canonical roster — while keeping the user's
  * selection and settings (language, etc.).
  */
-const DATA_VERSION = 6
+const DATA_VERSION = 7
 
 type Persisted = {
   version: number

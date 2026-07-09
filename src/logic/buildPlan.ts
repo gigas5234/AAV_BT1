@@ -47,10 +47,15 @@ export function buildPlan(selected: Member[], s: Settings): Plan {
     .filter((m) => !m.mainLeader && m.supportLeader)
     .sort((a, b) => effThru(b) - effThru(a) || b.priority - a.priority)
 
-  const waves: Wave[] = Array.from({ length: waveCount }, () => ({ main: [], support: [] }))
+  const waves: Wave[] = Array.from({ length: waveCount }, () => ({ main: [], support: [], reserve: [] }))
 
-  // 1) main leaders -> group with the biggest remaining need (fills both toward target)
-  for (const leader of mains) {
+  // 1) main leaders. Pin Group 1's anchors (Zhapa + KOREA) first so Group 1 stays consistent,
+  //    then distribute the rest to whichever group needs capacity most.
+  const G1_PINNED = ['ccc-zhapa', 'korea']
+  const pinned = mains.filter((m) => G1_PINNED.includes(m.id))
+  const otherMains = mains.filter((m) => !G1_PINNED.includes(m.id))
+  pinned.forEach((m) => waves[0].main.push(m))
+  for (const leader of otherMains) {
     let gi = 0
     let worst = -Infinity
     waves.forEach((w, i) => {
@@ -81,6 +86,10 @@ export function buildPlan(selected: Member[], s: Settings): Plan {
       if (gi < 0) break
       waves[gi].support.push(supports.shift()!)
     }
+    // 3) one reserve leader per group — opens only if the rallies fill up (troops keep growing)
+    waves.forEach((w) => {
+      if (supports.length > 0) w.reserve.push(supports.shift()!)
+    })
   }
 
   const waveCapacityK = waves.map(grpCap)

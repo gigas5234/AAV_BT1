@@ -72,6 +72,7 @@ export default function PlacementGrid({
     plan.waves.forEach((w, i) => {
       w.main.forEach((m) => map.set(m.id, { wave: i, kind: 'main' }))
       w.support.forEach((m) => map.set(m.id, { wave: i, kind: 'support' }))
+      w.reserve.forEach((m) => map.set(m.id, { wave: i, kind: 'support' }))
     })
     return map
   }, [plan])

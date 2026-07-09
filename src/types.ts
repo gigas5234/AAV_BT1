@@ -46,7 +46,7 @@ export type Settings = {
   capacityBufferRate: number
 }
 
-export type Wave = { main: Member[]; support: Member[] }
+export type Wave = { main: Member[]; support: Member[]; reserve: Member[] }
 
 export type Plan = {
   selectedCount: number

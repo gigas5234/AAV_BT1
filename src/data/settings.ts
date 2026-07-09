@@ -2,8 +2,8 @@ import type { Settings } from '../types'
 
 export const DEFAULT_SETTINGS: Settings = {
   lang: 'en',
-  troopsPerPlayerK: 310,
-  avgRosterK: 310,
+  troopsPerPlayerK: 320,
+  avgRosterK: 320,
   minLeaderTroopsK: 100,
   marchCapacityK: 100,
   joinsPerLaunch: 1,
