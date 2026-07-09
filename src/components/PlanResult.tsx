@@ -23,15 +23,6 @@ function buildCopyText(plan: Plan, s: Settings): string {
     lines.push(`▸ Main: ${names(w.main)}`)
     lines.push(`▸ Support: ${names(w.support)}`)
   })
-  lines.push('')
-  lines.push(sep)
-  lines.push('📋 HOW TO RUN')
-  lines.push('1) Send your BEST troops to a 30-level MAIN rally first.')
-  lines.push('2) Main full? Join a SUPPORT rally — overflow only.')
-  lines.push('3) Group 2 launches ~2 min after Group 1 (at 3:00 left).')
-  lines.push(`4) Group 2: keep ${s.minLeaderTroopsK}K+ for your own rally.`)
-  lines.push('5) Join hero (slot 1): Chenko / Yeonwoo / Amane only.')
-  lines.push('6) No extra rallies unless R4 asks.')
   return lines.join('\n')
 }
 
