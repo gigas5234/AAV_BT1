@@ -143,8 +143,8 @@ const STR: Record<string, Entry> = {
   'pl.legendG1': { en: 'Group 1 leader', ko: '1조 리더' },
   'pl.legendG2': { en: 'Group 2 leader', ko: '2조 리더' },
   'pl.legendHint': {
-    en: '×N = rally cycles · drag snaps · ± to zoom',
-    ko: '×N = 사이클 · 드래그 스냅 · ±로 줌',
+    en: '×N = cycles · drag a city to move · drag background to pan · ± zoom',
+    ko: '×N = 사이클 · 성 드래그=이동 · 배경 드래그=지도이동 · ±로 줌',
   },
 
   'group.1': { en: 'Group 1', ko: '1조' },

@@ -15,17 +15,23 @@ function names(ms: { name: string }[]) {
 }
 
 function buildCopyText(plan: Plan, s: Settings): string {
-  const lines = ['[Bear Trap Rally Plan]']
+  const sep = '━━━━━━━━━━━━━━━'
+  const lines: string[] = ['🐻 BEAR TRAP · RALLY PLAN', sep]
   plan.waves.forEach((w, i) => {
-    const offset = i * s.waveOffsetSec
-    lines.push(`Group ${i + 1} (start T+${offset}s)`)
-    lines.push(`  Main: ${names(w.main)}`)
-    lines.push(`  Support: ${names(w.support)}`)
+    lines.push('')
+    lines.push(`【 GROUP ${i + 1} 】  launch T+${i * s.waveOffsetSec}s`)
+    lines.push(`▸ Main: ${names(w.main)}`)
+    lines.push(`▸ Support: ${names(w.support)}`)
   })
   lines.push('')
-  lines.push('Send your best troops to the 30-level main rallies first.')
-  lines.push('If a main rally is full, join a support rally. Support rallies are for overflow only.')
-  lines.push('Do not open extra rallies unless R4 asks. Group 2 keeps 100K for its own rally.')
+  lines.push(sep)
+  lines.push('📋 HOW TO RUN')
+  lines.push('1) Send your BEST troops to a 30-level MAIN rally first.')
+  lines.push('2) Main full? Join a SUPPORT rally — overflow only.')
+  lines.push('3) Group 2 launches ~2 min after Group 1 (at 3:00 left).')
+  lines.push(`4) Group 2: keep ${s.minLeaderTroopsK}K+ for your own rally.`)
+  lines.push('5) Join hero (slot 1): Chenko / Yeonwoo / Amane only.')
+  lines.push('6) No extra rallies unless R4 asks.')
   return lines.join('\n')
 }
 

@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Member, Plan, Settings } from '../types'
 import { roleOf } from '../types'
 import { memberCycles } from '../logic/buildPlan'
@@ -39,8 +39,12 @@ export default function PlacementGrid({
   const t = useT()
   const lang = useLang()
   const boardRef = useRef<HTMLDivElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
   const saveRef = useRef<HTMLTextAreaElement>(null)
+  const panRef = useRef({ x: 0, y: 0, sl: 0, st: 0 })
+  const panningRef = useRef(false)
   const [activeId, setActiveId] = useState<string | null>(null)
+  const [panning, setPanning] = useState(false)
   const [drag, setDrag] = useState<{ x: number; y: number } | null>(null)
   const [showNames, setShowNames] = useState(false)
   const [zoom, setZoom] = useState(1)
@@ -54,6 +58,14 @@ export default function PlacementGrid({
   const OY = H / 2
   const isoX = (x: number, y: number) => OX + (x - y) * S
   const isoY = (x: number, y: number) => OY + (x + y) * S
+
+  // center the view on the bear trap (board center) on mount and when zoom changes
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    el.scrollLeft = OX - el.clientWidth / 2
+    el.scrollTop = OY - el.clientHeight / 2
+  }, [zoom, OX, OY])
 
   const leaderWave = useMemo(() => {
     const map = new Map<string, { wave: number; kind: 'main' | 'support' }>()
@@ -82,7 +94,27 @@ export default function PlacementGrid({
     setDrag({ ...m.coord })
   }
 
+  // pan the map when the drag starts on the background (not on a city)
+  const panDown = (e: React.PointerEvent) => {
+    if ((e.target as HTMLElement).closest('[data-tile]')) return
+    const el = scrollRef.current
+    if (!el) return
+    panRef.current = { x: e.clientX, y: e.clientY, sl: el.scrollLeft, st: el.scrollTop }
+    panningRef.current = true
+    setPanning(true)
+    try {
+      boardRef.current?.setPointerCapture(e.pointerId)
+    } catch {
+      /* ignore */
+    }
+  }
+
   const move = (e: React.PointerEvent) => {
+    if (panningRef.current && scrollRef.current) {
+      scrollRef.current.scrollLeft = panRef.current.sl - (e.clientX - panRef.current.x)
+      scrollRef.current.scrollTop = panRef.current.st - (e.clientY - panRef.current.y)
+      return
+    }
     if (!activeId || !boardRef.current) return
     const rect = boardRef.current.getBoundingClientRect()
     const px = e.clientX - rect.left
@@ -93,6 +125,11 @@ export default function PlacementGrid({
   }
 
   const end = () => {
+    if (panningRef.current) {
+      panningRef.current = false
+      setPanning(false)
+      return
+    }
     if (activeId && drag) {
       const key = `${drag.x},${drag.y}`
       const self = members.find((m) => m.id === activeId)!
@@ -219,9 +256,10 @@ export default function PlacementGrid({
         </div>
       )}
 
-      <div className="no-scrollbar flex-1 overflow-auto">
+      <div ref={scrollRef} className="no-scrollbar flex-1 overflow-auto">
         <div
           ref={boardRef}
+          onPointerDown={panDown}
           onPointerMove={move}
           onPointerUp={end}
           onPointerCancel={end}
@@ -230,6 +268,7 @@ export default function PlacementGrid({
             width: W,
             height: H,
             touchAction: 'none',
+            cursor: panning ? 'grabbing' : 'grab',
             background:
               'repeating-linear-gradient(45deg, transparent 0 30px, rgba(90,130,170,0.10) 30px 31px), repeating-linear-gradient(-45deg, transparent 0 30px, rgba(90,130,170,0.10) 30px 31px), #14231a',
           }}
@@ -266,6 +305,7 @@ export default function PlacementGrid({
             return (
               <div
                 key={m.id}
+                data-tile
                 onPointerDown={start(m.id)}
                 className="absolute flex -translate-x-1/2 -translate-y-1/2 cursor-grab flex-col items-center"
                 style={{ left: px, top: py, opacity, zIndex: activeId === m.id ? 50 : ringed ? 20 : 5 }}
