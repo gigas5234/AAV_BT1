@@ -198,6 +198,9 @@ const STR: Record<string, Entry> = {
     en: '~250K troops · concentrate archers on the 30-main, fill the rest with cavalry',
     ko: '병력 ~250K 기준 · 궁병은 30 메인에 집중, 나머지는 기병으로 채우기',
   },
+  'slots.pillWhy': { en: 'Why this ratio', ko: '왜 이 비율?' },
+  'slots.pillHow': { en: 'Setup', ko: '설정법' },
+  'slots.pillBan': { en: 'Banned', ko: '금지 영웅' },
   'roster.byLevel': { en: 'By level', ko: '레벨별' },
 }
 
@@ -392,12 +395,18 @@ export function calcGuide(lang: Lang): string[] {
 
 // ---- Slots tab content ---- (troop counts in K, ~250K budget, infantry capped ~50K)
 export type Slot = { n: number; title: string; purpose: string; infK: number; cavK: number; arcK: number; note?: string }
-export type SlotCardData = { title: string; tag: string; slots: Slot[] }
+export type SlotCardData = { title: string; tag: string; rawK?: number; slots: Slot[] }
 export type SlotsContent = {
+  whyTitle: string
+  whyIntro: string
+  whyPoints: string[]
+  whyKey: string
   howTitle: string
   howBody: string
   howSteps: string[]
   howNote: string
+  examplesTitle: string
+  examplesNote: string
   cards: SlotCardData[]
   notesTitle: string
   notes: string[]
@@ -413,6 +422,15 @@ export type SlotsContent = {
 export function slotsContent(lang: Lang): SlotsContent {
   if (lang === 'ko')
     return {
+      whyTitle: '병력 비율 — 10/10/80 vs 20/40/40',
+      whyIntro: '10/10/80(궁병 몰빵)은 모두가 T10에 병력도 많아 데미지가 비슷할 때 가장 강력합니다. 하지만 우리 왕국은 세대가 지났어도 아직 모두가 그만큼을 갖추진 못했습니다.',
+      whyPoints: [
+        '메인 집결(30·T10)에 좋은 병력을 몰아주면 큰 포인트를 얻습니다. 메인에 못 들어간 인원은 서브 집결에 참여해 점수를 챙깁니다 — 서브도 낮은 점수가 아니고, 성장할수록 올라갑니다.',
+        '서브가 자기 집결에 10/10/80을 쓰면 자기 데미지도 낮게 잡히고, 좋은 메인 집결에 궁병을 넣지 못합니다. 예: 궁병 100K 중 80K를 자기 집결에 쓰면 다른 곳엔 20K뿐입니다.',
+        '그래서 서브 집결은 자기 집결을 20/40/40으로 완화하고, 궁병 60%↑를 메인에 보냅니다 → 서브 집결자도 좋은 점수를 받습니다.',
+        '집결자가 아닌 분은 메인에 10/10/80으로 보내도 됩니다. 인원 초과로 못 들어가면 서브에 20/40/40으로 3등분해 보내는 게 점수에 더 좋습니다.',
+      ],
+      whyKey: '결론: 30·T10 멤버는 최대한 10/10/80. 아직 T10이 아니거나 병력이 부족하면 20/40/40도 OK(보병 비율을 낮추는 게 핵심). 퀵슬롯에 미리 저장해 두고, 집결 시간을 보고 빠르게 투입하세요.',
       howTitle: '퀵슬롯이 뭔가요?',
       howBody: '퀵슬롯 = 병력 편성을 미리 저장해 두는 슬롯이에요. 곰덫에서 매번 병력을 고를 필요 없이 저장된 편성을 바로 꺼내 씁니다.',
       howSteps: [
@@ -422,35 +440,39 @@ export function slotsContent(lang: Lang): SlotsContent {
         '처음엔 1·2·3·4·5·6 숫자로 되어 있어요. 이게 퀵슬롯이며, 이름으로 바꿀 수 있습니다.',
       ],
       howNote: '여기에 아래 구성대로 병력을 저장해 두면 곰덫에서 바로 꺼내 씁니다.',
+      examplesTitle: '역할별 편성 예시',
+      examplesNote: '메인 집결자는 T10·궁병 위주(병력도 많음)라 10/10/80을 유지합니다 — 그만큼 궁병이 많아야 합니다. 나머지는 각 병종을 비슷하게(33/33/33) 보고 보병 50K만 빼서 20/40/40이 됩니다. (총 병력 − 50K = 실제 사용)',
       cards: [
         {
           title: '메인 집결자',
-          tag: '30레벨',
+          tag: '30 · T10 · 10/10/80',
           slots: [
-            { n: 1, title: '자기 집결 · 최대 데미지', purpose: '자기 집결 호스트, 100K↑.', infK: 10, cavK: 15, arcK: 75, note: '최고 병력 · 궁병 몰빵.' },
-            { n: 2, title: '첸코 참여', purpose: '다른 메인 참여 · 남는 자리.', infK: 10, cavK: 25, arcK: 25, note: '1번 원정 스킬 높으면.' },
-            { n: 3, title: '연우 참여', purpose: '보조 참여.', infK: 10, cavK: 20, arcK: 20, note: '연우를 1번 영웅으로.' },
-            { n: 4, title: '아마네 · 예비', purpose: '예비 참여.', infK: 10, cavK: 20, arcK: 10, note: '첸코·연우 부족할 때.' },
+            { n: 1, title: '자기 집결 (호스트)', purpose: '자기 집결 · 최대 데미지', infK: 10, cavK: 10, arcK: 80, note: '최소 100K · 궁병 몰빵.' },
+            { n: 2, title: '첸코 참여', purpose: '다른 30메인 집결에 참여', infK: 10, cavK: 10, arcK: 80 },
+            { n: 3, title: '연우 참여', purpose: '다른 30메인 집결에 참여', infK: 10, cavK: 10, arcK: 80 },
+            { n: 4, title: '아마네 예비', purpose: '남는 병력 · 예비', infK: 4, cavK: 4, arcK: 32 },
           ],
         },
         {
           title: '서브 집결자',
-          tag: '27–28 · overflow',
+          tag: '27–28 · 20/40/40',
+          rawK: 300,
           slots: [
-            { n: 1, title: '30 메인 참여', purpose: '30레벨 집결 편승 · 좋은 점수.', infK: 10, cavK: 30, arcK: 60, note: '궁병은 여기에 집중 (75까진 안 감).' },
-            { n: 2, title: '자기 서브 오픈', purpose: 'overflow 집결 (100K↑).', infK: 20, cavK: 50, arcK: 30, note: '기병 위주로 채워 궁병 절약.' },
-            { n: 3, title: '첸코 / 연우 참여', purpose: '남는 메인·서브 참여.', infK: 10, cavK: 30, arcK: 10 },
-            { n: 4, title: '예비', purpose: '남는 병력.', infK: 0, cavK: 0, arcK: 0, note: '여기까지 오면 병력 부족 — 무리하지 않기.' },
+            { n: 1, title: '30메인 참여', purpose: '좋은 병력을 30메인에', infK: 20, cavK: 40, arcK: 40 },
+            { n: 2, title: '자기 서브 집결', purpose: 'overflow · 자기 집결 오픈', infK: 20, cavK: 40, arcK: 40, note: '기병 위주로 궁병 절약.' },
+            { n: 3, title: '첸코 / 연우 참여', purpose: '남는 메인·서브에 참여', infK: 10, cavK: 20, arcK: 20 },
+            { n: 4, title: '예비', purpose: '부족하면 무리하지 않기', infK: 0, cavK: 0, arcK: 0 },
           ],
         },
         {
           title: '일반 참여자',
-          tag: '집결 안 엶',
+          tag: '집결 안 엶 · 20/40/40',
+          rawK: 300,
           slots: [
-            { n: 1, title: '30 메인 전용', purpose: '최고 병력을 여기 먼저.', infK: 10, cavK: 20, arcK: 70, note: '궁병 집중.' },
-            { n: 2, title: '첸코 참여', purpose: '메인 집결 참여.', infK: 10, cavK: 25, arcK: 25 },
-            { n: 3, title: '연우 참여', purpose: '메인 집결 참여.', infK: 10, cavK: 25, arcK: 15 },
-            { n: 4, title: '아마네 참여', purpose: '메인이 찼거나 병력 남을 때.', infK: 10, cavK: 20, arcK: 10 },
+            { n: 1, title: '30메인 전용', purpose: '최고 병력을 여기 먼저', infK: 20, cavK: 40, arcK: 40 },
+            { n: 2, title: '첸코 참여', purpose: '다른 메인 집결 참여', infK: 20, cavK: 40, arcK: 40 },
+            { n: 3, title: '연우 / 서브 참여', purpose: '메인 초과 시 서브에 참여', infK: 10, cavK: 20, arcK: 20 },
+            { n: 4, title: '예비', purpose: '남는 병력', infK: 0, cavK: 0, arcK: 0 },
           ],
         },
       ],
@@ -474,6 +496,15 @@ export function slotsContent(lang: Lang): SlotsContent {
       checkExample: '예) 첸코 + 하워드 + 퀸 · 20/30/50 → 자원 타일로 발송',
     }
   return {
+    whyTitle: 'Troop ratio — 10/10/80 vs 20/40/40',
+    whyIntro: '10/10/80 (all archers) is strongest when everyone is maxed at T10 with similar damage. But our kingdom, old as it is, is not all there yet.',
+    whyPoints: [
+      'Funnel good troops into the 30-level (T10) main rally for big points. Anyone who cannot get in joins a support rally — support is not a low score, and it climbs as members grow.',
+      'If a support leader runs 10/10/80 in their own rally, their own damage is low AND they cannot lend archers to the strong main rally. E.g. of 100K archers, 80K in your own rally leaves just 20K for anywhere else.',
+      'So support leaders relax their own rally to 20/40/40 and send 60%+ of their archers to the main — which scores them well too.',
+      'Non-leaders can send 10/10/80 to the main. If it is full, split ~20/40/40 into a support rally for a better score.',
+    ],
+    whyKey: 'Bottom line: 30 / T10 members run 10/10/80 when they can; not yet T10 or short on troops → 20/40/40 is fine (keeping infantry low is the key). Save formations in quick slots and drop your rally fast when the timing comes.',
     howTitle: 'What is a quick slot?',
     howBody: 'A quick slot is a saved troop formation. Instead of picking troops every time at the bear trap, you pull up a saved slot instantly.',
     howSteps: [
@@ -483,35 +514,39 @@ export function slotsContent(lang: Lang): SlotsContent {
       'They start as 1·2·3·4·5·6 by default. Those are your quick slots — you can rename them.',
     ],
     howNote: 'Save the formations below into these slots, then pull them up at the bear trap.',
+    examplesTitle: 'Formation examples by role',
+    examplesNote: 'Main leaders are T10, archer-heavy and hold more troops, so they run 10/10/80 — they need that many archers. Everyone else holds each troop type roughly equally (33/33/33) and just sets aside 50K infantry, landing at 20/40/40. (Total − 50K = usable.)',
     cards: [
       {
         title: 'Main leader',
-        tag: 'level 30',
+        tag: '30 · T10 · 10/10/80',
         slots: [
-          { n: 1, title: 'Own rally · max damage', purpose: 'Host your own rally, 100K+.', infK: 10, cavK: 15, arcK: 75, note: 'Best troops · archers maxed.' },
-          { n: 2, title: 'Chenko join', purpose: 'Join another main or a leftover seat.', infK: 10, cavK: 25, arcK: 25, note: 'Use if 1st expedition skill is strong.' },
-          { n: 3, title: 'Yeonwoo join', purpose: 'Support join.', infK: 10, cavK: 20, arcK: 20, note: 'Yeonwoo in hero slot 1.' },
-          { n: 4, title: 'Amane · reserve', purpose: 'Reserve join.', infK: 10, cavK: 20, arcK: 10, note: 'When Chenko / Yeonwoo run out.' },
+          { n: 1, title: 'Own rally (host)', purpose: 'Your own rally · max damage', infK: 10, cavK: 10, arcK: 80, note: 'Keep 100K+ · archers maxed.' },
+          { n: 2, title: 'Chenko join', purpose: 'Join another 30-main rally', infK: 10, cavK: 10, arcK: 80 },
+          { n: 3, title: 'Yeonwoo join', purpose: 'Join another 30-main rally', infK: 10, cavK: 10, arcK: 80 },
+          { n: 4, title: 'Amane reserve', purpose: 'Leftover troops · reserve', infK: 4, cavK: 4, arcK: 32 },
         ],
       },
       {
         title: 'Support leader',
-        tag: '27–28 · overflow',
+        tag: '27–28 · 20/40/40',
+        rawK: 300,
         slots: [
-          { n: 1, title: 'Join a 30 main', purpose: 'Ride a 30-level rally for the best score.', infK: 10, cavK: 30, arcK: 60, note: 'Put your archers here (not the full 75).' },
-          { n: 2, title: 'Open own rally', purpose: 'Overflow rally, 100K+.', infK: 20, cavK: 50, arcK: 30, note: 'Cavalry-heavy to spare archers.' },
-          { n: 3, title: 'Chenko / Yeonwoo join', purpose: 'Join a leftover main or support.', infK: 10, cavK: 30, arcK: 10 },
-          { n: 4, title: 'Reserve', purpose: 'Leftover troops.', infK: 0, cavK: 0, arcK: 0, note: 'If you get here you are short — do not overreach.' },
+          { n: 1, title: 'Join a 30 main', purpose: 'Send your good troops to the main', infK: 20, cavK: 40, arcK: 40 },
+          { n: 2, title: 'Own support rally', purpose: 'Overflow · open your own rally', infK: 20, cavK: 40, arcK: 40, note: 'Cavalry-heavy to spare archers.' },
+          { n: 3, title: 'Chenko / Yeonwoo join', purpose: 'Join a leftover main or support', infK: 10, cavK: 20, arcK: 20 },
+          { n: 4, title: 'Reserve', purpose: "Do not overreach if you're short", infK: 0, cavK: 0, arcK: 0 },
         ],
       },
       {
         title: 'General member',
-        tag: 'no rally',
+        tag: 'no rally · 20/40/40',
+        rawK: 300,
         slots: [
-          { n: 1, title: '30 main only', purpose: 'Send your best troops here first.', infK: 10, cavK: 20, arcK: 70, note: 'Archers concentrated here.' },
-          { n: 2, title: 'Chenko join', purpose: 'Join a main rally.', infK: 10, cavK: 25, arcK: 25 },
-          { n: 3, title: 'Yeonwoo join', purpose: 'Join a main rally.', infK: 10, cavK: 25, arcK: 15 },
-          { n: 4, title: 'Amane join', purpose: 'When mains are full or troops are left.', infK: 10, cavK: 20, arcK: 10 },
+          { n: 1, title: '30 main only', purpose: 'Send your best troops here first', infK: 20, cavK: 40, arcK: 40 },
+          { n: 2, title: 'Chenko join', purpose: 'Join another main rally', infK: 20, cavK: 40, arcK: 40 },
+          { n: 3, title: 'Yeonwoo / support join', purpose: 'If main is full, join a support', infK: 10, cavK: 20, arcK: 20 },
+          { n: 4, title: 'Reserve', purpose: 'Leftover troops', infK: 0, cavK: 0, arcK: 0 },
         ],
       },
     ],
