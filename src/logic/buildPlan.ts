@@ -63,7 +63,9 @@ export function buildPlan(selected: Member[], s: Settings): Plan {
     waves[gi].main.push(leader)
   }
 
-  // 2) support leaders (nearest + highest capacity first) fill the group that needs it most
+  // 2) support leaders (nearest + highest capacity first) keep filling the group that needs
+  //    it most until every group reaches its target or the support pool runs out. No cap —
+  //    we recruit as many nearby leaders as it takes to hold the troops.
   if (s.autoAddSupport) {
     let guard = supports.length
     while (guard-- > 0 && supports.length > 0) {
@@ -71,8 +73,7 @@ export function buildPlan(selected: Member[], s: Settings): Plan {
       let worst = 0
       waves.forEach((w, i) => {
         const need = groupTargetsK[i] - grpCap(w)
-        const room = w.support.length < s.maxSupportPerWave
-        if (room && need > worst) {
+        if (need > worst) {
           worst = need
           gi = i
         }

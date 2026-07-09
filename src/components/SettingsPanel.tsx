@@ -93,7 +93,6 @@ export default function SettingsPanel({
       <NumField label={t('set.rallyCycle')} value={settings.rallyCycleSec} onChange={(n) => set('rallyCycleSec', Math.max(60, n))} step={30} suffix="s" />
       <NumField label={t('set.marchPerCell')} value={settings.marchSecPerCell} onChange={(n) => set('marchSecPerCell', Math.max(0, n))} suffix="s" />
       <NumField label={t('set.waveOffset')} value={settings.waveOffsetSec} onChange={(n) => set('waveOffsetSec', n)} step={5} suffix="s" />
-      <NumField label={t('set.maxSupport')} value={settings.maxSupportPerWave} onChange={(n) => set('maxSupportPerWave', Math.max(0, Math.round(n)))} />
       <NumField label={t('set.capBuffer')} value={Math.round(settings.capacityBufferRate * 100)} onChange={(n) => set('capacityBufferRate', Math.max(0, n) / 100)} step={5} suffix="%" />
       <Toggle label={t('set.splitWaves')} value={settings.useWaves} onChange={(b) => set('useWaves', b)} />
       <Toggle label={t('set.autoSupport')} value={settings.autoAddSupport} onChange={(b) => set('autoAddSupport', b)} />
