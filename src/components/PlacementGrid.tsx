@@ -18,6 +18,7 @@ type Props = {
   onBack: () => void
   onMoveMember: (id: string, coord: { x: number; y: number }) => void
   onResetPositions: () => void
+  onPlaySim: () => void
 }
 
 const BASE_S = 22
@@ -35,6 +36,7 @@ export default function PlacementGrid({
   onBack,
   onMoveMember,
   onResetPositions,
+  onPlaySim,
 }: Props) {
   const t = useT()
   const lang = useLang()
@@ -195,6 +197,12 @@ export default function PlacementGrid({
             className="rounded-full border border-white/15 px-2.5 py-1 text-[11px] text-slate-300"
           >
             {t('common.reset')}
+          </button>
+          <button
+            onClick={onPlaySim}
+            className="flex items-center gap-1 rounded-full bg-amber-400 px-2.5 py-1 text-[11px] font-semibold text-[#3a2600]"
+          >
+            ▶ {t('sim.open')}
           </button>
         </div>
       </header>

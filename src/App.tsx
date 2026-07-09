@@ -13,8 +13,9 @@ import PlacementGrid from './components/PlacementGrid'
 import GuideTab from './components/GuideTab'
 import SlotsTab from './components/SlotsTab'
 import CalcTab from './components/CalcTab'
+import SimView from './components/SimView'
 
-type PlanView = 'roster' | 'result' | 'placement'
+type PlanView = 'roster' | 'result' | 'placement' | 'sim'
 
 export default function App() {
   const [started, setStarted] = useState(false)
@@ -91,7 +92,10 @@ export default function App() {
             onBack={() => setPlanView('result')}
             onMoveMember={(id, coord) => patchMember(id, { coord })}
             onResetPositions={resetPositions}
+            onPlaySim={() => setPlanView('sim')}
           />
+        ) : tab === 'plan' && planView === 'sim' && plan ? (
+          <SimView members={members} plan={plan} settings={settings} onBack={() => setPlanView('placement')} />
         ) : (
           <div key={`${tab}-${planView}`} className="tabfade">
             {tab === 'plan' && planView === 'roster' && (

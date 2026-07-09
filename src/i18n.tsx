@@ -134,6 +134,17 @@ const STR: Record<string, Entry> = {
     ko: '인원이 적습니다 — 서브를 줄이고 메인 중심으로 운영하세요.',
   },
 
+  'sim.title': { en: 'Simulation', ko: '시뮬레이션' },
+  'sim.open': { en: 'Play', ko: '재생' },
+  'sim.back': { en: '← Placement', ko: '← 배치' },
+  'sim.coverage': { en: 'Coverage', ko: '커버리지' },
+  'sim.hits': { en: 'Hits', ko: '타격 수' },
+  'sim.hitsMin': { en: '/ min', ko: '/ 분' },
+  'sim.maxGap': { en: 'Max gap', ko: '최대 빈틈' },
+  'sim.active': { en: 'Active rallies', ko: '진행 집결' },
+  'sim.hint': { en: 'Rallies march from cities to the bear; the trap glows when hit.', ko: '집결이 도시→곰덫으로 행군하고, 타격 시 곰덫이 빛납니다.' },
+  'sim.replay': { en: 'Replay', ko: '다시' },
+
   'pl.backPlan': { en: '← Plan', ko: '← 계획' },
   'pl.title': { en: 'Placement', ko: '배치' },
   'pl.blocked': { en: 'That cell is blocked', ko: '그 칸은 막혀 있어요' },
