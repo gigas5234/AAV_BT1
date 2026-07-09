@@ -24,20 +24,19 @@ export function memberCycles(m: Member, s: Settings): number {
 export function buildPlan(selected: Member[], s: Settings): Plan {
   const waveCount = s.useWaves ? 2 : 1
   const contribK = s.troopsPerPlayerK
-  const reserveK = s.minLeaderTroopsK
 
-  // participants per group (even split, extra goes to earlier groups)
+  // participants per group (even split, extra goes to earlier groups) — display only
   const groupParticipants = Array.from({ length: waveCount }, (_, i) => {
     const base = Math.floor(selected.length / waveCount)
     return base + (i < selected.length % waveCount ? 1 : 0)
   })
 
-  // troops each group must place; group index > 0 reserves per person
-  const groupTargetsK = groupParticipants.map((cnt, i) =>
-    Math.round(cnt * (contribK - (i > 0 ? reserveK : 0))),
-  )
-
+  // Every leader (group 1 AND group 2) locks ~100K in their own continuous rally, and that
+  // 100K is still rallied. So all troops flow into rallies; the two groups must hold an equal
+  // share. Target each group with half of the total — keeps Group 1 and Group 2 balanced.
   const totalTroopsK = selected.length * contribK
+  const perGroupTargetK = Math.round(totalTroopsK / waveCount)
+  const groupTargetsK = Array.from({ length: waveCount }, () => perGroupTargetK)
   const cyclesPerEvent = Math.max(1, Math.floor((s.eventMinutes * 60) / Math.max(60, s.rallyCycleSec)))
 
   const effThru = (m: Member) => m.rallyCapacityK * memberCycles(m, s)
