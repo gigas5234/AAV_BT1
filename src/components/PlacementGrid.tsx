@@ -198,12 +198,6 @@ export default function PlacementGrid({
           >
             {t('common.reset')}
           </button>
-          <button
-            onClick={onPlaySim}
-            className="flex items-center gap-1 rounded-full bg-amber-400 px-2.5 py-1 text-[11px] font-semibold text-[#3a2600]"
-          >
-            ▶ {t('sim.open')}
-          </button>
         </div>
       </header>
 
@@ -346,6 +340,17 @@ export default function PlacementGrid({
             )
           })}
         </div>
+      </div>
+
+      {/* run-simulation CTA — between the map and the legend, with an attention pulse */}
+      <div className="px-4 pt-2">
+        <button
+          onClick={onPlaySim}
+          style={{ animation: 'ctaPulse 2.2s ease-in-out infinite' }}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-amber-300 to-amber-400 py-3 text-sm font-bold text-[#3a2600] transition-transform active:scale-[0.97]"
+        >
+          <span className="text-base leading-none">▶</span> {t('sim.run')}
+        </button>
       </div>
 
       <div className="space-y-1 px-4 py-2 text-[11px] text-slate-400">

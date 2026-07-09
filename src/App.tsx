@@ -95,7 +95,7 @@ export default function App() {
             onPlaySim={() => setPlanView('sim')}
           />
         ) : tab === 'plan' && planView === 'sim' && plan ? (
-          <SimView members={members} plan={plan} settings={settings} onBack={() => setPlanView('placement')} />
+          <SimView members={members} selected={selectedMembers} plan={plan} settings={settings} onBack={() => setPlanView('placement')} />
         ) : (
           <div key={`${tab}-${planView}`} className="tabfade">
             {tab === 'plan' && planView === 'roster' && (

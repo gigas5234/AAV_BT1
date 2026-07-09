@@ -20,7 +20,10 @@ const STR: Record<string, Entry> = {
   'tab.calc': { en: 'Calc', ko: '계산기' },
 
   'calc.header': { en: 'Troop calculator', ko: '병종 계산기' },
-  'calc.sub': { en: 'Enter your troops to auto-fill quick slots.', ko: '병종을 입력하면 퀵슬롯을 자동으로 채웁니다.' },
+  'calc.sub': {
+    en: 'Enter the most troops you can bring to the bear trap, then hand-split how many of each troop type go into each quick slot. Remaining troops update live so you never plan more than you actually have.',
+    ko: '곰덫에 쓸 수 있는 최대 병력을 입력하고, 퀵슬롯마다 병종을 몇 명씩 넣을지 직접 배분해 보는 계산기예요. 보유량을 넘겨 편성하지 않도록(최대 병력 초과 방지) 남은 병력이 실시간으로 표시됩니다.',
+  },
   'calc.role': { en: 'Role', ko: '역할' },
   'calc.roleCheck': {
     en: 'Check whether you are assigned Main, Support, or General — your setup depends on it.',
@@ -31,7 +34,12 @@ const STR: Record<string, Entry> = {
   'calc.support': { en: 'Support', ko: '서브' },
   'calc.general': { en: 'General', ko: '일반' },
   'calc.pool': { en: 'Your troops (K)', ko: '보유 병종 (K)' },
-  'calc.capacity': { en: 'Party capacity', ko: '파티 수용량' },
+  'calc.owned': { en: 'Your troops', ko: '보유 병력' },
+  'calc.ratioTitle': { en: 'Troop ratio', ko: '병사 비율' },
+  'calc.target': { en: 'target', ko: '목표' },
+  'calc.marchLabel': { en: 'March', ko: '행군' },
+  'calc.capacity': { en: 'Base capacity', ko: '최소 수용량' },
+  'calc.capHint': { en: 'Default per slot — edit each slot to match its heroes.', ko: '슬롯 기본값 — 슬롯마다 영웅에 맞춰 개별 수정 가능.' },
   'calc.slotCount': { en: 'Slots', ko: '슬롯 수' },
   'calc.firstHero': { en: 'First hero', ko: '1번 영웅' },
   'calc.auto': { en: 'Rally host (auto)', ko: '집결자 (자동)' },
@@ -133,17 +141,32 @@ const STR: Record<string, Entry> = {
     en: 'Small turnout — cut support rallies and lean on main rallies.',
     ko: '인원이 적습니다 — 서브를 줄이고 메인 중심으로 운영하세요.',
   },
+  'warn.farLeader': {
+    en: '{n} far leader(s) used (>25s march) — they cycle slowly; prefer nearer leaders if possible.',
+    ko: '먼 집결자 {n}명 사용 (편도 25초↑) — 사이클이 느립니다. 가능하면 가까운 집결자를 우선하세요.',
+  },
 
   'sim.title': { en: 'Simulation', ko: '시뮬레이션' },
   'sim.open': { en: 'Play', ko: '재생' },
+  'sim.run': { en: 'Run simulation', ko: '시뮬레이션 실행' },
   'sim.back': { en: '← Placement', ko: '← 배치' },
   'sim.coverage': { en: 'Coverage', ko: '커버리지' },
   'sim.hits': { en: 'Hits', ko: '타격 수' },
   'sim.hitsMin': { en: '/ min', ko: '/ 분' },
   'sim.maxGap': { en: 'Max gap', ko: '최대 빈틈' },
   'sim.active': { en: 'Active rallies', ko: '진행 집결' },
-  'sim.hint': { en: 'Rallies march from cities to the bear; the trap glows when hit.', ko: '집결이 도시→곰덫으로 행군하고, 타격 시 곰덫이 빛납니다.' },
+  'sim.hint': { en: 'Marches gather to the host (15 per rally); only the host strikes the bear. Wave 2 fills after Wave 1 returns.', ko: '행군이 호스트로 모여 집결(15행군). 곰은 호스트만 타격. 2조는 1조 복귀 후 채워집니다.' },
+  'sim.rallies': { en: 'open', ko: '집결' },
+  'sim.marches': { en: 'marches', ko: '행군' },
+  'sim.empty': { en: 'waiting for troops…', ko: '병력 복귀 대기…' },
   'sim.replay': { en: 'Replay', ko: '다시' },
+  'sim.filled': { en: 'filled', ko: '충원' },
+  'sim.st.wait': { en: 'Idle', ko: '대기' },
+  'sim.st.gather': { en: 'Gathering', ko: '집결 중' },
+  'sim.st.ready': { en: 'Ready', ko: '대기 중' },
+  'sim.st.march': { en: 'Marching', ko: '행군' },
+  'sim.st.fight': { en: 'Attacking', ko: '공격!' },
+  'sim.st.return': { en: 'Returning', ko: '복귀' },
 
   'pl.backPlan': { en: '← Plan', ko: '← 계획' },
   'pl.title': { en: 'Placement', ko: '배치' },
@@ -230,7 +253,7 @@ export function guideSections(lang: Lang): GuideSection[] {
         title: '원정 스킬이 뭔가요?',
         accent: '#2dd4bf',
         body: [
-          '집결에 참여(join)하면 내 1번 영웅의 "1번 원정 스킬"만 집결 전체에 적용됩니다. 원정 스킬은 스킬 아이콘 왼쪽 위에 작은 배지(⚔️)가 붙어 있어요.',
+          '집결에 참여(join)하면 내 1번 영웅의 "1번 원정 스킬"만 집결 전체에 적용됩니다.',
           '그래서 1번 영웅은 아래 3명 중 하나로 두고, 그 원정 스킬을 최우선으로 올리세요.',
         ],
         skills: [
@@ -281,7 +304,7 @@ export function guideSections(lang: Lang): GuideSection[] {
       title: 'What is an expedition skill?',
       accent: '#2dd4bf',
       body: [
-        "When you JOIN a rally, only your 1st hero's FIRST expedition skill applies to the whole rally. An expedition skill has a small badge (⚔️) on the top-left of the skill icon.",
+        "When you JOIN a rally, only your 1st hero's FIRST expedition skill applies to the whole rally.",
         'So set your 1st hero to one of the three below and upgrade that expedition skill first.',
       ],
       skills: [

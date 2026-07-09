@@ -42,10 +42,20 @@ export function buildPlan(selected: Member[], s: Settings): Plan {
   const effThru = (m: Member) => m.rallyCapacityK * memberCycles(m, s)
   const grpCap = (w: Wave) => capOf([...w.main, ...w.support])
 
-  const mains = selected.filter((m) => m.mainLeader).sort((a, b) => effThru(b) - effThru(a))
+  // "Too far" = one-way march over FAR_MARCH_SEC. Everyone moves at the same speed, so a far
+  // leader burns most of its cycle travelling and hits the bear rarely — avoid unless needed.
+  const FAR_MARCH_SEC = 25
+  const farCells = FAR_MARCH_SEC / Math.max(0.1, s.marchSecPerCell)
+  const isFar = (m: Member) => distToTrap(m) > farCells
+  const byEff = (a: Member, b: Member) => effThru(b) - effThru(a) || b.priority - a.priority
+  // near candidates first, far ones only after the near pool is exhausted
+  const nearFirst = (a: Member, b: Member) =>
+    Number(isFar(a)) - Number(isFar(b)) || byEff(a, b)
+
+  const mains = selected.filter((m) => m.mainLeader).sort(nearFirst)
   const supports = selected
     .filter((m) => !m.mainLeader && m.supportLeader)
-    .sort((a, b) => effThru(b) - effThru(a) || b.priority - a.priority)
+    .sort(nearFirst)
 
   const waves: Wave[] = Array.from({ length: waveCount }, () => ({ main: [], support: [], reserve: [] }))
 
@@ -101,6 +111,10 @@ export function buildPlan(selected: Member[], s: Settings): Plan {
     groupTargetsK[i] > 0 ? Math.round((waveCapacityK[i] / groupTargetsK[i]) * 100) : 0,
   )
 
+  const warnings = buildWarnings(selected, waves, groupTargetsK, waveCapacityK, shortageK, fillPct)
+  const farUsed = waves.flatMap((w) => [...w.main, ...w.support]).filter(isFar).length
+  if (farUsed > 0) warnings.push({ key: 'warn.farLeader', params: { n: farUsed } })
+
   return {
     selectedCount: selected.length,
     totalTroopsK,
@@ -113,7 +127,7 @@ export function buildPlan(selected: Member[], s: Settings): Plan {
     waveThroughputK,
     fillPct,
     shortageK,
-    warnings: buildWarnings(selected, waves, groupTargetsK, waveCapacityK, shortageK, fillPct),
+    warnings,
   }
 }
 
