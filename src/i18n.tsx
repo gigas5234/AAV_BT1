@@ -281,6 +281,19 @@ export function guideSections(lang: Lang): GuideSection[] {
         body: ['메타는 궁병 위주(10/10/80까지)지만 우리 평균 병력은 전체 320K 수준입니다. 27레벨이 한 궁병 행군에 전부 쏟으면 다른 집결에 보낼 병력이 없습니다.', '그래서 보병 20 / 기병 40 / 궁병 40으로 여러 행군에 나눠 씁니다. 예외: 30레벨 메인 집결에 보내는 행군은 궁병을 더 높게.'],
       },
       {
+        title: '집결자 체크사항 (호스트 필독)',
+        accent: '#f87171',
+        body: ['집결을 연 호스트는 자신에게 들어오는 병력을 확인하고, 잘못된 영웅 편성은 반드시 돌려보내야 합니다.'],
+        list: [
+          '들어오는 참여 병력의 1번 영웅을 확인하세요.',
+          '1번 영웅이 첸코·연우·아마네가 아니면 반드시 돌려보냅니다(kick).',
+          '잘못된 영웅의 원정 스킬이 발동되면 발동 슬롯 하나를 차지해, 정상적인 첸코 버프가 안 걸릴 수 있습니다.',
+          '그 결과 전 부대가 첸코 원정 스킬 Lv.5의 전 부대 치명 +25%를 못 받고 싸우게 됩니다.',
+          '곰덫은 참여자 중 최대 4명의 1번 원정 스킬만 발동됩니다. 그러니 받은 병력에 올바른 1번 영웅(첸코·연우·아마네)이 4명 이상 포함되는 것이 중요합니다.',
+        ],
+        highlight: '잘못된 영웅 1명이 발동 슬롯 4개 중 하나를 차지하면, 전 부대가 +25% 버프를 놓칠 수 있습니다.',
+      },
+      {
         title: '오늘의 규칙',
         body: [],
         list: [
@@ -330,6 +343,19 @@ export function guideSections(lang: Lang): GuideSection[] {
       accent: '#2dd4bf',
       highlight: 'Use only half your infantry! If you have 100K infantry, send just 50K — fill the rest with cavalry and archers.',
       body: ['Meta is archer-heavy (up to 10/10/80), but our average roster is ~320K total. If a 27 leader dumps everything into one archer march, they have nothing left to rally elsewhere.', 'So we spread troops across marches at about Inf 20 / Cav 40 / Arc 40. The one exception: the march you send into a 30-level main rally pushes archers higher.'],
+    },
+    {
+      title: 'Rally host checklist (must read)',
+      accent: '#f87171',
+      body: ['If you open a rally, watch the armies joining you and send back any wrong hero formation.'],
+      list: [
+        "Check the 1st hero of every army that joins.",
+        'If the 1st hero is not Chenko / Yeonwoo / Amane, send it back (kick).',
+        "A wrong hero's expedition skill can fire and take one of the firing slots, so the proper Chenko buff never lands.",
+        "The result: the whole rally fights without Chenko's +25% lethality (Lv.5 expedition skill) applied to every troop.",
+        'The bear trap only fires up to 4 joiners’ 1st expedition skills, so it matters that at least 4 correct 1st heroes (Chenko / Yeonwoo / Amane) are among the joiners.',
+      ],
+      highlight: 'One wrong hero taking a slot of the 4 can cost the entire rally its +25% buff.',
     },
     {
       title: 'Rules of the day',
@@ -437,8 +463,8 @@ export function slotsContent(lang: Lang): SlotsContent {
         '참여(JOIN) 영웅: 첸코 · 연우 · 아마네.',
       ],
       forbiddenTitle: '첫 배치(1번 영웅) 금지',
-      forbidden: ['제이빌', '아마데우스', '헬가', '사울', '파드', '고든', '다이애나', '하워드', '퀸', '힐데', '조이', '말린'],
-      forbiddenNote: '집결 참여 시 1번 영웅은 첸코·연우·아마네만 허용 — 그 외 모든 영웅은 1번 슬롯 금지(다른 슬롯엔 OK). 1번 영웅의 원정 스킬만 적용되기 때문.',
+      forbidden: ['제이빌', '아마데우스', '헬가', '사울', '파드', '고든', '다이애나', '하워드', '퀸', '힐데', '조이', '말린', '파란(블루) 영웅 전체'],
+      forbiddenNote: '집결 참여 시 1번 영웅은 첸코·연우·아마네만 허용 — 그 외 모든 영웅은 1번 슬롯 금지(다른 슬롯엔 OK). 파란(블루) 등급 영웅도 처음에 넣는 사람이 있는데 전부 금지입니다. 1번 영웅의 원정 스킬만 적용되기 때문.',
       troopBan: 'T7 미만(하위) 병종은 집결 참여 금지',
       checkTitle: '퀵슬롯 체크 방법',
       checkSteps: [
@@ -498,8 +524,8 @@ export function slotsContent(lang: Lang): SlotsContent {
       'Join-rally heroes: Chenko, Yeonwoo, Amane.',
     ],
     forbiddenTitle: 'Never in hero slot 1',
-    forbidden: ['Jabel', 'Amadeus', 'Helga', 'Saul', 'Fahd', 'Gordon', 'Diana', 'Howard', 'Quinn', 'Hilde', 'Zoe', 'Marlin'],
-    forbiddenNote: "When joining a rally, only Chenko / Yeonwoo / Amane are allowed in hero slot 1 — every other hero is banned there (fine in other slots), since only slot 1's expedition skill applies.",
+    forbidden: ['Jabel', 'Amadeus', 'Helga', 'Saul', 'Fahd', 'Gordon', 'Diana', 'Howard', 'Quinn', 'Hilde', 'Zoe', 'Marlin', 'all blue (rare) heroes'],
+    forbiddenNote: "When joining a rally, only Chenko / Yeonwoo / Amane are allowed in hero slot 1 — every other hero is banned there (fine in other slots). Blue (rare) heroes are a common mistake too and are all banned. Only slot 1's expedition skill applies.",
     troopBan: 'No troops below T7 in rallies',
     checkTitle: 'Check your quick slots',
     checkSteps: [
