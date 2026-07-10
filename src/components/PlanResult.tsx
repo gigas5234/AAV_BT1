@@ -11,7 +11,7 @@ type Props = {
 }
 
 function names(ms: { name: string }[]) {
-  return ms.map((m) => m.name).join(', ') || '—'
+  return ms.map((m) => `@${m.name}`).join(', ') || '—'
 }
 
 function buildCopyText(plan: Plan, s: Settings): string {

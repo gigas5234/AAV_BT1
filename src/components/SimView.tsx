@@ -23,9 +23,11 @@ type Props = { members: Member[]; selected: Member[]; plan: Plan; settings: Sett
 export default function SimView({ selected, plan, settings, onBack }: Props) {
   const t = useT()
   const lang = useLang()
+  const [reserveOn, setReserveOn] = useState(true)
+  const hasReserve = plan.waves.some((w) => w.reserve.length > 0)
   const { leaders, marchers, instances, byLeader, byWave, reserveK, twoWaves, eventSec } = useMemo(
-    () => buildSchedule(plan, selected, settings),
-    [plan, selected, settings],
+    () => buildSchedule(plan, selected, settings, reserveOn),
+    [plan, selected, settings, reserveOn],
   )
   const speed = settings.marchSecPerCell
 
@@ -356,6 +358,16 @@ export default function SimView({ selected, plan, settings, onBack }: Props) {
               </button>
             ))}
           </div>
+          {hasReserve && (
+            <button
+              onClick={() => setReserveOn((v) => !v)}
+              className={`rounded-md px-2.5 py-1.5 text-xs ${
+                reserveOn ? 'bg-amber-400 text-[#3a2600]' : 'border border-white/15 text-slate-400'
+              }`}
+            >
+              {t('sim.reserve')} {reserveOn ? 'ON' : 'OFF'}
+            </button>
+          )}
           <span className="ml-auto flex items-center gap-2 text-[10px] text-slate-400">
             <span className="flex items-center gap-1">
               <span className="h-2 w-2 rounded-full" style={{ background: WAVE_STYLE[0].accent }} />1{lang === 'ko' ? '조' : ''}
@@ -365,6 +377,9 @@ export default function SimView({ selected, plan, settings, onBack }: Props) {
             </span>
           </span>
         </div>
+        <p className="mt-1.5 text-[10px] text-slate-500">
+          {reserveOn ? t('sim.reserveOnHint') : t('sim.reserveOffHint')}
+        </p>
       </div>
     </div>
   )

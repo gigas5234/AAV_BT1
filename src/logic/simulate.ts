@@ -81,6 +81,7 @@ export function buildSchedule(
   plan: Plan,
   selected: Member[],
   s: Settings,
+  includeReserve = true,
 ): {
   leaders: SimLeader[]
   marchers: SimMarcher[]
@@ -102,7 +103,8 @@ export function buildSchedule(
     const rows: { m: Member; role: Role }[] = [
       ...w.main.map((m) => ({ m, role: 'main' as Role })),
       ...w.support.map((m) => ({ m, role: 'support' as Role })),
-      ...w.reserve.map((m) => ({ m, role: 'reserve' as Role })),
+      // reserve rallies open only when the toggle is on; otherwise those members just join others
+      ...(includeReserve ? w.reserve.map((m) => ({ m, role: 'reserve' as Role })) : []),
     ]
     rows.forEach((r) =>
       leaders.push({ member: r.m, group: g, role: r.role, dist: distToTrap(r.m), capacityK: r.m.rallyCapacityK }),

@@ -12,7 +12,7 @@ const VERSION = 1
  * changes so clients pick up the new canonical roster — while keeping the user's
  * selection and settings (language, etc.).
  */
-const DATA_VERSION = 8
+const DATA_VERSION = 9
 
 type Persisted = {
   version: number
@@ -56,6 +56,15 @@ export function loadState(): Loaded {
 
     const validIds = new Set(members.map((m) => m.id))
     const stored = (data.selectedIds ?? ids).filter((id) => validIds.has(id))
+    const selected = new Set(stored)
+    // Auto-select roster members that are brand new (ids the stored data never knew about),
+    // while keeping the user's existing selections/deselections untouched.
+    if (data.members) {
+      const knownIds = new Set(data.members.map((m) => m.id))
+      members.forEach((m) => {
+        if (!knownIds.has(m.id)) selected.add(m.id)
+      })
+    }
 
     // Settings: keep user tuning when data version matches; otherwise reset to the new
     // defaults but preserve the chosen language.
@@ -65,7 +74,7 @@ export function loadState(): Loaded {
 
     return {
       members,
-      selectedIds: new Set(stored),
+      selectedIds: selected,
       settings,
     }
   } catch {

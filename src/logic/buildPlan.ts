@@ -96,10 +96,14 @@ export function buildPlan(selected: Member[], s: Settings): Plan {
       if (gi < 0) break
       waves[gi].support.push(supports.shift()!)
     }
-    // 3) one reserve leader per group — opens only if the rallies fill up (troops keep growing)
-    waves.forEach((w) => {
-      if (supports.length > 0) w.reserve.push(supports.shift()!)
-    })
+    // 3) up to RESERVE_PER_WAVE reserve leaders per group — open only if the rallies fill up
+    //    (troops keep growing). Kept as backup seats for overflow.
+    const RESERVE_PER_WAVE = 2
+    for (let n = 0; n < RESERVE_PER_WAVE; n++) {
+      for (const w of waves) {
+        if (supports.length > 0) w.reserve.push(supports.shift()!)
+      }
+    }
   }
 
   const waveCapacityK = waves.map(grpCap)
