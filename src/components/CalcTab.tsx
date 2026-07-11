@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { calcGuide, useLang, useT } from '../i18n'
 import chenkoImg from '../assets/heroes/chenko.png'
 import yeonwooImg from '../assets/heroes/yeonwoo.png'
@@ -22,14 +22,117 @@ type Pool = Record<Kind, Record<number, number>>
 const emptyTier = () => ({ 10: 0, 9: 0, 8: 0, 7: 0 })
 const emptyPool = (): Pool => ({ inf: emptyTier(), cav: emptyTier(), arc: emptyTier() })
 
+// Per-slot target ratios [inf, cav, arc] %, kept in sync with the Quick Slots
+// examples (i18n cards). Main concentrates archers at 10/10/80 while they last,
+// then fills the rest with CAVALRY (10/90/0) — infantry stays pinned at 10%, we
+// never force extra infantry in. Support/General cannot sustain 10/10/80, so
+// every slot uses the balanced 20/40/40.
+const ROLE_RATIOS: Record<Role, [number, number, number][]> = {
+  main: [
+    [10, 10, 80],
+    [10, 10, 80],
+    [10, 90, 0],
+  ],
+  support: [[20, 40, 40]],
+  general: [[20, 40, 40]],
+}
+
 /** target ratio [inf, cav, arc] % per role/slot, and whether slot 1 is the auto host. */
 function slotSpec(role: Role, i: number): { ratio: [number, number, number]; auto: boolean } {
-  if (role === 'main') return i === 0 ? { ratio: [10, 15, 75], auto: true } : { ratio: [15, 40, 45], auto: false }
-  if (role === 'support') return i === 0 ? { ratio: [20, 50, 30], auto: true } : { ratio: [15, 45, 40], auto: false }
-  return i === 0 ? { ratio: [10, 20, 70], auto: false } : { ratio: [15, 40, 45], auto: false }
+  const arr = ROLE_RATIOS[role]
+  const ratio = arr[Math.min(i, arr.length - 1)]
+  const auto = i === 0 && role !== 'general' // slot 1 is the auto host for main/support
+  return { ratio, auto }
 }
 
 const fmt = (n: number) => Math.round(n).toLocaleString('en-US')
+
+/** Tiny copy-to-clipboard icon button — copies a raw number to paste into the game. */
+function CopyNum({ value, onCopied }: { value: number; onCopied: (v: number) => void }) {
+  const [done, setDone] = useState(false)
+  const copy = async () => {
+    if (value <= 0) return
+    try {
+      await navigator.clipboard.writeText(String(value))
+    } catch {
+      const ta = document.createElement('textarea')
+      ta.value = String(value)
+      document.body.appendChild(ta)
+      ta.select()
+      document.execCommand('copy')
+      document.body.removeChild(ta)
+    }
+    setDone(true)
+    setTimeout(() => setDone(false), 1000)
+    onCopied(value)
+  }
+  return (
+    <button
+      type="button"
+      onClick={copy}
+      disabled={value <= 0}
+      aria-label="copy"
+      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border ${
+        value <= 0
+          ? 'border-white/5 text-slate-600'
+          : done
+            ? 'border-emerald-400/50 text-emerald-300'
+            : 'border-white/15 text-slate-300 active:bg-white/10'
+      }`}
+    >
+      {done ? (
+        <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true">
+          <path d="M5 12l5 5L20 6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ) : (
+        <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+          <rect x="9" y="9" width="11" height="11" rx="2" />
+          <path d="M5 15V5a2 2 0 0 1 2-2h10" strokeLinecap="round" />
+        </svg>
+      )}
+    </button>
+  )
+}
+
+/**
+ * Numeric field that lets you type freely (including clearing it) and only
+ * applies the minimum on blur — so a value like 100000 can be edited without
+ * every keystroke snapping back to `min`.
+ */
+function NumField({ value, min = 0, onChange, className }: { value: number; min?: number; onChange: (v: number) => void; className?: string }) {
+  const [text, setText] = useState(() => String(value))
+  const [focused, setFocused] = useState(false)
+  useEffect(() => {
+    if (!focused) setText(String(value))
+  }, [value, focused])
+  return (
+    <input
+      type="number"
+      inputMode="numeric"
+      value={text}
+      onFocus={(e) => {
+        setFocused(true)
+        e.currentTarget.select()
+      }}
+      onChange={(e) => {
+        setText(e.target.value)
+        if (e.target.value === '') return // allow an empty field mid-edit
+        const n = Number(e.target.value)
+        if (!Number.isNaN(n)) onChange(Math.max(0, Math.round(n)))
+      }}
+      onBlur={() => {
+        setFocused(false)
+        const n = Math.max(min, Math.round(Number(text) || 0))
+        onChange(n)
+        setText(String(n))
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') e.currentTarget.blur()
+      }}
+      className={className}
+    />
+  )
+}
 
 export default function CalcTab() {
   const t = useT()
@@ -42,6 +145,14 @@ export default function CalcTab() {
   const [heroBySlot, setHeroBySlot] = useState<Record<number, string>>({})
   const [showGuide, setShowGuide] = useState(false)
   const [alloc, setAlloc] = useState<Record<string, number>>({})
+  const [toast, setToast] = useState<string | null>(null)
+  const toastTimer = useRef<ReturnType<typeof setTimeout>>()
+  const showToast = (msg: string) => {
+    setToast(msg)
+    clearTimeout(toastTimer.current)
+    toastTimer.current = setTimeout(() => setToast(null), 1600)
+  }
+  const showCopied = (v: number) => showToast(t('calc.copied', { n: fmt(v) }))
 
   const ownedTierList = TIERS.flatMap((tr) => KINDS.map((k) => ({ k, tr }))).filter(({ k, tr }) => owned[k][tr] > 0)
   const ownedTotal: Record<Kind, number> = {
@@ -63,7 +174,7 @@ export default function CalcTab() {
   const slotKind = (s: number, k: Kind) => TIERS.reduce((n, tr) => n + cell(s, k, tr), 0)
   const slotTotal = (s: number) => KINDS.reduce((n, k) => n + slotKind(s, k), 0)
   const slotCap = (s: number) => capBySlot[s] ?? capacity // per-slot capacity, defaults to base
-  const setSlotCap = (s: number, v: number) => setCapBySlot((c) => ({ ...c, [s]: Math.max(STEP, Math.round(v)) }))
+  const setSlotCap = (s: number, v: number) => setCapBySlot((c) => ({ ...c, [s]: Math.max(0, Math.round(v)) }))
 
   const setOwn = (k: Kind, tr: number, v: number) =>
     setOwned((p) => ({ ...p, [k]: { ...p[k], [tr]: Math.max(0, Math.round(v)) } }))
@@ -74,6 +185,79 @@ export default function CalcTab() {
     const capRoom = slotCap(s) - (slotTotal(s) - cell(s, k, tr))
     const max = Math.max(0, Math.min(ownedRoom, capRoom))
     setAlloc((a) => ({ ...a, [key(s, k, tr)]: Math.min(Math.max(0, Math.round(v)), max) }))
+  }
+
+  const clearSlots = () => setAlloc({})
+
+  type Alloc = Record<string, number>
+  type Rem = Record<Kind, Record<number, number>>
+  const freshRem = (): Rem => ({ inf: { ...owned.inf }, cav: { ...owned.cav }, arc: { ...owned.arc } })
+  // draw up to `want` of a kind into slot s, strongest tier first; returns amount drawn
+  const drawTroops = (next: Alloc, rem: Rem, s: number, k: Kind, want: number) => {
+    let drawn = 0
+    for (const tr of TIERS) {
+      if (want <= 0) break
+      const grab = Math.min(want, rem[k][tr])
+      if (grab > 0) {
+        next[key(s, k, tr)] = (next[key(s, k, tr)] || 0) + grab
+        rem[k][tr] -= grab
+        want -= grab
+        drawn += grab
+      }
+    }
+    return drawn
+  }
+
+  // Auto-fill: build sensible marches for the bear trap, not a blind ratio split.
+  //  - Damage troops fill each slot: archers go in first (concentrated per the
+  //    role ratio), then cavalry backfills the rest of the capacity — so when
+  //    archers run out a slot is completed with cavalry, never left half-empty.
+  //  - Infantry deals little damage, so we deploy at most HALF of what we own
+  //    and only as a small filler. It is never sent alone or as the majority of
+  //    a march (a slot with no archers/cavalry gets no infantry at all).
+  //  - Strongest (highest-tier) troops are drawn first; slot 1 fills first.
+  const autoFill = () => {
+    const next: Alloc = {}
+    const rem = freshRem()
+    let infBudget = Math.floor(ownedTotal.inf / 2 / STEP) * STEP // only half our infantry
+    for (let s = 0; s < slots; s++) {
+      const cap = slotCap(s)
+      const [ri, , ra] = slotSpec(role, s).ratio
+      const infPortion = Math.round((cap * ri) / 100 / STEP) * STEP
+      const damageTarget = cap - infPortion // archers + cavalry should fill this
+      const arcDrawn = drawTroops(next, rem, s, 'arc', Math.min(damageTarget, Math.round((cap * ra) / 100 / STEP) * STEP))
+      const cavDrawn = drawTroops(next, rem, s, 'cav', damageTarget - arcDrawn) // cavalry absorbs the archer shortfall
+      const damage = arcDrawn + cavDrawn
+      // infantry only where there are real troops, capped by budget and never the majority
+      if (damage > 0 && infBudget > 0) {
+        infBudget -= drawTroops(next, rem, s, 'inf', Math.min(infPortion, infBudget, damage))
+      }
+    }
+    setAlloc(next)
+    showToast(t('calc.filled'))
+  }
+
+  // Even split: divide your own troops equally across the slots — every slot
+  // mirrors your army (each kind's total ÷ slots), capped at slot capacity.
+  // Infantry is deliberately deployed at only HALF of what you own (it deals
+  // little), so the even mix leans lighter on infantry. Damage troops go in
+  // first so capacity pressure trims infantry, not archers.
+  const evenFill = () => {
+    const next: Alloc = {}
+    const rem = freshRem()
+    const share: Record<Kind, number> = {
+      inf: Math.floor(ownedTotal.inf / 2 / slots / STEP) * STEP, // only half our infantry
+      cav: Math.floor(ownedTotal.cav / slots / STEP) * STEP,
+      arc: Math.floor(ownedTotal.arc / slots / STEP) * STEP,
+    }
+    for (let s = 0; s < slots; s++) {
+      let capLeft = slotCap(s)
+      for (const k of ['arc', 'cav', 'inf'] as Kind[]) {
+        capLeft -= drawTroops(next, rem, s, k, Math.min(share[k], capLeft))
+      }
+    }
+    setAlloc(next)
+    showToast(t('calc.evenFilled'))
   }
 
   const kindLabel = (k: Kind) => t(`calc.${k}`)
@@ -154,19 +338,29 @@ export default function CalcTab() {
         )}
       </div>
 
-      {/* role */}
-      <div className="flex gap-1.5">
-        {(['main', 'support', 'general'] as Role[]).map((r) => (
-          <button
-            key={r}
-            onClick={() => setRole(r)}
-            className={`flex-1 rounded-lg py-2 text-sm ${
-              role === r ? 'bg-amber-400 font-semibold text-[#3a2600]' : 'border border-white/15 text-slate-300'
-            }`}
-          >
-            {t(`calc.${r}`)}
-          </button>
-        ))}
+      {/* role — segmented toggle + one-line description of the selected role */}
+      <div>
+        <div className="flex gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] p-1">
+          {(['main', 'support', 'general'] as Role[]).map((r) => {
+            const on = role === r
+            return (
+              <button
+                key={r}
+                onClick={() => setRole(r)}
+                aria-pressed={on}
+                className={`flex-1 rounded-lg py-2 text-sm transition-colors ${
+                  on ? 'bg-amber-400 font-bold text-[#3a2600] shadow-sm shadow-amber-500/30' : 'font-medium text-slate-300 hover:bg-white/5'
+                }`}
+              >
+                {t(`calc.${r}`)}
+              </button>
+            )
+          })}
+        </div>
+        <div className="mt-1.5 flex items-start gap-1.5 px-1 text-[12px] leading-relaxed text-amber-200/90">
+          <span className="mt-[3px] h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" />
+          <span>{t(`calc.${role}Desc`)}</span>
+        </div>
       </div>
 
       {/* owned troops (real numbers, per kind x tier) */}
@@ -206,15 +400,57 @@ export default function CalcTab() {
         </div>
         <label className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm">
           <span className="text-slate-300">{t('calc.capacity')}</span>
-          <input
-            type="number"
+          <NumField
             value={capacity}
-            onChange={(e) => setCapacity(Math.max(STEP, Math.round(Number(e.target.value) || 0)))}
+            min={STEP}
+            onChange={setCapacity}
             className="w-20 rounded-md border border-white/10 bg-white/5 px-2 py-1 text-right text-[13px] text-white outline-none focus:border-amber-400/60"
           />
         </label>
       </div>
       <p className="-mt-1 px-1 text-[11px] text-slate-500">{t('calc.capHint')}</p>
+
+      {/* fill helpers: by-ratio / even split / reset */}
+      <div>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={autoFill}
+            disabled={poolTotal === 0}
+            className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition-colors ${
+              poolTotal === 0 ? 'cursor-not-allowed border border-white/10 text-slate-600' : 'bg-amber-400 text-[#3a2600] active:brightness-95'
+            }`}
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+              <path d="M13 2 3 14h7l-1 8 10-12h-7z" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            {t('calc.autoFill')}
+          </button>
+          <button
+            onClick={evenFill}
+            disabled={poolTotal === 0}
+            className={`flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-semibold transition-colors ${
+              poolTotal === 0 ? 'cursor-not-allowed border-white/10 text-slate-600' : 'border-sky-400/50 text-sky-200 active:bg-sky-400/10'
+            }`}
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+              <path d="M6 4v16M12 4v16M18 4v16" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            {t('calc.evenFill')}
+          </button>
+        </div>
+        <div className="mt-2 flex justify-end">
+          <button
+            onClick={clearSlots}
+            className="flex items-center justify-center gap-1.5 rounded-lg border border-white/15 px-3 py-1.5 text-[12px] font-medium text-slate-300 active:bg-white/10"
+          >
+            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+              <path d="M3 12a9 9 0 1 0 3-6.7M3 4v4h4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            {t('calc.clearSlots')}
+          </button>
+        </div>
+        <p className="mt-1.5 px-1 text-[11px] leading-relaxed text-slate-500">{t('calc.autoFillHint')}</p>
+      </div>
 
       {/* remaining (below slot count so it's always in view) */}
       {poolTotal > 0 && (
@@ -265,10 +501,10 @@ export default function CalcTab() {
                 <span className="ml-auto flex items-center gap-1 font-mono text-[12px]">
                   <span className={`font-semibold ${over ? 'text-red-300' : 'text-amber-300'}`}>{fmt(total)}</span>
                   <span className="text-slate-500">/</span>
-                  <input
-                    type="number"
+                  <NumField
                     value={cap}
-                    onChange={(e) => setSlotCap(i, Number(e.target.value) || 0)}
+                    min={STEP}
+                    onChange={(v) => setSlotCap(i, v)}
                     className="w-[4.5rem] rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 text-right text-white outline-none focus:border-amber-400/60"
                   />
                 </span>
@@ -313,6 +549,7 @@ export default function CalcTab() {
                           onChange={(e) => setCell(i, k, tr, Number(e.target.value) || 0)}
                           className="w-16 rounded-md border border-white/10 bg-white/5 px-1.5 py-1 text-right text-[12px] text-white outline-none focus:border-amber-400/60"
                         />
+                        <CopyNum value={v} onCopied={showCopied} />
                       </div>
                     </div>
                   )
@@ -343,6 +580,18 @@ export default function CalcTab() {
             </section>
           )
         })
+      )}
+
+      {/* copy toast */}
+      {toast && (
+        <div className="pointer-events-none fixed inset-x-0 bottom-24 z-50 flex justify-center px-4">
+          <div className="accopen flex items-center gap-2 rounded-full border border-emerald-400/40 bg-[#0e1526]/95 px-4 py-2 text-[13px] font-medium text-emerald-200 shadow-lg shadow-black/50 backdrop-blur">
+            <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true">
+              <path d="M5 12l5 5L20 6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            {toast}
+          </div>
+        </div>
       )}
     </div>
   )

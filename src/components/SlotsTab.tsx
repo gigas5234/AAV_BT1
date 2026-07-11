@@ -101,6 +101,8 @@ function SlotCard({ title, tag, rawK, slots }: { title: string; tag: string; raw
   )
 }
 
+const WHY_SEEN_KEY = 'aav-bt1:why-seen'
+
 export default function SlotsTab() {
   const t = useT()
   const lang = useLang()
@@ -108,6 +110,25 @@ export default function SlotsTab() {
   // one compact pill row; only one info panel open at a time. Banned heroes is the most
   // important, so it comes first and is open by default.
   const [panel, setPanel] = useState<'why' | 'how' | 'ban' | null>('ban')
+  // red dot draws attention to the ratio explainer until it's opened once
+  const [whySeen, setWhySeen] = useState(() => {
+    try {
+      return localStorage.getItem(WHY_SEEN_KEY) === '1'
+    } catch {
+      return false
+    }
+  })
+  const openPanel = (id: 'why' | 'how' | 'ban') => {
+    setPanel((cur) => (cur === id ? null : id))
+    if (id === 'why' && !whySeen) {
+      setWhySeen(true)
+      try {
+        localStorage.setItem(WHY_SEEN_KEY, '1')
+      } catch {
+        /* ignore */
+      }
+    }
+  }
   const pills = [
     { id: 'ban', label: t('slots.pillBan'), dot: '#f87171' },
     { id: 'why', label: t('slots.pillWhy'), dot: '#f5b301' },
@@ -125,16 +146,23 @@ export default function SlotsTab() {
       <div className="flex gap-1.5">
         {pills.map((p) => {
           const on = panel === p.id
+          const showDot = p.id === 'why' && !whySeen
           return (
             <button
               key={p.id}
-              onClick={() => setPanel(on ? null : p.id)}
-              className={`flex flex-1 items-center justify-center gap-1.5 rounded-full border px-2 py-2 text-[12px] transition-colors ${
+              onClick={() => openPanel(p.id)}
+              className={`relative flex flex-1 items-center justify-center gap-1.5 rounded-full border px-2 py-2 text-[12px] transition-colors ${
                 on ? 'border-transparent bg-white/12 font-semibold text-white' : 'border-white/12 text-slate-300'
               }`}
             >
               <span className="h-2 w-2 rounded-full" style={{ background: p.dot }} />
               {p.label}
+              {showDot && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-2.5 w-2.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500/70" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-[#0b1220]" />
+                </span>
+              )}
             </button>
           )
         })}
@@ -146,7 +174,19 @@ export default function SlotsTab() {
             <span className="text-base leading-none">🎯</span>
             {content.whyTitle}
           </h3>
+          {/* mirrors the Guide's "Troop ratio (20/40/40)" section — keep in sync */}
+          <div className="mb-2.5 flex items-start gap-2 rounded-xl border-2 border-amber-300 bg-amber-400 px-3 py-2.5 text-[13px] font-semibold text-[#3a2600] shadow-md shadow-amber-500/25">
+            <svg viewBox="0 0 24 24" className="mt-0.5 h-4 w-4 shrink-0" fill="currentColor" aria-hidden="true">
+              <path d="M13 2 3 14h7l-1 8 10-12h-7z" />
+            </svg>
+            <span>{content.whyHighlight}</span>
+          </div>
           <p className="text-[13px] leading-relaxed text-amber-100/90">{content.whyIntro}</p>
+          <div className="mt-2 space-y-1.5 rounded-lg bg-black/20 px-3 py-2.5 text-[13px] leading-relaxed text-slate-200">
+            {content.whyRatio.map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
+          </div>
           <ul className="mt-2.5 space-y-2 text-[13px] leading-relaxed text-slate-200">
             {content.whyPoints.map((p, i) => (
               <li key={i} className="flex gap-2">

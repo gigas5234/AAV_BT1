@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { guideSections, slotsContent, useLang, useT } from '../i18n'
 import { ConditionalHeroes } from './SlotsTab'
 
@@ -41,7 +41,7 @@ export default function GuideTab() {
     })
 
   return (
-    <div className="space-y-2 px-4 pb-24 pt-5">
+    <div className="space-y-3.5 px-4 pb-24 pt-5">
       <div className="mb-1">
         <h2 className="text-lg font-semibold text-white">{t('guide.header')}</h2>
         <p className="mt-0.5 text-sm text-slate-400">{t('guide.sub')}</p>
@@ -50,7 +50,7 @@ export default function GuideTab() {
       {sections.map((s, i) => {
         const isOpen = open.has(i)
         return (
-          <div key={i} className="contents">
+          <Fragment key={i}>
             <section className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
               <button onClick={() => toggle(i)} className="flex w-full items-center gap-2.5 px-3.5 py-3 text-left">
                 <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: s.accent ?? '#64748b' }} />
@@ -127,7 +127,7 @@ export default function GuideTab() {
                 )}
               </section>
             )}
-          </div>
+          </Fragment>
         )
       })}
     </div>
