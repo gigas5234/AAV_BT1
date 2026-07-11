@@ -14,6 +14,20 @@ function BanIcon() {
   )
 }
 
+/** Heroes allowed in slot 1 only if their expedition skill is high enough. */
+export function ConditionalHeroes({ heroes, note }: { heroes: string[]; note: string }) {
+  const t = useT()
+  return (
+    <div className="rounded-xl border border-amber-400/30 bg-amber-400/[0.07] px-4 py-3">
+      <p className="text-[13px] font-semibold text-amber-200">
+        <span className="mr-1.5 rounded bg-amber-400/25 px-1.5 py-0.5 text-[10px] font-bold text-amber-100">{t('common.conditional')}</span>
+        {heroes.join(' · ')}
+      </p>
+      <p className="mt-1.5 text-[12px] leading-relaxed text-amber-100/75">{note}</p>
+    </div>
+  )
+}
+
 function TroopBar({ infK, cavK, arcK }: { infK: number; cavK: number; arcK: number }) {
   const t = useT()
   const total = infK + cavK + arcK
@@ -127,7 +141,7 @@ export default function SlotsTab() {
       </div>
 
       {panel === 'why' && (
-        <section className="rounded-2xl border border-amber-400/40 bg-amber-400/[0.08] p-4">
+        <section className="accopen rounded-2xl border border-amber-400/40 bg-amber-400/[0.08] p-4">
           <h3 className="mb-2 flex items-center gap-2 font-semibold text-amber-100">
             <span className="text-base leading-none">🎯</span>
             {content.whyTitle}
@@ -146,7 +160,7 @@ export default function SlotsTab() {
       )}
 
       {panel === 'how' && (
-        <section className="rounded-2xl border border-sky-400/25 bg-sky-400/[0.06] p-4">
+        <section className="accopen rounded-2xl border border-sky-400/25 bg-sky-400/[0.06] p-4">
           <h3 className="mb-2 font-semibold text-white">{content.howTitle}</h3>
           <p className="text-[13px] leading-relaxed text-slate-300">{content.howBody}</p>
           <ol className="mt-2.5 list-decimal space-y-1.5 pl-5 text-[13px] leading-relaxed text-slate-300">
@@ -159,27 +173,32 @@ export default function SlotsTab() {
       )}
 
       {panel === 'ban' && (
-        <div className="space-y-3 rounded-xl border-2 border-red-500 bg-red-500/10 px-4 py-3">
-          <div>
-            <p className="flex items-center gap-2 text-[16px] font-bold text-red-300">
+        <div className="accopen space-y-3">
+          <div className="space-y-3 rounded-xl border-2 border-red-500 bg-red-500/10 px-4 py-3">
+            <div>
+              <p className="flex items-center gap-2 text-[16px] font-bold text-red-300">
+                <BanIcon />
+                {content.forbiddenTitle}
+              </p>
+              <p className="mt-2 text-[16px] font-semibold leading-relaxed text-red-200">{content.forbidden.join(' · ')}</p>
+              <p className="mt-1.5 text-[12px] leading-relaxed text-red-200/70">{content.forbiddenNote}</p>
+            </div>
+            <p className="flex items-center gap-2 border-t border-red-500/30 pt-2.5 text-[15px] font-bold text-red-300">
               <BanIcon />
-              {content.forbiddenTitle}
+              {content.troopBan}
             </p>
-            <p className="mt-2 text-[16px] font-semibold leading-relaxed text-red-200">{content.forbidden.join(' · ')}</p>
-            <p className="mt-1.5 text-[12px] leading-relaxed text-red-200/70">{content.forbiddenNote}</p>
           </div>
-          <p className="flex items-center gap-2 border-t border-red-500/30 pt-2.5 text-[15px] font-bold text-red-300">
-            <BanIcon />
-            {content.troopBan}
-          </p>
+          <ConditionalHeroes heroes={content.conditional} note={content.conditionalNote} />
         </div>
       )}
 
-      <div className="pt-1">
-        <h3 className="text-[15px] font-semibold text-white">{content.examplesTitle}</h3>
-        <p className="mt-1.5 rounded-lg border border-amber-400/20 bg-amber-400/[0.06] px-3 py-2 text-[12px] leading-relaxed text-amber-100/90">
-          {content.examplesNote}
-        </p>
+      <div className="mt-1 rounded-2xl border-2 border-amber-400/50 bg-amber-400/[0.1] p-4">
+        <div className="flex items-center gap-2">
+          <span className="rounded-md bg-amber-400 px-2 py-0.5 text-[11px] font-bold text-[#3a2600]">{content.examplesTag}</span>
+          <h3 className="text-[15px] font-semibold text-amber-100">{content.examplesTitle}</h3>
+        </div>
+        <p className="mt-2 text-[13px] font-semibold leading-relaxed text-amber-100">{content.examplesLead}</p>
+        <p className="mt-1.5 text-[12px] leading-relaxed text-amber-100/75">{content.examplesNote}</p>
       </div>
 
       {content.cards.map((c) => (

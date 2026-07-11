@@ -5,9 +5,6 @@ import { memberCycles } from '../logic/buildPlan'
 import { ROLE_STYLE, WAVE_STYLE } from '../theme'
 import { groupName, useLang, useT } from '../i18n'
 
-/** Admin-only: export current coords to bake as defaults. Hidden in normal use. */
-const SHOW_SAVE = false
-
 type Props = {
   members: Member[]
   plan: Plan
@@ -19,6 +16,7 @@ type Props = {
   onMoveMember: (id: string, coord: { x: number; y: number }) => void
   onResetPositions: () => void
   onPlaySim: () => void
+  admin?: boolean
 }
 
 const BASE_S = 22
@@ -37,7 +35,9 @@ export default function PlacementGrid({
   onMoveMember,
   onResetPositions,
   onPlaySim,
+  admin = false,
 }: Props) {
+  const SHOW_SAVE = admin
   const t = useT()
   const lang = useLang()
   const boardRef = useRef<HTMLDivElement>(null)

@@ -28,6 +28,22 @@ export default function App() {
   const [settings, setSettings] = useState<Settings>(initial.settings)
   const [plan, setPlan] = useState<Plan | null>(null)
   const [placementScope, setPlacementScope] = useState<number | 'all'>('all')
+  const [admin, setAdminState] = useState(() => {
+    try {
+      return localStorage.getItem('aav-bt1:admin') === '1'
+    } catch {
+      return false
+    }
+  })
+  const setAdmin = (v: boolean) => {
+    setAdminState(v)
+    try {
+      if (v) localStorage.setItem('aav-bt1:admin', '1')
+      else localStorage.removeItem('aav-bt1:admin')
+    } catch {
+      /* ignore */
+    }
+  }
 
   useEffect(() => {
     saveState(members, selectedIds, settings)
@@ -93,6 +109,7 @@ export default function App() {
             onMoveMember={(id, coord) => patchMember(id, { coord })}
             onResetPositions={resetPositions}
             onPlaySim={() => setPlanView('sim')}
+            admin={admin}
           />
         ) : tab === 'plan' && planView === 'sim' && plan ? (
           <SimView members={members} selected={selectedMembers} plan={plan} settings={settings} onBack={() => setPlanView('placement')} />
@@ -103,6 +120,8 @@ export default function App() {
                 members={members}
                 selectedIds={selectedIds}
                 settings={settings}
+                admin={admin}
+                onSetAdmin={setAdmin}
                 onToggle={toggleSelect}
                 onSetAll={setAll}
                 onPatchMember={patchMember}

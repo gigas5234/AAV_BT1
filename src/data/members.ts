@@ -56,5 +56,5 @@ export const SEED_MEMBERS: Member[] = [
   { id: 'getmemorefans', name: 'Getmemorefans', level: 24, rallyCapacityK: 350, mainLeader: false, supportLeader: false, priority: 35, coord: { x: 6, y: -1 } },
   { id: 'lord-farquad', name: 'Lord Farquad', level: 24, rallyCapacityK: 350, mainLeader: false, supportLeader: false, priority: 35, coord: { x: -6, y: 1 } },
   { id: 'ccc-mrck', name: 'CCC MRCK', level: 24, rallyCapacityK: 350, mainLeader: false, supportLeader: false, priority: 35, coord: { x: -5, y: 6 } },
-  { id: 'lord-manny', name: 'Lord Manny', level: 24, rallyCapacityK: 350, mainLeader: false, supportLeader: false, priority: 35, coord: { x: -7, y: 3 } },
+  { id: 'lord-manny', name: 'Lord Manny', level: 24, rallyCapacityK: 350, mainLeader: false, supportLeader: false, priority: 35, coord: { x: 5, y: -7 } },
 ]

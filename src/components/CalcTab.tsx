@@ -124,18 +124,24 @@ export default function CalcTab() {
 
       {/* role check banner + usage guide */}
       <div>
-        <div className="flex items-start gap-2 rounded-xl border border-amber-400/40 bg-amber-400/10 px-3 py-2.5">
+        <button
+          onClick={() => setShowGuide((v) => !v)}
+          aria-expanded={showGuide}
+          className="flex w-full items-center gap-2 rounded-xl border border-amber-400/40 bg-amber-400/10 px-3 py-2.5 text-left"
+        >
           <span className="flex-1 text-[13px] font-semibold leading-relaxed text-amber-200">{t('calc.roleCheck')}</span>
-          <button
-            onClick={() => setShowGuide((v) => !v)}
-            aria-label={t('calc.guideTitle')}
-            className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[13px] font-bold ${
-              showGuide ? 'border-transparent bg-amber-400 text-[#3a2600]' : 'border-amber-300 text-amber-200'
-            }`}
+          <span className="shrink-0 text-[11px] text-amber-300/80">{showGuide ? t('common.fold') : t('common.more')}</span>
+          <svg
+            viewBox="0 0 24 24"
+            className={`h-5 w-5 shrink-0 text-amber-300 transition-transform ${showGuide ? 'rotate-180' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            aria-hidden="true"
           >
-            !
-          </button>
-        </div>
+            <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
         {showGuide && (
           <div className="mt-2 rounded-xl border border-white/10 bg-white/[0.04] p-3">
             <p className="mb-1.5 text-[13px] font-medium text-white">{t('calc.guideTitle')}</p>

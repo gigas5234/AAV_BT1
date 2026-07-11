@@ -12,7 +12,7 @@ const VERSION = 1
  * changes so clients pick up the new canonical roster — while keeping the user's
  * selection and settings (language, etc.).
  */
-const DATA_VERSION = 9
+const DATA_VERSION = 10
 
 type Persisted = {
   version: number
@@ -50,7 +50,7 @@ export function loadState(): Loaded {
       const byId = new Map(data.members.map((m) => [m.id, m]))
       members = SEED_MEMBERS.map((seed) => {
         const saved = byId.get(seed.id)
-        return saved ? { ...seed, rallyCapacityK: saved.rallyCapacityK, coord: saved.coord } : seed
+        return saved ? { ...seed, level: saved.level ?? seed.level, rallyCapacityK: saved.rallyCapacityK, coord: saved.coord } : seed
       })
     }
 

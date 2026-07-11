@@ -9,6 +9,9 @@ const STR: Record<string, Entry> = {
   'common.reset': { en: 'Reset', ko: '초기화' },
   'common.names': { en: 'Names', ko: '이름' },
   'common.save': { en: 'Save', ko: '저장' },
+  'common.more': { en: 'How to use', ko: '사용법' },
+  'common.fold': { en: 'Hide', ko: '접기' },
+  'common.conditional': { en: 'Conditional', ko: '조건부' },
   'common.copy': { en: 'Copy', ko: '복사' },
   'common.copied': { en: 'Copied ✓', ko: '복사됨 ✓' },
   'common.all': { en: 'All', ko: '전체' },
@@ -69,6 +72,12 @@ const STR: Record<string, Entry> = {
   },
   'roster.start': { en: 'Start · {n} selected', ko: '시작 · {n}명 선택' },
   'roster.startShort': { en: 'Start · {n}', ko: '시작 · {n}' },
+  'admin.title': { en: 'Admin mode', ko: '관리자 모드' },
+  'admin.on': { en: 'Unlock', ko: '로그인' },
+  'admin.off': { en: 'Lock', ko: '해제' },
+  'admin.prompt': { en: 'Admin password', ko: '관리자 비밀번호' },
+  'admin.wrong': { en: 'Wrong password', ko: '비밀번호가 틀렸습니다' },
+  'admin.hint': { en: 'You can now edit each member’s level & capacity, and save placement coords.', ko: '이제 인원별 레벨·수용량 수정, 배치 좌표 저장이 가능합니다.' },
   'roster.confirmReset': {
     en: 'Reset roster, positions, and settings to defaults?',
     ko: '명단·배치·설정을 기본값으로 되돌릴까요?',
@@ -248,18 +257,13 @@ export type GuideSection = {
 export function guideSections(lang: Lang): GuideSection[] {
   if (lang === 'ko')
     return [
-      { title: '이벤트', body: ['곰덫(Pitfall)은 30분간, 이틀에 한 번 열립니다. 연맹 전체가 곰에게 데미지를 쌓습니다.', '보상은 개인 데미지로만 지급됩니다. 많이 참여하고 화력을 낼수록 좋습니다.'] },
+      { title: '이벤트', accent: '#94a3b8', body: ['곰덫(Pitfall)은 30분간, 이틀에 한 번 열립니다. 연맹 전체가 곰에게 데미지를 쌓습니다.', '보상은 개인 데미지로만 지급됩니다. 많이 참여하고 화력을 낼수록 좋습니다.'] },
       {
-        title: '집결을 가장 강력한 3영웅',
+        title: '집결과 영웅 — 호스트가 전부',
         accent: '#f5b301',
-        body: ['집결자(호스트)의 영웅 3명 스킬과 모든 스탯 — 영주 장비·영주 보석·펫·아카데미 등 — 그리고 각 영웅의 장비·장비 레벨·스킬 레벨까지 전부 집결 전체에 적용됩니다.', '참여자는 병력과 1번 영웅의 1번 원정 스킬만 기여합니다. 기어·차밍·연구는 적용되지 않습니다.'],
-        callout: '그래서 최고 병력은 가장 강한 30레벨 리더의 집결에 넣어야 합니다 — 호스트 스탯이 전체를 곱합니다.',
-      },
-      {
-        title: '원정 스킬이 뭔가요?',
-        accent: '#2dd4bf',
         body: [
-          '집결에 참여(join)하면 내 1번 영웅의 "1번 원정 스킬"만 집결 전체에 적용됩니다.',
+          '집결자(호스트)의 영웅 3명 스킬과 모든 스탯 — 영주 장비·보석·펫·아카데미, 각 영웅의 장비·레벨·스킬까지 — 전부 집결 전체에 적용됩니다.',
+          '참여자는 병력과 1번 영웅의 "1번 원정 스킬"만 기여합니다. 기어·차밍·연구는 적용되지 않습니다.',
           '그래서 1번 영웅은 아래 3명 중 하나로 두고, 그 원정 스킬을 최우선으로 올리세요.',
         ],
         skills: [
@@ -267,21 +271,32 @@ export function guideSections(lang: Lang): GuideSection[] {
           { hero: '2번 · 연우', skill: 'On Guard', effect: '전 부대 치명(Lethality) +25%' },
           { hero: '3번 · 아마네', skill: 'Tri-Phalanx', effect: '전 부대 공격(Attack) +25%' },
         ],
-        highlight: '이 스킬을 최우선으로 Lv.5(25%)까지 올리세요. 5 → 10 → 15 → 20 → 25%',
+        highlight: '1번 영웅의 원정 스킬을 최우선으로 Lv.5(25%)까지 올리세요. 5 → 10 → 15 → 20 → 25%',
+        callout: '그래서 최고 병력은 가장 강한 30레벨 리더의 집결에 넣어야 합니다 — 호스트 스탯이 전체를 곱합니다.',
       },
       {
-        title: '두 웨이브 · 2분 간격',
+        title: '세 가지 역할 · 메인 / 서브 / 참여자',
+        accent: '#a78bfa',
+        body: ['집결 자리는 한정적입니다(한 집결 15행군). 그래서 역할을 나눕니다 — 강한 리더가 집결을 열고, 넘치는 인원을 받을 집결을 더 열고, 나머지는 좋은 집결에 참여합니다.'],
+        list: [
+          '메인 집결자 (30·T10): 스탯이 제일 강해 자기 집결을 엽니다. 좋은 병력이 여기로 모여 큰 데미지를 냅니다.',
+          '서브 집결자 (27–28): 메인에 다 못 들어간 인원을 받는 overflow 집결을 엽니다. 서브도 좋은 점수를 냅니다.',
+          '렐리 참여자: 집결을 열지 않고, 좋은 집결(30메인 우선)에 병력을 넣어 점수를 챙깁니다.',
+        ],
+        callout: '역할별 병력 편성 예시는 퀵슬롯 탭에 있습니다.',
+      },
+      {
+        title: '두 웨이브 · 행군 거리',
         accent: '#4c9be8',
         body: [
           '두 조로 나눠 시차를 두고 출격합니다. 2조는 1조보다 정확히 2분 뒤에 집결을 엽니다.',
-          '집결 대기 시간은 5분입니다. 1조 집결 타이머가 5:00에서 3:00이 될 때(2분 경과), 2조가 다음 집결을 엽니다. 이렇게 곰을 30분 내내 끊김 없이 때립니다.',
-          '집결이 복귀하면 즉시 재출격하세요.',
+          '집결 대기 5분. 1조 타이머가 5:00에서 3:00이 될 때(2분 경과) 2조가 집결을 엽니다. 이렇게 곰을 30분 내내 끊김 없이 때립니다. 복귀하면 즉시 재출격.',
+          '곰덫과 가까운 리더가 더 많은 사이클을 돕니다. 짧은 행군 = 더 많은 출격 = 더 많은 데미지. 가까운 도시를 메인 리더로 우선하세요.',
         ],
         callout: '신호: 현재 집결 타이머가 3:00 남았을 때, 다음 조가 집결을 엽니다.',
       },
-      { title: '행군 거리', body: ['곰덫과 가까운 리더가 더 많은 사이클을 돌립니다. 짧은 행군 = 더 많은 출격 = 더 많은 데미지. 가까운 도시를 메인 리더로 우선하세요.'] },
       {
-        title: '우리 병력 규칙 (20 / 40 / 40)',
+        title: '병력 비율 (20 / 40 / 40)',
         accent: '#2dd4bf',
         highlight: '보병은 절반만! 보병이 100K면 50K만 보내세요. 나머지 자리는 기병·궁병으로 채웁니다.',
         body: ['메타는 궁병 위주(10/10/80까지)지만 우리 평균 병력은 전체 320K 수준입니다. 27레벨이 한 궁병 행군에 전부 쏟으면 다른 집결에 보낼 병력이 없습니다.', '그래서 보병 20 / 기병 40 / 궁병 40으로 여러 행군에 나눠 씁니다. 예외: 30레벨 메인 집결에 보내는 행군은 궁병을 더 높게.'],
@@ -301,6 +316,7 @@ export function guideSections(lang: Lang): GuideSection[] {
       },
       {
         title: '오늘의 규칙',
+        accent: '#34d399',
         body: [],
         list: [
           '좋은 병력은 30레벨 메인 집결에 먼저 보내세요.',
@@ -312,18 +328,13 @@ export function guideSections(lang: Lang): GuideSection[] {
       },
     ]
   return [
-    { title: 'The event', body: ['The trap runs for 30 minutes, every two days, at the Pitfall. The whole alliance stacks damage on the bear.', 'Rewards are paid out on your personal damage only. The more you show up and hit, the better.'] },
+    { title: 'The event', accent: '#94a3b8', body: ['The trap runs for 30 minutes, every two days, at the Pitfall. The whole alliance stacks damage on the bear.', 'Rewards are paid out on your personal damage only. The more you show up and hit, the better.'] },
     {
-      title: "Host's 3 strongest heroes",
+      title: 'Rallies & heroes — the host is everything',
       accent: '#f5b301',
-      body: ["The host's three hero skills and all their stats — lord gear, lord gems, pet, academy, and more — plus each hero's gear, gear level, and skill level all apply to the whole rally.", "Joiners contribute only their troops and their first hero's first expedition skill. Gear, charms, and research do not carry over."],
-      callout: "That is why your best troops belong in the strongest 30-level leader's rally — the host's stats multiply everyone inside.",
-    },
-    {
-      title: 'What is an expedition skill?',
-      accent: '#2dd4bf',
       body: [
-        "When you JOIN a rally, only your 1st hero's FIRST expedition skill applies to the whole rally.",
+        "The host's three hero skills and all their stats — lord gear, gems, pet, academy, and each hero's gear/level/skill — all apply to the whole rally.",
+        "Joiners contribute only their troops and their 1st hero's FIRST expedition skill. Gear, charms, and research do not carry over.",
         'So set your 1st hero to one of the three below and upgrade that expedition skill first.',
       ],
       skills: [
@@ -331,21 +342,32 @@ export function guideSections(lang: Lang): GuideSection[] {
         { hero: 'Slot 2 · Yeonwoo', skill: 'On Guard', effect: 'All Squads Lethality +25%' },
         { hero: 'Slot 3 · Amane', skill: 'Tri-Phalanx', effect: 'All Squads Attack +25%' },
       ],
-      highlight: 'Max this skill first — Lv.5 = 25%. 5 → 10 → 15 → 20 → 25%',
+      highlight: 'Max your 1st expedition skill first — Lv.5 = 25%. 5 → 10 → 15 → 20 → 25%',
+      callout: "That is why your best troops belong in the strongest 30-level leader's rally — the host's stats multiply everyone inside.",
     },
     {
-      title: 'Two waves · 2-minute gap',
+      title: 'Three roles · Main / Support / Participant',
+      accent: '#a78bfa',
+      body: ['Rally seats are limited (15 marches per rally), so we split into roles — strong leaders open rallies, more leaders open rallies to catch the overflow, and everyone else joins a good rally.'],
+      list: [
+        'Main leader (30 · T10): strongest stats, hosts their own rally. Good troops gather here for big damage.',
+        'Support leader (27–28): opens an overflow rally for members who could not fit the main. Support scores well too.',
+        'Participant: does not host — joins a good rally (30-main first) to bank points.',
+      ],
+      callout: 'Formation examples per role are on the Quick Slots tab.',
+    },
+    {
+      title: 'Two waves · march distance',
       accent: '#4c9be8',
       body: [
         'We split into two groups on a stagger. Group 2 opens its rally exactly 2 minutes after Group 1.',
-        "The rally gather window is 5 minutes. When Group 1's rally timer goes from 5:00 down to 3:00 (2 minutes in), Group 2 opens the next rally. This keeps the bear hit for the full 30 minutes.",
-        'When your rally returns, relaunch immediately.',
+        "The gather window is 5 minutes. When Group 1's timer goes 5:00 → 3:00 (2 minutes in), Group 2 opens the next rally — keeping the bear hit for the full 30 minutes. Relaunch immediately when you return.",
+        'A leader close to the Pitfall runs more cycles. Short march = more launches = more damage. Prefer nearby cities as main leaders.',
       ],
       callout: 'Trigger: at 3:00 left on the current rally, the next group launches.',
     },
-    { title: 'March distance', body: ['A leader close to the Pitfall can run more rally cycles than one far away. Short march = more launches = more total damage. Prefer nearby cities as main leaders.'] },
     {
-      title: 'Our troop rule (20 / 40 / 40)',
+      title: 'Troop ratio (20 / 40 / 40)',
       accent: '#2dd4bf',
       highlight: 'Use only half your infantry! If you have 100K infantry, send just 50K — fill the rest with cavalry and archers.',
       body: ['Meta is archer-heavy (up to 10/10/80), but our average roster is ~320K total. If a 27 leader dumps everything into one archer march, they have nothing left to rally elsewhere.', 'So we spread troops across marches at about Inf 20 / Cav 40 / Arc 40. The one exception: the march you send into a 30-level main rally pushes archers higher.'],
@@ -365,6 +387,7 @@ export function guideSections(lang: Lang): GuideSection[] {
     },
     {
       title: 'Rules of the day',
+      accent: '#34d399',
       body: [],
       list: [
         'Send your best troops to a 30-level main rally first.',
@@ -409,6 +432,8 @@ export type SlotsContent = {
   howSteps: string[]
   howNote: string
   examplesTitle: string
+  examplesTag: string
+  examplesLead: string
   examplesNote: string
   cards: SlotCardData[]
   notesTitle: string
@@ -416,6 +441,8 @@ export type SlotsContent = {
   forbiddenTitle: string
   forbidden: string[]
   forbiddenNote: string
+  conditional: string[]
+  conditionalNote: string
   troopBan: string
   checkTitle: string
   checkSteps: string[]
@@ -444,6 +471,8 @@ export function slotsContent(lang: Lang): SlotsContent {
       ],
       howNote: '여기에 아래 구성대로 병력을 저장해 두면 곰덫에서 바로 꺼내 씁니다.',
       examplesTitle: '역할별 편성 예시',
+      examplesTag: '예시',
+      examplesLead: '이건 퀵슬롯 설정 예시입니다. 자신의 병력 총량에 맞춰 비율을 미리 설정하세요.',
       examplesNote: '가진 궁병을 좋은 슬롯(자기 집결·30메인)에 먼저 10/10/80으로 몰아 채우고, 궁병이 떨어지면 기병으로 채웁니다. 예시는 제일 센 멤버 기준 — 총 430K · 궁병 160K · 보병 50K 제외(총 − 50K = 실제 사용). 궁병이 적으면 10/10/80 슬롯 수만 줄이면 됩니다.',
       cards: [
         {
@@ -489,8 +518,10 @@ export function slotsContent(lang: Lang): SlotsContent {
         '참여(JOIN) 영웅: 첸코 · 연우 · 아마네.',
       ],
       forbiddenTitle: '첫 배치(1번 영웅) 금지',
-      forbidden: ['제이빌', '아마데우스', '헬가', '사울', '파드', '고든', '다이애나', '하워드', '퀸', '힐데', '조이', '말린', '파란(블루) 영웅 전체'],
+      forbidden: ['제이빌', '헬가', '사울', '파드', '고든', '다이애나', '하워드', '퀸', '조이', '말린', '파란(블루) 영웅 전체'],
       forbiddenNote: '집결 참여 시 1번 영웅은 첸코·연우·아마네만 허용 — 그 외 모든 영웅은 1번 슬롯 금지(다른 슬롯엔 OK). 파란(블루) 등급 영웅도 처음에 넣는 사람이 있는데 전부 금지입니다. 1번 영웅의 원정 스킬만 적용되기 때문.',
+      conditional: ['아마데우스', '힐데'],
+      conditionalNote: '스킬레벨에 따라 1번 영웅으로 써도 됩니다 — 단 원정 스킬이 3레벨 이하면 그냥 첸코가 낫습니다.',
       troopBan: 'T7 미만(하위) 병종은 집결 참여 금지',
       checkTitle: '퀵슬롯 체크 방법',
       checkSteps: [
@@ -519,6 +550,8 @@ export function slotsContent(lang: Lang): SlotsContent {
     ],
     howNote: 'Save the formations below into these slots, then pull them up at the bear trap.',
     examplesTitle: 'Formation examples by role',
+    examplesTag: 'Example',
+    examplesLead: 'These are quick-slot setup examples. Set your own ratio in advance based on your total troops.',
     examplesNote: 'Put your archers into your best slots (own rally, 30-main) at 10/10/80 first, then fill the rest with cavalry once they run out. Example is the biggest member — 430K total, 160K archers, 50K infantry set aside (total − 50K = usable). Fewer archers just means fewer 10/10/80 slots.',
     cards: [
       {
@@ -564,8 +597,10 @@ export function slotsContent(lang: Lang): SlotsContent {
       'Join-rally heroes: Chenko, Yeonwoo, Amane.',
     ],
     forbiddenTitle: 'Never in hero slot 1',
-    forbidden: ['Jabel', 'Amadeus', 'Helga', 'Saul', 'Fahd', 'Gordon', 'Diana', 'Howard', 'Quinn', 'Hilde', 'Zoe', 'Marlin', 'all blue (rare) heroes'],
+    forbidden: ['Jabel', 'Helga', 'Saul', 'Fahd', 'Gordon', 'Diana', 'Howard', 'Quinn', 'Zoe', 'Marlin', 'all blue (rare) heroes'],
     forbiddenNote: "When joining a rally, only Chenko / Yeonwoo / Amane are allowed in hero slot 1 — every other hero is banned there (fine in other slots). Blue (rare) heroes are a common mistake too and are all banned. Only slot 1's expedition skill applies.",
+    conditional: ['Amadeus', 'Hilde'],
+    conditionalNote: 'OK as your 1st hero depending on skill level — but if the expedition skill is Lv.3 or lower, just use Chenko.',
     troopBan: 'No troops below T7 in rallies',
     checkTitle: 'Check your quick slots',
     checkSteps: [

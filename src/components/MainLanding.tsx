@@ -44,7 +44,7 @@ export default function MainLanding({ onStart }: { onStart: () => void }) {
           <circle cx="14.6" cy="7.6" r="1.6" />
         </svg>
         <span className="text-[11px] font-medium tracking-wide text-white/55">
-          Made by <span className="text-amber-200/90">CCC Zhapa</span>
+          Made by <span className="text-amber-200/90">[AAV]CCC Zhapa</span>
         </span>
       </div>
     </div>

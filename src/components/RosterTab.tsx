@@ -10,6 +10,8 @@ type Props = {
   members: Member[]
   selectedIds: Set<string>
   settings: Settings
+  admin: boolean
+  onSetAdmin: (v: boolean) => void
   onToggle: (id: string) => void
   onSetAll: (on: boolean) => void
   onPatchMember: (id: string, patch: Partial<Member>) => void
@@ -22,6 +24,8 @@ export default function RosterTab({
   members,
   selectedIds,
   settings,
+  admin,
+  onSetAdmin,
   onToggle,
   onSetAll,
   onPatchMember,
@@ -32,6 +36,13 @@ export default function RosterTab({
   const t = useT()
   const [query, setQuery] = useState('')
   const [showSettings, setShowSettings] = useState(false)
+
+  const askAdmin = () => {
+    const p = window.prompt(t('admin.prompt'))
+    if (p == null) return
+    if (p === 'aav0409') onSetAdmin(true)
+    else window.alert(t('admin.wrong'))
+  }
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -93,6 +104,23 @@ export default function RosterTab({
       {showSettings && (
         <div className="px-4 pb-2">
           <SettingsPanel settings={settings} onChange={onChangeSettings} />
+          {/* admin mode: unlock editing member level / capacity + saving placement */}
+          <div className="mt-2 flex items-center justify-between rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2">
+            <span className="text-xs text-slate-300">
+              {t('admin.title')}
+              {admin && <span className="ml-1.5 text-[10px] font-semibold text-emerald-300">ON</span>}
+            </span>
+            {admin ? (
+              <button onClick={() => onSetAdmin(false)} className="rounded-md border border-white/15 px-2.5 py-1 text-[11px] text-slate-300">
+                {t('admin.off')}
+              </button>
+            ) : (
+              <button onClick={askAdmin} className="rounded-md border border-amber-400/40 px-2.5 py-1 text-[11px] text-amber-300">
+                {t('admin.on')}
+              </button>
+            )}
+          </div>
+          {admin && <p className="mt-1 text-[10px] text-emerald-300/80">{t('admin.hint')}</p>}
           <button
             onClick={() => {
               if (confirm(t('roster.confirmReset'))) onReset()
@@ -151,27 +179,41 @@ export default function RosterTab({
                 )}
               </button>
 
-              <button onClick={() => onToggle(m.id)} className="flex min-w-0 flex-1 items-center gap-2 text-left">
-                <span className="truncate text-sm text-white">{m.name}</span>
+              <button onClick={() => onToggle(m.id)} className="min-w-0 flex-1 truncate text-left text-sm text-white">
+                {m.name}
+              </button>
+
+              {/* level — editable only in admin mode */}
+              {admin ? (
+                <input
+                  type="number"
+                  value={m.level}
+                  onChange={(e) => onPatchMember(m.id, { level: Math.max(1, Math.min(40, Math.round(Number(e.target.value) || 0))) })}
+                  className="w-11 shrink-0 rounded-md border border-white/10 bg-white/5 px-1 py-1 text-center text-xs text-white outline-none focus:border-amber-400/60"
+                />
+              ) : (
                 <span
                   className="shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold"
                   style={{ background: badge.background, color: badge.color }}
                 >
                   {m.level}
                 </span>
-              </button>
+              )}
 
-              <label className="flex shrink-0 items-center gap-1 text-[11px] text-slate-400">
-                <input
-                  type="number"
-                  value={m.rallyCapacityK}
-                  onChange={(e) =>
-                    onPatchMember(m.id, { rallyCapacityK: Math.max(0, Number(e.target.value) || 0) })
-                  }
-                  className="w-14 rounded-md border border-white/10 bg-white/5 px-1.5 py-1 text-right text-xs text-white outline-none focus:border-amber-400/60"
-                />
-                K
-              </label>
+              {/* capacity — editable only in admin mode */}
+              {admin ? (
+                <label className="flex shrink-0 items-center gap-1 text-[11px] text-slate-400">
+                  <input
+                    type="number"
+                    value={m.rallyCapacityK}
+                    onChange={(e) => onPatchMember(m.id, { rallyCapacityK: Math.max(0, Number(e.target.value) || 0) })}
+                    className="w-14 rounded-md border border-white/10 bg-white/5 px-1.5 py-1 text-right text-xs text-white outline-none focus:border-amber-400/60"
+                  />
+                  K
+                </label>
+              ) : (
+                <span className="shrink-0 text-[11px] text-slate-400">{m.rallyCapacityK}K</span>
+              )}
             </li>
           )
         })}
