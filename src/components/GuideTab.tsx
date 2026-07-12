@@ -1,6 +1,12 @@
 import { Fragment, useState } from 'react'
 import { guideSections, slotsContent, useLang, useT } from '../i18n'
 import { ConditionalHeroes } from './SlotsTab'
+import FirstHeroShots from './FirstHeroShots'
+import chenkoSkill from '../assets/guide/chenko-skill.webp'
+import yeonwooSkill from '../assets/guide/yeonwoo-skill.webp'
+import amaneSkill from '../assets/guide/amane-skill.webp'
+
+const SKILL_IMG: Record<string, string> = { chenko: chenkoSkill, yeonwoo: yeonwooSkill, amane: amaneSkill }
 
 function Chevron({ open }: { open: boolean }) {
   return (
@@ -75,10 +81,7 @@ export default function GuideTab() {
                       <div className="space-y-1.5">
                         {s.skills.map((sk, j) => (
                           <div key={j} className="flex items-center gap-2.5 rounded-lg border border-white/10 bg-white/[0.03] p-2.5">
-                            <svg viewBox="0 0 24 24" className="h-8 w-8 shrink-0" aria-hidden="true">
-                              <rect x="2" y="2" width="20" height="20" rx="5" fill="#e8622a" />
-                              <path d="M7 7l10 10M17 7L7 17" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" />
-                            </svg>
+                            <img src={SKILL_IMG[sk.id]} alt={sk.skill} className="h-11 w-11 shrink-0 rounded-lg object-contain" />
                             <div className="min-w-0">
                               <p className="text-[13px] text-white">
                                 <span className="text-slate-400">{sk.hero}</span> · <span className="font-medium">{sk.skill}</span>
@@ -89,6 +92,7 @@ export default function GuideTab() {
                         ))}
                       </div>
                     )}
+                    {s.skills && <FirstHeroShots />}
                     {s.callout && (
                       <p className="rounded-lg border border-amber-400/25 bg-amber-400/10 px-3 py-2 text-amber-200">{s.callout}</p>
                     )}

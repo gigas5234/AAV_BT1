@@ -217,6 +217,17 @@ const STR: Record<string, Entry> = {
 
   'guide.header': { en: 'Bear Trap guide', ko: '곰덫 가이드' },
   'guide.sub': { en: 'How the event works and how we run it.', ko: '이벤트 작동 방식과 운영법.' },
+  'guide.firstHeroLead': {
+    en: 'So set hero slot 1 to one of the three (Chenko / Yeonwoo / Amane) and level that expedition skill first.',
+    ko: '그래서 1번 영웅은 아래 3명(첸코 · 연우 · 아마네) 중 하나로 두고, 그 원정 스킬을 최우선으로 올리세요.',
+  },
+  'guide.firstHeroThree': { en: 'When you send 3 heroes', ko: '영웅 3명을 보낼 때' },
+  'guide.firstHeroOne': { en: 'When you send only 1 hero', ko: '영웅 1명만 보낼 때' },
+  'guide.firstHeroBadge': { en: '1st hero', ko: '첫 영웅' },
+  'guide.firstHeroNote': {
+    en: 'The left-most slot is the "first hero" in both cases — only this hero’s expedition skill applies to the rally.',
+    ko: '두 경우 모두 맨 왼쪽 자리가 “첫 영웅”입니다 — 이 영웅의 원정 스킬만 집결에 적용됩니다.',
+  },
   'slots.header': { en: 'Quick slots', ko: '퀵슬롯 설정' },
   'slots.sub': { en: 'March presets per role, four slots each.', ko: '역할별 행군 프리셋, 각 4슬롯.' },
   'slots.budget': {
@@ -256,7 +267,7 @@ export function groupName(lang: Lang, i: number) {
 }
 
 // ---- Guide tab content ----
-export type GuideSkill = { hero: string; skill: string; effect: string }
+export type GuideSkill = { id: 'chenko' | 'yeonwoo' | 'amane'; hero: string; skill: string; effect: string }
 export type GuideSection = {
   title: string
   accent?: string
@@ -280,9 +291,9 @@ export function guideSections(lang: Lang): GuideSection[] {
           '그래서 1번 영웅은 아래 3명 중 하나로 두고, 그 원정 스킬을 최우선으로 올리세요.',
         ],
         skills: [
-          { hero: '1번 · 첸코', skill: 'Stand of Arms', effect: '전 부대 치명(Lethality) +25%' },
-          { hero: '2번 · 연우', skill: 'On Guard', effect: '전 부대 치명(Lethality) +25%' },
-          { hero: '3번 · 아마네', skill: 'Tri-Phalanx', effect: '전 부대 공격(Attack) +25%' },
+          { id: 'chenko', hero: '1번 · 첸코', skill: 'Stand of Arms', effect: '전 부대 치명(Lethality) +25%' },
+          { id: 'yeonwoo', hero: '2번 · 연우', skill: 'On Guard', effect: '전 부대 치명(Lethality) +25%' },
+          { id: 'amane', hero: '3번 · 아마네', skill: 'Tri-Phalanx', effect: '전 부대 공격(Attack) +25%' },
         ],
         highlight: '1번 영웅의 원정 스킬을 최우선으로 Lv.5(25%)까지 올리세요. 5 → 10 → 15 → 20 → 25%',
         callout: '그래서 최고 병력은 가장 강한 30레벨 리더의 집결에 넣어야 합니다 — 호스트 스탯이 전체를 곱합니다.',
@@ -351,9 +362,9 @@ export function guideSections(lang: Lang): GuideSection[] {
         'So set your 1st hero to one of the three below and upgrade that expedition skill first.',
       ],
       skills: [
-        { hero: 'Slot 1 · Chenko', skill: 'Stand of Arms', effect: 'All Squads Lethality +25%' },
-        { hero: 'Slot 2 · Yeonwoo', skill: 'On Guard', effect: 'All Squads Lethality +25%' },
-        { hero: 'Slot 3 · Amane', skill: 'Tri-Phalanx', effect: 'All Squads Attack +25%' },
+        { id: 'chenko', hero: 'Slot 1 · Chenko', skill: 'Stand of Arms', effect: 'All Squads Lethality +25%' },
+        { id: 'yeonwoo', hero: 'Slot 2 · Yeonwoo', skill: 'On Guard', effect: 'All Squads Lethality +25%' },
+        { id: 'amane', hero: 'Slot 3 · Amane', skill: 'Tri-Phalanx', effect: 'All Squads Attack +25%' },
       ],
       highlight: 'Max your 1st expedition skill first — Lv.5 = 25%. 5 → 10 → 15 → 20 → 25%',
       callout: "That is why your best troops belong in the strongest 30-level leader's rally — the host's stats multiply everyone inside.",
