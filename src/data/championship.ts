@@ -7,7 +7,7 @@ export type RouteKind = 'strong' | 'rest'
 export type ChampMember = { order: number; name: string; power: number }
 export type ChampRoute = { id: RouteId; kind: RouteKind; members: ChampMember[] }
 
-export const CHAMP_ROUTES: ChampRoute[] = [
+const ROUTES_0715: ChampRoute[] = [
   {
     id: 'left',
     kind: 'strong',
@@ -93,7 +93,7 @@ export const routeTotal = (r: ChampRoute) => r.members.reduce((n, m) => n + m.po
 // This round's championship group — the alliances we're matched against.
 export type ChampAlliance = { state: number; tag: string; name: string; score: number; flags: number; us?: boolean }
 
-export const CHAMP_GROUP: ChampAlliance[] = [
+const GROUP_0715: ChampAlliance[] = [
   { state: 1920, tag: 'HMB', name: 'HoldMyBeer', score: 0, flags: 0 },
   { state: 1952, tag: 'RCb', name: 'BRloslocos', score: 0, flags: 0 },
   { state: 1962, tag: 'CRW', name: 'CrimsonWolves', score: 0, flags: 0 },
@@ -101,3 +101,8 @@ export const CHAMP_GROUP: ChampAlliance[] = [
   { state: 1985, tag: 'EGO', name: 'Egoists', score: 0, flags: 0 },
   { state: 2001, tag: 'THE', name: 'EternalThrones', score: 0, flags: 0 },
 ]
+
+// One matchup per date — add a new round entry each day; newest first.
+export type ChampRound = { date: string; label: string; routes: ChampRoute[]; group: ChampAlliance[] }
+
+export const CHAMP_ROUNDS: ChampRound[] = [{ date: '2026-07-15', label: '7/15', routes: ROUTES_0715, group: GROUP_0715 }]

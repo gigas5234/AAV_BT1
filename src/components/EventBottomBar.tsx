@@ -52,6 +52,11 @@ const ICONS: Record<string, JSX.Element> = {
       <path d="M6 4v6a6 6 0 0 0 12 0V4M8 20h8M12 16v4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
+  matchup: (
+    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
+      <path d="M4 6h5l2 3-2 3H4zM20 6h-5l-2 3 2 3h5M11 9h2M9 18h6M12 15v3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
   tips: (
     <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
       <path d="M12 3l2.5 5 5.5.8-4 3.9 1 5.5L12 15.5 6.5 18.2l1-5.5-4-3.9L9.5 8z" strokeLinejoin="round" />
@@ -79,6 +84,18 @@ const ICONS: Record<string, JSX.Element> = {
     <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
       <path d="M12 2.5c2.5 3 4 5 4 7.5a4 4 0 0 1-8 0c0-1 .3-1.8.7-2.6C9.5 9 11 8 12 2.5z" strokeLinejoin="round" />
       <path d="M8 20h8" strokeLinecap="round" />
+    </svg>
+  ),
+  daily: (
+    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
+      <path d="M3.5 9.5h17M8 3.5v3M16 3.5v3M7.5 13h2M14.5 13h2M7.5 16.5h2" strokeLinecap="round" />
+    </svg>
+  ),
+  items: (
+    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
+      <rect x="3.5" y="4" width="17" height="16" rx="2" />
+      <path d="M3.5 9h17M9 4v16M13 12h4M13 15.5h4" strokeLinecap="round" />
     </svg>
   ),
 }

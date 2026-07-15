@@ -1,4 +1,4 @@
-import { CHAMP_ROUTES, routeTotal, type RouteId } from '../data/championship'
+import { routeTotal, type ChampRoute, type RouteId } from '../data/championship'
 import { useT } from '../i18n'
 
 const ROUTE_STYLE: Record<RouteId, { accent: string; labelKey: string }> = {
@@ -9,10 +9,10 @@ const ROUTE_STYLE: Record<RouteId, { accent: string; labelKey: string }> = {
 
 const fmt = (n: number) => n.toLocaleString('en-US')
 
-export default function ChampionshipLineup() {
+export default function ChampionshipLineup({ routes }: { routes: ChampRoute[] }) {
   const t = useT()
-  const grand = CHAMP_ROUTES.reduce((n, r) => n + routeTotal(r), 0)
-  const total = CHAMP_ROUTES.reduce((n, r) => n + r.members.length, 0)
+  const grand = routes.reduce((n, r) => n + routeTotal(r), 0)
+  const total = routes.reduce((n, r) => n + r.members.length, 0)
 
   return (
     <div className="space-y-3">
@@ -31,7 +31,7 @@ export default function ChampionshipLineup() {
         </span>
       </div>
 
-      {CHAMP_ROUTES.map((r) => {
+      {routes.map((r) => {
         const s = ROUTE_STYLE[r.id]
         const sorted = [...r.members].sort((a, b) => b.order - a.order)
         return (

@@ -43,10 +43,17 @@ const STR: Record<string, Entry> = {
   'sec.strategy': { en: 'Strategy', ko: '전략' },
   'sec.setup': { en: 'Setup', ko: '편성' },
   'sec.key': { en: 'Key tips', ko: '핵심 팁' },
+  'sec.daily': { en: 'By day', ko: '일별' },
+  'sec.items': { en: 'Items', ko: '아이템' },
+  'gov.day': { en: 'Day', ko: '일차' },
+  'gov.selectDay': { en: 'Tap a day to see its scoring', ko: '일차를 눌러 그날 점수를 확인' },
+  'gov.priority': { en: 'Priority', ko: '고득점 우선순위' },
   'champ.critical': { en: 'MOST IMPORTANT', ko: '가장 중요' },
   'champ.important': { en: 'IMPORTANT', ko: '중요' },
   'sec.bracket': { en: 'Matchups', ko: '대진' },
+  'sec.matchup': { en: 'Matchup', ko: '대진' },
   'sec.tips': { en: 'Tips', ko: '팁' },
+  'champ.pickDate': { en: 'Pick a date', ko: '날짜 선택' },
   // championship lineup
   'champ.lineupTitle': { en: 'Our route lineup', ko: '우리 루트 배치' },
   'champ.totalPower': { en: 'Total power', ko: '총 전투력' },
@@ -516,7 +523,7 @@ export function champTips(lang: Lang): ChampTipsContent {
       rules: [
         {
           title: '등록 = 그 순간의 스냅샷',
-          body: '병력·버프·상황이 등록하는 순간 그대로 적용됩니다(실시간 아님). 관직 버프를 받고 등록하면 그 버프가 그대로 들어가고, 엘크 스킬도 적용됩니다. → 버프를 전부 켠 상태로 등록하세요.',
+          body: '병력·버프·상황이 등록하는 순간 그대로 적용됩니다(실시간 아님). → 버프를 전부 켠 상태로 등록하세요. 예: 관직 버프(파괴력 +10%, 또는 파괴력 +5% + 출정 부대 수용량 +2,500), 엘크(펫 스킬)까지 켜고 등록하면 그 스탯이 그대로 고정됩니다.',
         },
         { title: '파워 갱신 시 재등록', body: '자신의 전투력이 갱신되면 다시 등록해 최신 상태로 업데이트해 주세요.' },
         { title: '병력 비율 50 / 20 / 30', body: '보병 50 · 기병 20 · 궁병 30 을 최대한 유지하세요.' },
@@ -538,7 +545,7 @@ export function champTips(lang: Lang): ChampTipsContent {
     rules: [
       {
         title: 'Registration = a snapshot',
-        body: 'Your troops, buffs and state are captured exactly as they are at sign-up (not real-time). If you register while an office (appointment) buff is active it stays applied, and the Elk skill applies too. → Turn on every buff before you register.',
+        body: 'Your troops, buffs and state are captured exactly as they are at sign-up (not real-time). → Turn on every buff before you register. e.g. an office buff (Damage +10%, or Damage +5% + march capacity +2,500) and the Elk pet skill — those stats lock in as-is.',
       },
       { title: 'Re-register when your power changes', body: 'Whenever your combat power updates, register again to refresh your snapshot.' },
       { title: 'Troop ratio 50 / 20 / 30', body: 'Keep Infantry 50 · Cavalry 20 · Archers 30 as much as possible.' },
@@ -597,23 +604,23 @@ export function mysticContent(lang: Lang): MysticContent {
     overview: 'Each dungeon scores a specific stat system on its own. Winning comes from strategic depth, not raw total power.',
     scheduleTitle: 'Weekly dungeons · buffs',
     schedule: [
-      { days: 'Mon - Tue', dungeon: 'Colosseum', stat: 'Hero stats · hero gear' },
+      { days: 'Mon - Tue', dungeon: 'Coliseum', stat: 'Hero stats · hero gear' },
       { days: 'Wed - Thu', dungeon: 'Forest of Life & Crystal Cave', stat: 'Pet skills · lord gems' },
-      { days: 'Fri - Sat', dungeon: 'Nexus of Knowledge & Lava Fortress', stat: 'Academy / War Academy tech · lord gear' },
-      { days: 'Sun', dungeon: 'Shining Spire', stat: 'Final test — every stat applies. This zone uses your real troop count.', final: true },
+      { days: 'Fri - Sat', dungeon: 'Knowledge Nexus & Molten Fort', stat: 'Academy / War Academy tech · lord gear' },
+      { days: 'Sun', dungeon: 'Radiant Spire', stat: 'Final test — every stat applies. This zone uses your real troop count.', final: true },
     ],
     ratioIntro: [
-      'Except for the Shining Spire, most zones hand you Lv.10 troops. So your account expedition bonuses and the zone traits matter more than the troop type itself.',
+      'Except for the Radiant Spire, most zones hand you Lv.10 troops. So your account expedition bonuses and the zone traits matter more than the troop type itself.',
       'The AI tends to run Infantry / Cavalry / Archer near 33 / 33 / 33, shifting to roughly 53 / 27 / 20 around step 10.',
     ],
     ratioStart: 'Safe start — when unsure, open with 50 / 20 / 30.',
     ratioTable: [
-      { zone: 'Arena', ratio: '50 / 10 / 40', note: 'Lean a bit more on the back line' },
+      { zone: 'Coliseum', ratio: '50 / 10 / 40', note: 'Lean a bit more on the back line' },
       { zone: 'Forest of Life', ratio: '50 / 15 / 35', note: 'Balanced, accounting for pet support' },
-      { zone: 'Crystal Mine', ratio: '60 / 20 / 20', note: 'Thicker front line' },
-      { zone: 'Hall of Knowledge', ratio: '50 / 20 / 30', note: 'Default, stable' },
-      { zone: 'Lava Fortress', ratio: '60 / 15 / 25', note: 'Front-line durability first' },
-      { zone: 'Shining Spire', ratio: '50 / 15 / 35', note: 'Account power matters most' },
+      { zone: 'Crystal Cave', ratio: '60 / 20 / 20', note: 'Thicker front line' },
+      { zone: 'Knowledge Nexus', ratio: '50 / 20 / 30', note: 'Default, stable' },
+      { zone: 'Molten Fort', ratio: '60 / 15 / 25', note: 'Front-line durability first' },
+      { zone: 'Radiant Spire', ratio: '50 / 15 / 35', note: 'Account power matters most' },
     ],
     ratioTip: 'These ratios are flexible. Fine-tune to the day’s active buff, and use your 5 daily attempts to test combinations.',
   }
@@ -627,6 +634,7 @@ export type VikingCard = {
   items?: string[]
   table?: { head: [string, string]; rows: [string, string][] }
   steps?: VikingStep[]
+  images?: string[]
   note?: string
 }
 export type VikingTip = { text: string; level?: 'critical' | 'important'; image?: 'guard' }
@@ -664,6 +672,16 @@ export function vikingContent(lang: Lang): VikingContent {
             '하지만 최고점은 남을 지원하며 얻는 지원 점수에서 크게 갈립니다.',
             '그래서 본성 비우기 + 접속자 우선 지원이 가장 강한 운영입니다.',
           ],
+        },
+        {
+          title: '아군 지원하는 법',
+          items: [
+            '맵에서 도와줄 연맹원의 성을 클릭합니다.',
+            '「Send Troops(병력 보내기)」를 누릅니다.',
+            '「Confirm(확인)」으로 지원 병력을 파병합니다.',
+          ],
+          images: ['send', 'confirm'],
+          note: '이렇게 보낸 병력이 그 성에서 바이킹을 잡으면 내 지원 점수가 됩니다.',
         },
         {
           title: '공격 라운드 · 타겟',
@@ -816,6 +834,16 @@ export function vikingContent(lang: Lang): VikingContent {
         ],
       },
       {
+        title: 'How to support an ally',
+        items: [
+          'Tap the ally’s city on the map.',
+          'Press “Send Troops”.',
+          'Press “Confirm” to dispatch your reinforcements.',
+        ],
+        images: ['send', 'confirm'],
+        note: 'Kills your reinforcements make at that city become your support score.',
+      },
+      {
         title: 'Attack rounds · targets',
         table: {
           head: ['Range', 'Target'],
@@ -944,6 +972,251 @@ export function vikingContent(lang: Lang): VikingContent {
           'During the event: delay healing as long as possible; return to support when HQ defense ends.',
         ],
       },
+    ],
+  }
+}
+
+// ---- Strongest Governor (KvK prep) content ----
+export type GovItem = { name: string; basis: string; pts: string }
+export type GovDay = { n: string; title: string; means: string; priority: string; items: GovItem[]; note?: string }
+export type GovStatus = 'best' | 'ok' | 'no'
+export type GovMatrixRow = { item: string; days: GovStatus[] }
+export type GovIntelCase = { steps: string[]; result: string }
+export type GovIntelTip = { title: string; lead: string; day1: GovIntelCase; day35: GovIntelCase }
+export type GovernorContent = {
+  intro: string
+  discrepancy: string
+  days: GovDay[]
+  intelTip: GovIntelTip
+  matrixTitle: string
+  matrixNote: string
+  matrix: GovMatrixRow[]
+}
+
+export function governorContent(lang: Lang): GovernorContent {
+  if (lang === 'ko')
+    return {
+      intro: '준비 단계는 5일 동안 진행되며, 매일 다른 성장 항목으로 왕국 포인트를 경쟁합니다. 위의 날짜를 누르면 그날 점수가 되는 항목만 보여줍니다.',
+      discrepancy: '※ 2일차 레전드 파편(3,040)·자원 채집 점수는 잘린 화면을 대조해 보완한 추정치입니다. 가속(30/분)은 매일 동일하지만, 아래 매트릭스의 건물/연구/병사는 인게임 표(실제 행동) 기준입니다.',
+      days: [
+        {
+          n: '1', title: '도시 건설', means: '정보 이벤트 · 순금 · 가속 · 영주 보석',
+          priority: '정보 이벤트 6,000 → 순금 2,000 → 영주 보석 → 가속',
+          items: [
+            { name: '정보 이벤트 완료', basis: '1개', pts: '6,000' },
+            { name: '순금으로 건물 레벨업', basis: '순금 1개', pts: '2,000' },
+            { name: '영주 보석 최고 평점 증가', basis: '1점', pts: '70' },
+            { name: '건설·연구·훈련 가속 사용', basis: '1분', pts: '30' },
+          ],
+          note: '건설·연구·훈련 가속은 다이아 가속을 포함하지 않습니다.',
+        },
+        {
+          n: '2', title: '기초 능력 향상', means: '영웅 룰렛 · 영웅 파편 · 순금 · 가속 · 채집',
+          priority: '영웅 룰렛 8,000 → 레전드 파편 3,040 → 순금 2,000 → 에픽 파편 1,220',
+          items: [
+            { name: '영웅 룰렛 참여', basis: '1회', pts: '8,000' },
+            { name: '레전드 영웅 파편 성급업', basis: '1개', pts: '3,040' },
+            { name: '순금으로 건물 레벨업', basis: '순금 1개', pts: '2,000' },
+            { name: '에픽 영웅 파편 성급업', basis: '1개', pts: '1,220' },
+            { name: '레어 영웅 파편 성급업', basis: '1개', pts: '350' },
+            { name: '건설·연구·훈련 가속 사용', basis: '1분', pts: '30' },
+            { name: '자원 채집 (식량·목재 1,000 / 석재 200 / 철광 50)', basis: '기준량', pts: '2' },
+          ],
+        },
+        {
+          n: '3', title: '펫 훈련', means: '고급 펫 단련 · 룰렛 · 정보 이벤트 · 영웅 파편',
+          priority: '고급 훈련 기록 15,000 → 영웅 룰렛 8,000 → 정보 이벤트 6,000 → 레전드 파편 3,040',
+          items: [
+            { name: '고급 훈련 기록으로 펫 단련', basis: '1개', pts: '15,000' },
+            { name: '영웅 룰렛 참여', basis: '1회', pts: '8,000' },
+            { name: '정보 이벤트 완료', basis: '1개', pts: '6,000' },
+            { name: '레전드 영웅 파편 성급업', basis: '1개', pts: '3,040' },
+            { name: '에픽 영웅 파편 성급업', basis: '1개', pts: '1,220' },
+            { name: '일반 훈련 기록으로 펫 단련', basis: '1개', pts: '1,150' },
+            { name: '레어 영웅 파편 성급업', basis: '1개', pts: '350' },
+            { name: '영주 보석 최고 평점 증가', basis: '1점', pts: '70' },
+            { name: '펫 돌파 평점 증가', basis: '1점', pts: '50' },
+          ],
+        },
+        {
+          n: '4', title: '영웅 성장', means: '미스릴 · 전용 장비 부속품 · 제작 망치 · 병사 훈련',
+          priority: '미스릴 40,000 → 전용 장비 부속품 8,000 → 제작 망치 4,000 → 10급 병사 훈련',
+          items: [
+            { name: '미스릴 소모', basis: '1개', pts: '40,000' },
+            { name: '영웅 전용 장비 부속품 소모', basis: '1개', pts: '8,000' },
+            { name: '영웅 장비 제작 망치 소모', basis: '1개', pts: '4,000' },
+            { name: '영주 보석 최고 평점 증가', basis: '1점', pts: '70' },
+            { name: '병사 훈련·승급', basis: '등급별', pts: '3~60' },
+            { name: '자원 채집', basis: '기준량', pts: '2' },
+          ],
+          note: '병사 훈련: 1급 3 · 5급 12 · 8급 35 · 10급 60. 새로 훈련하면 전체 점수, 승급하면 등급 차이만 획득 (예: 9→10급 = 60−45 = 15점).',
+        },
+        {
+          n: '5', title: '전투력 부스트', means: '미스릴 · 펫 단련 · 장비 성장 · 순금 · 가속 · 채집',
+          priority: '미스릴 40,000 → 고급 훈련 기록 15,000 → 전용 장비 부속품 8,000 → 정보 이벤트 6,000 → 제작 망치 4,000',
+          items: [
+            { name: '미스릴 소모', basis: '1개', pts: '40,000' },
+            { name: '고급 훈련 기록으로 펫 단련', basis: '1개', pts: '15,000' },
+            { name: '영웅 전용 장비 부속품 소모', basis: '1개', pts: '8,000' },
+            { name: '정보 이벤트 완료', basis: '1개', pts: '6,000' },
+            { name: '영웅 장비 제작 망치 소모', basis: '1개', pts: '4,000' },
+            { name: '순금으로 건물 레벨업', basis: '순금 1개', pts: '2,000' },
+            { name: '일반 훈련 기록으로 펫 단련', basis: '1개', pts: '1,150' },
+            { name: '펫 돌파 평점 증가', basis: '1점', pts: '50' },
+            { name: '영주 장비 최고 평점 증가', basis: '1점', pts: '36' },
+            { name: '건설·연구·훈련 가속 · 자원 채집', basis: '1분 / 기준량', pts: '30 / 2' },
+          ],
+        },
+      ],
+      intelTip: {
+        title: '정보 이벤트 타이밍 (몰아 받기)',
+        lead: '정보 이벤트는 개당 6,000점, 완료 후 약 16시간 유지됩니다. 리셋(UTC 00:00) 직후에 몰아 받는 게 핵심입니다.',
+        day1: {
+          steps: [
+            'UTC 08:00 이벤트를 완료해두고, 보상은 받지 않고 대기합니다.',
+            'UTC 16:00 이벤트는 완료하지 말고 그냥 대기합니다.',
+            '리셋(UTC 00:00) 직후: 08:00 보상을 받고, 이어서 16:00 · 00:00 이벤트까지 완료합니다.',
+          ],
+          result: '8 + 8 + 8 = 최대 24개 (약 144,000점).',
+        },
+        day35: {
+          steps: [
+            '08:00 이벤트는 적용되지 않습니다. 이날은 16:00부터 시작.',
+            'UTC 16:00 이벤트를 완료하지 말고 대기합니다.',
+            '리셋(UTC 00:00) 직후: 16:00 · 00:00 이벤트를 완료합니다.',
+          ],
+          result: '8 + 8 = 16개 (약 96,000점).',
+        },
+      },
+      matrixTitle: '아이템별 사용 날짜',
+      matrixNote: '✅ 최고 · 🆗 보통 · 🚫 점수 낮음/없음',
+      matrix: [
+        { item: '순금', days: ['best', 'best', 'no', 'no', 'ok'] },
+        { item: '영웅 파편', days: ['no', 'best', 'best', 'no', 'no'] },
+        { item: '건물 레벨업', days: ['ok', 'best', 'no', 'no', 'ok'] },
+        { item: '병사 훈련', days: ['no', 'no', 'no', 'best', 'ok'] },
+        { item: '연구', days: ['no', 'ok', 'no', 'no', 'best'] },
+        { item: '영웅 룰렛', days: ['no', 'best', 'best', 'no', 'no'] },
+        { item: '자원 채집', days: ['no', 'best', 'no', 'best', 'best'] },
+        { item: '정보 이벤트', days: ['best', 'no', 'best', 'no', 'best'] },
+        { item: '펫 단련', days: ['no', 'no', 'best', 'no', 'best'] },
+        { item: '영주 보석', days: ['best', 'no', 'best', 'best', 'no'] },
+        { item: '영주 장비', days: ['no', 'no', 'no', 'no', 'best'] },
+        { item: '전용 장비 부속품', days: ['no', 'no', 'no', 'best', 'best'] },
+        { item: '미스릴', days: ['no', 'no', 'no', 'best', 'best'] },
+        { item: '제작 망치', days: ['no', 'no', 'no', 'best', 'best'] },
+      ],
+    }
+  return {
+    intro: 'Prep runs for 5 days; each day competes for kingdom points with a different growth track. Tap a day above to see only what scores that day.',
+    discrepancy: '※ Day 2 legendary-shard (3,040) and gathering scores are reconstructed from a cut screenshot. Speedups (30/min) are the same daily, but the Building/Research/Troop rows below follow the in-game table (actual actions).',
+    days: [
+      {
+        n: '1', title: 'City construction', means: 'Intel missions · Truegold · Speedups · Lord gems',
+        priority: 'Intel 6,000 → Truegold 2,000 → Lord gems → Speedups',
+        items: [
+          { name: 'Complete an intel mission', basis: '1', pts: '6,000' },
+          { name: 'Level a building with Truegold', basis: '1 Truegold', pts: '2,000' },
+          { name: 'Lord gem top rating +', basis: '1 pt', pts: '70' },
+          { name: 'Build / research / train speedups', basis: '1 min', pts: '30' },
+        ],
+        note: 'Build/research/train speedups do not include diamond speedups (per the in-game notice).',
+      },
+      {
+        n: '2', title: 'Base stats', means: 'Hero roulette · Hero shards · Truegold · Speedups · Gathering',
+        priority: 'Roulette 8,000 → Legendary shard 3,040 → Truegold 2,000 → Epic shard 1,220',
+        items: [
+          { name: 'Hero roulette spin', basis: '1', pts: '8,000' },
+          { name: 'Star up with Legendary shard', basis: '1', pts: '3,040' },
+          { name: 'Level a building with Truegold', basis: '1 Truegold', pts: '2,000' },
+          { name: 'Star up with Epic shard', basis: '1', pts: '1,220' },
+          { name: 'Star up with Rare shard', basis: '1', pts: '350' },
+          { name: 'Build / research / train speedups', basis: '1 min', pts: '30' },
+          { name: 'Gather (food·wood 1,000 / stone 200 / iron 50)', basis: 'per unit', pts: '2' },
+        ],
+      },
+      {
+        n: '3', title: 'Pet training', means: 'Advanced pet training · Roulette · Intel · Hero shards',
+        priority: 'Advanced manual 15,000 → Roulette 8,000 → Intel 6,000 → Legendary shard 3,040',
+        items: [
+          { name: 'Train pet with Advanced manual', basis: '1', pts: '15,000' },
+          { name: 'Hero roulette spin', basis: '1', pts: '8,000' },
+          { name: 'Complete an intel mission', basis: '1', pts: '6,000' },
+          { name: 'Star up with Legendary shard', basis: '1', pts: '3,040' },
+          { name: 'Star up with Epic shard', basis: '1', pts: '1,220' },
+          { name: 'Train pet with Basic manual', basis: '1', pts: '1,150' },
+          { name: 'Star up with Rare shard', basis: '1', pts: '350' },
+          { name: 'Lord gem top rating +', basis: '1 pt', pts: '70' },
+          { name: 'Pet breakthrough rating +', basis: '1 pt', pts: '50' },
+        ],
+      },
+      {
+        n: '4', title: 'Hero growth', means: 'Mithril · Hero gear parts · Forge hammers · Troop training',
+        priority: 'Mithril 40,000 → Gear parts 8,000 → Hammers 4,000 → T10 troop training',
+        items: [
+          { name: 'Spend Mithril', basis: '1', pts: '40,000' },
+          { name: 'Spend Hero gear part', basis: '1', pts: '8,000' },
+          { name: 'Spend Forge hammer', basis: '1', pts: '4,000' },
+          { name: 'Lord gem top rating +', basis: '1 pt', pts: '70' },
+          { name: 'Troop training / promotion', basis: 'by tier', pts: '3~60' },
+          { name: 'Gathering', basis: 'per unit', pts: '2' },
+        ],
+        note: 'Troop tiers: T1 3 · T5 12 · T8 35 · T10 60. New training gives full points; promotion gives only the tier gap (e.g. T9→T10 = 60−45 = 15).',
+      },
+      {
+        n: '5', title: 'Power boost', means: 'Mithril · Pet training · Gear growth · Truegold · Speedups · Gathering',
+        priority: 'Mithril 40,000 → Advanced manual 15,000 → Gear parts 8,000 → Intel 6,000 → Hammers 4,000',
+        items: [
+          { name: 'Spend Mithril', basis: '1', pts: '40,000' },
+          { name: 'Train pet with Advanced manual', basis: '1', pts: '15,000' },
+          { name: 'Spend Hero gear part', basis: '1', pts: '8,000' },
+          { name: 'Complete an intel mission', basis: '1', pts: '6,000' },
+          { name: 'Spend Forge hammer', basis: '1', pts: '4,000' },
+          { name: 'Level a building with Truegold', basis: '1 Truegold', pts: '2,000' },
+          { name: 'Train pet with Basic manual', basis: '1', pts: '1,150' },
+          { name: 'Pet breakthrough rating +', basis: '1 pt', pts: '50' },
+          { name: 'Lord gear top rating +', basis: '1 pt', pts: '36' },
+          { name: 'Speedups · Gathering', basis: '1 min / per unit', pts: '30 / 2' },
+        ],
+      },
+    ],
+    intelTip: {
+      title: 'Intel-event timing (stack the claims)',
+      lead: 'Each intel mission is 6,000 pts and stays completable for ~16h. The key is to bank them right after reset (UTC 00:00).',
+      day1: {
+        steps: [
+          'Complete the UTC 08:00 mission but leave its reward unclaimed.',
+          'Do NOT complete the UTC 16:00 mission — just wait.',
+          'Right after reset (UTC 00:00): claim the 08:00 reward, then complete the 16:00 and 00:00 missions.',
+        ],
+        result: '8 + 8 + 8 = up to 24 (~144,000 pts).',
+      },
+      day35: {
+        steps: [
+          'The 08:00 window doesn’t count — this day starts from 16:00.',
+          'Do NOT complete the UTC 16:00 mission — just wait.',
+          'Right after reset (UTC 00:00): complete the 16:00 and 00:00 missions.',
+        ],
+        result: '8 + 8 = 16 (~96,000 pts).',
+      },
+    },
+    matrixTitle: 'Which day to use each item',
+    matrixNote: '✅ Best · 🆗 OK · 🚫 Low / no points',
+    matrix: [
+      { item: 'Truegold', days: ['best', 'best', 'no', 'no', 'ok'] },
+      { item: 'Hero shards', days: ['no', 'best', 'best', 'no', 'no'] },
+      { item: 'Building', days: ['ok', 'best', 'no', 'no', 'ok'] },
+      { item: 'Troop', days: ['no', 'no', 'no', 'best', 'ok'] },
+      { item: 'Research', days: ['no', 'ok', 'no', 'no', 'best'] },
+      { item: 'Roulette', days: ['no', 'best', 'best', 'no', 'no'] },
+      { item: 'Gathering', days: ['no', 'best', 'no', 'best', 'best'] },
+      { item: 'Intel missions', days: ['best', 'no', 'best', 'no', 'best'] },
+      { item: 'Pet upgrades', days: ['no', 'no', 'best', 'no', 'best'] },
+      { item: 'Charms', days: ['best', 'no', 'best', 'best', 'no'] },
+      { item: 'Gov gear', days: ['no', 'no', 'no', 'no', 'best'] },
+      { item: 'Widgets', days: ['no', 'no', 'no', 'best', 'best'] },
+      { item: 'Mithril', days: ['no', 'no', 'no', 'best', 'best'] },
+      { item: 'Hammers', days: ['no', 'no', 'no', 'best', 'best'] },
     ],
   }
 }

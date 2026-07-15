@@ -3,6 +3,10 @@ import { useLang, useT, vikingContent, type VikingCard, type VikingCompare, type
 import guardImg from '../assets/events/viking-guard.webp'
 import goodImg from '../assets/events/viking-good.webp'
 import badImg from '../assets/events/viking-bad.webp'
+import supportSendImg from '../assets/events/viking-support-send.webp'
+import supportConfirmImg from '../assets/events/viking-support-confirm.webp'
+
+const CARD_IMG: Record<string, string> = { send: supportSendImg, confirm: supportConfirmImg }
 
 function CopyLine({ text }: { text: string }) {
   const t = useT()
@@ -94,6 +98,17 @@ function Card({ c }: { c: VikingCard }) {
                 </ul>
               )}
               {s.copy && <CopyLine text={s.copy} />}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {c.images && (
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          {c.images.map((k, i) => (
+            <div key={i} className="relative overflow-hidden rounded-xl border border-white/10">
+              <span className="absolute left-1.5 top-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-sky-500 text-[11px] font-bold text-white shadow">{i + 1}</span>
+              <img src={CARD_IMG[k]} alt="" className="block w-full" />
             </div>
           ))}
         </div>

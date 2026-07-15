@@ -17,8 +17,8 @@ export type EventMeta = {
 }
 
 export const EVENTS: EventMeta[] = [
-  { id: 'governor', accent: '#e2a13a', ready: false, sections: ['overview', 'tips'], hot: true },
-  { id: 'championship', accent: '#f5b301', ready: true, sections: ['overview', 'lineup', 'bracket', 'tips'] },
+  { id: 'governor', accent: '#e2a13a', ready: true, sections: ['overview', 'daily', 'items'], hot: true },
+  { id: 'championship', accent: '#f5b301', ready: true, sections: ['tips', 'matchup'] },
   { id: 'viking', accent: '#4c9be8', ready: true, sections: ['overview', 'key', 'strategy', 'setup'] },
   { id: 'mystic', accent: '#a78bfa', ready: true, sections: [] },
   { id: 'eternity', accent: '#2dd4bf', ready: false, sections: ['overview', 'tips'] },

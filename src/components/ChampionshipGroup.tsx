@@ -1,9 +1,9 @@
-import { CHAMP_GROUP } from '../data/championship'
+import { type ChampAlliance } from '../data/championship'
 import { useT } from '../i18n'
 
 const fmt = (n: number) => n.toLocaleString('en-US')
 
-export default function ChampionshipGroup() {
+export default function ChampionshipGroup({ group }: { group: ChampAlliance[] }) {
   const t = useT()
   return (
     <div className="space-y-3">
@@ -15,12 +15,12 @@ export default function ChampionshipGroup() {
         </span>
         <div>
           <p className="text-[11px] text-slate-400">{t('champ.groupTitle')}</p>
-          <p className="text-[15px] font-semibold text-white">{CHAMP_GROUP.length}</p>
+          <p className="text-[15px] font-semibold text-white">{group.length}</p>
         </div>
       </div>
 
       <ul className="space-y-2">
-        {CHAMP_GROUP.map((a) => (
+        {group.map((a) => (
           <li
             key={a.state}
             className={`flex items-center gap-3 rounded-2xl border px-3.5 py-3 ${

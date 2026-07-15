@@ -4,7 +4,7 @@ export default function ChampionshipTips() {
   const lang = useLang()
   const c = champTips(lang)
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 px-4 pt-4">
       {/* the critical mechanic */}
       <div className="flex items-start gap-2 rounded-2xl border-2 border-amber-300 bg-amber-400 px-4 py-3 text-[14px] font-semibold text-[#3a2600] shadow-lg shadow-amber-500/25">
         <svg viewBox="0 0 24 24" className="mt-0.5 h-5 w-5 shrink-0" fill="currentColor" aria-hidden="true">
