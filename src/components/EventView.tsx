@@ -7,7 +7,8 @@ import VikingVengeance from './VikingVengeance'
 import GovernorEvent from './GovernorEvent'
 
 function Championship({ section }: { section: string }) {
-  return section === 'matchup' ? <ChampionshipMatchup /> : <ChampionshipTips />
+  if (section === 'matchup') return <ChampionshipMatchup />
+  return <ChampionshipTips />
 }
 
 function ComingSoon({ name, section }: { name: string; section: string }) {

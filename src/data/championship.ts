@@ -102,7 +102,99 @@ const GROUP_0715: ChampAlliance[] = [
   { state: 2001, tag: 'THE', name: 'EternalThrones', score: 0, flags: 0 },
 ]
 
-// One matchup per date — add a new round entry each day; newest first.
-export type ChampRound = { date: string; label: string; routes: ChampRoute[]; group: ChampAlliance[] }
+// Enemy scouting — an upcoming opponent's per-route power (base power at first appearance).
+export type ScoutMember = { order: number; name: string; power: number }
+export type ScoutRoute = { id: RouteId; members: ScoutMember[] }
+export type ChampScout = { oppTag: string; opp: string; routes: ScoutRoute[] }
 
-export const CHAMP_ROUNDS: ChampRound[] = [{ date: '2026-07-15', label: '7/15', routes: ROUTES_0715, group: GROUP_0715 }]
+export const scoutTotal = (r: ScoutRoute) => r.members.reduce((n, m) => n + m.power, 0)
+
+// HMB (HoldMyBeer) — our 2nd match. Members listed by first-appearance base power (ascending).
+const SCOUT_HMB: ChampScout = {
+  oppTag: 'HMB',
+  opp: 'HoldMyBeer',
+  routes: [
+    {
+      id: 'left',
+      members: [
+        { order: 1, name: 'Teabone', power: 1211 },
+        { order: 2, name: 'Srikar king', power: 1216 },
+        { order: 3, name: 'Suasthl', power: 1220 },
+        { order: 4, name: 'soriKing', power: 1235 },
+        { order: 5, name: 'Tundra', power: 1237 },
+        { order: 6, name: 'Flanker', power: 1252 },
+        { order: 7, name: 'carlos11', power: 1263 },
+        { order: 8, name: 'Mizuki', power: 1270 },
+        { order: 9, name: 'Sir_Brodi', power: 1292 },
+        { order: 10, name: 'snen', power: 1314 },
+        { order: 11, name: 'Elvis', power: 1323 },
+        { order: 12, name: 'hamzawi', power: 1324 },
+        { order: 13, name: 'yoda', power: 1344 },
+        { order: 14, name: 'Pegle', power: 1353 },
+        { order: 15, name: 'samer', power: 1354 },
+        { order: 16, name: 'JPK', power: 1365 },
+        { order: 17, name: 'ErstE', power: 1369 },
+        { order: 18, name: 'Fafah49', power: 1399 },
+        { order: 19, name: 'Roman', power: 1479 },
+        { order: 20, name: '까마구대왕', power: 1532 },
+      ],
+    },
+    {
+      id: 'mid',
+      members: [
+        { order: 1, name: 'CALL ME DEWW', power: 1223 },
+        { order: 2, name: 'PETOUS', power: 1232 },
+        { order: 3, name: 'Knight Rider', power: 1239 },
+        { order: 4, name: 'LozzyMc', power: 1262 },
+        { order: 5, name: 'BEX', power: 1264 },
+        { order: 6, name: 'VIKRANTII', power: 1280 },
+        { order: 7, name: 'JimmyAss', power: 1316 },
+        { order: 8, name: 'shinnamonroll', power: 1320 },
+        { order: 9, name: 'justin890217', power: 1326 },
+        { order: 10, name: 'LordAinzOoaIGown', power: 1335 },
+        { order: 11, name: 'maaarina00', power: 1341 },
+        { order: 12, name: 'feker slh1', power: 1348 },
+        { order: 13, name: 'Hendousha', power: 1353 },
+        { order: 14, name: 'AthanaSia', power: 1363 },
+        { order: 15, name: 'JET', power: 1369 },
+        { order: 16, name: 'Edwin', power: 1380 },
+        { order: 17, name: 'jamir', power: 1381 },
+        { order: 18, name: 'Andrii', power: 1397 },
+        { order: 19, name: 'Iryna2025', power: 1448 },
+        { order: 20, name: 'WA0G82', power: 1502 },
+      ],
+    },
+    {
+      id: 'right',
+      members: [
+        { order: 1, name: 'Bamsibey', power: 1054 },
+        { order: 2, name: 'dictatorbaddie4L', power: 1059 },
+        { order: 3, name: 'kakatiya empire', power: 1113 },
+        { order: 4, name: 'Eptesicus', power: 1115 },
+        { order: 5, name: '백지현예쁘다', power: 1154 },
+        { order: 6, name: 'RC999', power: 1185 },
+        { order: 7, name: 'Green Baron', power: 1191 },
+        { order: 8, name: 'Furkan03', power: 1202 },
+        { order: 9, name: 'Juuwasd', power: 1218 },
+        { order: 10, name: 'Lord Zurks', power: 1227 },
+        { order: 11, name: 'SeeyeS', power: 1254 },
+        { order: 12, name: 'KoCTaJloM', power: 1278 },
+        { order: 13, name: 'Voltavenger', power: 1291 },
+        { order: 14, name: 'Lord Nanook', power: 1299 },
+        { order: 15, name: 'DK 92', power: 1307 },
+        { order: 16, name: 'Valk98', power: 1315 },
+        { order: 17, name: 'ReaperReX', power: 1348 },
+        { order: 18, name: 'Sentinel Prime', power: 1353 },
+        { order: 19, name: 'Lord Mindwarp', power: 1371 },
+        { order: 20, name: 'Ice Lemsi', power: 1428 },
+      ],
+    },
+  ],
+}
+
+// One matchup per date — add a new round entry each day; newest first.
+export type ChampRound = { date: string; label: string; routes: ChampRoute[]; group: ChampAlliance[]; scout?: ChampScout }
+
+export const CHAMP_ROUNDS: ChampRound[] = [
+  { date: '2026-07-15', label: '7/15', routes: ROUTES_0715, group: GROUP_0715, scout: SCOUT_HMB },
+]

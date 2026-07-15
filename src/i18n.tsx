@@ -45,6 +45,7 @@ const STR: Record<string, Entry> = {
   'sec.key': { en: 'Key tips', ko: '핵심 팁' },
   'sec.daily': { en: 'By day', ko: '일별' },
   'sec.items': { en: 'Items', ko: '아이템' },
+  'sec.castle': { en: 'Castle', ko: '성 전투' },
   'gov.day': { en: 'Day', ko: '일차' },
   'gov.selectDay': { en: 'Tap a day to see its scoring', ko: '일차를 눌러 그날 점수를 확인' },
   'gov.priority': { en: 'Priority', ko: '고득점 우선순위' },
@@ -52,8 +53,33 @@ const STR: Record<string, Entry> = {
   'champ.important': { en: 'IMPORTANT', ko: '중요' },
   'sec.bracket': { en: 'Matchups', ko: '대진' },
   'sec.matchup': { en: 'Matchup', ko: '대진' },
+  'sec.report': { en: 'Report', ko: '리포트' },
   'sec.tips': { en: 'Tips', ko: '팁' },
   'champ.pickDate': { en: 'Pick a date', ko: '날짜 선택' },
+  'champ.reportResult': { en: 'Result', ko: '경기 결과' },
+  'champ.win': { en: 'WIN', ko: '승리' },
+  'champ.loss': { en: 'LOSS', ko: '패배' },
+  'champ.viewReport': { en: 'Report', ko: '리포트' },
+  'champ.tabResult': { en: 'Result', ko: '결과' },
+  'champ.tabAnalysis': { en: 'Analysis', ko: '분석' },
+  'champ.tabNext': { en: 'Next', ko: '다음 배치' },
+  'champ.close': { en: 'Close', ko: '닫기' },
+  // scouting
+  'champ.scout': { en: 'Scout', ko: '정찰' },
+  'champ.nextOpp': { en: 'Next opponent', ko: '다음 상대' },
+  'champ.scoutRoutes': { en: 'Enemy routes', ko: '적 루트' },
+  'champ.scoutPlan': { en: 'Plan', ko: '추천' },
+  'champ.rankTitle': { en: 'Route strength', ko: '루트 강도' },
+  'champ.strongest': { en: 'Strongest', ko: '가장 강함' },
+  'champ.weakest': { en: 'Weakest', ko: '가장 약함' },
+  'champ.total': { en: 'Total', ko: '총전투력' },
+  'champ.avg': { en: 'Avg', ko: '평균' },
+  'champ.ourLine': { en: 'Our line', ko: '우리 라인' },
+  'champ.vs': { en: 'vs', ko: 'vs' },
+  'champ.strongLine': { en: 'Strong line', ko: '강라인' },
+  'champ.restLine': { en: 'Rest line', ko: '약라인' },
+  'champ.expWin': { en: 'Expected WIN', ko: '승리 예상' },
+  'champ.expLoss': { en: 'Sacrifice', ko: '희생' },
   // championship lineup
   'champ.lineupTitle': { en: 'Our route lineup', ko: '우리 루트 배치' },
   'champ.totalPower': { en: 'Total power', ko: '총 전투력' },
@@ -563,6 +589,239 @@ export function champTips(lang: Lang): ChampTipsContent {
   }
 }
 
+// ---- Championship battle reports (newest first) ----
+export type ChampReportSection = { title: string; points: string[] }
+export type ChampReportCase = { name: string; points: string[] }
+export type ChampReport = {
+  date: string
+  label: string
+  usTag: string
+  us: string
+  usScore: number
+  oppTag: string
+  opp: string
+  oppScore: number
+  routes: { name: string; win: boolean }[]
+  statHead: [string, string, string]
+  stats: { label: string; left: string; right: string }[]
+  statNote: string
+  analysis: ChampReportSection[]
+  casesTitle: string
+  cases: ChampReportCase[]
+  nextTitle: string
+  nextIntro: string
+  next: string[]
+  conclusion: string
+}
+
+export function champReports(lang: Lang): ChampReport[] {
+  if (lang === 'ko')
+    return [
+      {
+        date: '2026-07-15',
+        label: '7/15 · vs RCb',
+        usTag: 'AAV', us: 'Titanium', usScore: 2,
+        oppTag: 'RCb', opp: 'BRloslocos', oppScore: 1,
+        routes: [
+          { name: '왼쪽 루트', win: true },
+          { name: '중간 루트', win: false },
+          { name: '오른쪽 루트', win: true },
+        ],
+        statHead: ['구분', '왼쪽 루트', '오른쪽 루트'],
+        stats: [
+          { label: '확인된 교전', left: '37회', right: '27회' },
+          { label: 'AAV 승리', left: '19회', right: '19회' },
+          { label: 'AAV 패배', left: '18회', right: '8회' },
+          { label: '교전 승률', left: '51.4%', right: '70.4%' },
+          { label: '2연승', left: '1회', right: '7회' },
+        ],
+        statNote: '왼쪽은 마지막 인원까지 소모한 접전, 오른쪽은 16번 인원에서 상대 부대가 모두 소진됐습니다.',
+        analysis: [
+          {
+            title: '왼쪽 루트',
+            points: [
+              '양측 총전력이 비슷해 한 명 차이로 이긴 접전.',
+              '앞선 인원이 상대 전력을 낮추고 후속 인원이 마무리하는 흐름이 중요했음.',
+              'Rockramy가 유일한 2연승을 기록.',
+              'KOREA가 마지막 상대를 약화시키고 Fletchmoney가 최종 마무리.',
+            ],
+          },
+          {
+            title: '오른쪽 루트',
+            points: [
+              '상대 루트의 평균 전력이 낮아 AAV가 안정적으로 우세.',
+              '약화된 상대를 만난 인원들이 전력을 거의 보존하며 연승.',
+              'hyun · ladymarie93 · Ares308 · Bunzzang · DENNIXCYX · Eirene · Sweetie가 2연승.',
+              '상위 4명은 실제 전투 없이 잔존.',
+            ],
+          },
+          {
+            title: '전투에서 확인된 특징',
+            points: [
+              '표시 전투력이 높은 쪽이 대체로 유리했지만, 병종 비율·병종별 버프에 따라 뒤집히는 사례 발생.',
+              '비슷한 전투력에서는 보병 비율과 보병 HP·파괴력이 전투 지속력에 큰 영향.',
+              '승리 후 전력을 많이 보존한 인원이 다음 상대까지 연속으로 상대할 확률이 높음.',
+              '첫 상대가 이미 약화돼 있으면 전투력 감소가 작아 2연승 확률이 크게 상승.',
+            ],
+          },
+        ],
+        casesTitle: '대표 사례',
+        cases: [
+          {
+            name: 'FOLLAGIRL',
+            points: [
+              '자신보다 전투력이 높은 상대에게 승리.',
+              '50/20/30 비율과 높은 보병 비중이 유효했던 것으로 판단.',
+              '다만 첫 승리에서 전력을 많이 소모해 다음 전투에서는 패배.',
+            ],
+          },
+          {
+            name: 'Williams',
+            points: ['표시 전투력은 상대보다 높았지만 패배.', '33/33/33 편성과 상대의 높은 병종별 버프 차이가 주요 원인으로 추정.'],
+          },
+          {
+            name: 'Rockramy',
+            points: ['약화된 상대를 적은 손실로 격파.', '전력을 거의 보존한 상태로 다음 상대까지 잡아 2연승 성공.'],
+          },
+        ],
+        nextTitle: '다음 편성 방향',
+        nextIntro: '등록된 병종 구성은 바꿀 수 없으니, 다음 경기에서는 현재 전투력과 실전 효율 기준으로 순서를 조정하는 것이 중요합니다.',
+        next: [
+          '강한 인원은 약화된 상대를 잡을 수 있는 후속 위치에 배치.',
+          '전력을 많이 깎는 인원 뒤에 마무리형 고전투력 인원 배치.',
+          '2연승 가능성이 높은 인원은 루트 중후반에 배치.',
+          '마지막에는 확실하게 마무리할 최고 전투력 인원을 남김.',
+        ],
+        conclusion: '이번 승리의 핵심은 단순 총전력보다 상대 약화 → 전력 보존 → 후속 마무리의 연결이었습니다.',
+      },
+    ]
+  return [
+    {
+      date: '2026-07-15',
+      label: '7/15 · vs RCb',
+      usTag: 'AAV', us: 'Titanium', usScore: 2,
+      oppTag: 'RCb', opp: 'BRloslocos', oppScore: 1,
+      routes: [
+        { name: 'Left route', win: true },
+        { name: 'Middle route', win: false },
+        { name: 'Right route', win: true },
+      ],
+      statHead: ['Metric', 'Left route', 'Right route'],
+      stats: [
+        { label: 'Confirmed fights', left: '37', right: '27' },
+        { label: 'AAV wins', left: '19', right: '19' },
+        { label: 'AAV losses', left: '18', right: '8' },
+        { label: 'Win rate', left: '51.4%', right: '70.4%' },
+        { label: 'Double wins', left: '1', right: '7' },
+      ],
+      statNote: 'Left was a nail-biter down to the last member; on the right the enemy force ran out at member #16.',
+      analysis: [
+        {
+          title: 'Left route',
+          points: [
+            'Total power was close — won by a single member in a tight fight.',
+            'Front members softened the enemy so later members could finish — that flow mattered.',
+            'Rockramy scored the only double win.',
+            'KOREA weakened the last opponent and Fletchmoney closed it out.',
+          ],
+        },
+        {
+          title: 'Right route',
+          points: [
+            'The enemy route’s average power was lower, so AAV stayed comfortably ahead.',
+            'Members who met weakened foes kept most of their strength and chained wins.',
+            'hyun · ladymarie93 · Ares308 · Bunzzang · DENNIXCYX · Eirene · Sweetie went 2-0.',
+            'The top 4 survived without an actual fight.',
+          ],
+        },
+        {
+          title: 'What the fights showed',
+          points: [
+            'Higher displayed power usually won, but troop ratio and per-type buffs flipped some results.',
+            'At similar power, infantry ratio and infantry HP/damage drove staying power.',
+            'A member who keeps a lot of power after a win is likely to face the next opponent too.',
+            'If the first opponent is already weakened, power loss is small, so double-win odds jump.',
+          ],
+        },
+      ],
+      casesTitle: 'Notable cases',
+      cases: [
+        {
+          name: 'FOLLAGIRL',
+          points: [
+            'Beat an opponent with higher power.',
+            'The 50/20/30 ratio and a high infantry share looked decisive.',
+            'But spent a lot of power on that first win, then lost the next fight.',
+          ],
+        },
+        {
+          name: 'Williams',
+          points: ['Had higher displayed power but lost.', 'Likely a 33/33/33 build vs the opponent’s stronger per-type buffs.'],
+        },
+        {
+          name: 'Rockramy',
+          points: ['Crushed a weakened foe with little loss.', 'Kept nearly full strength and took the next opponent too — a double win.'],
+        },
+      ],
+      nextTitle: 'Next lineup direction',
+      nextIntro: 'Registered troop composition can’t be changed, so for the next match order by current power and real-fight efficiency.',
+      next: [
+        'Put strong members in follow-up slots where they can finish weakened foes.',
+        'Place a high-power finisher behind members who drain a lot of enemy power.',
+        'Slot likely double-winners in the mid-to-late part of the route.',
+        'Keep your top-power member for a guaranteed finish at the end.',
+      ],
+      conclusion: 'The win came from weaken → preserve power → follow-up finish, not raw total power.',
+    },
+  ]
+}
+
+// ---- Enemy scouting narrative (data-independent prose; route power lives in championship.ts) ----
+export type ChampScoutContent = {
+  sub: string
+  rankNote: string
+  planTitle: string
+  planIntro: string
+  rationale: string[]
+  verdict: string
+  altTitle: string
+  alt: string
+}
+
+export function champScout(lang: Lang): ChampScoutContent {
+  if (lang === 'ko')
+    return {
+      sub: '2번째 경기 · 각 인원 첫 등장 기준 원래 전투력입니다.',
+      rankNote: '중간이 가장 강하고(26,679), 오른쪽이 가장 약합니다(24,762). 오른쪽은 1,500 이상이 한 명도 없습니다.',
+      planTitle: '추천 배치 (안정적 2:1)',
+      planIntro: '우리 강라인 2개(각 26,800)를 HMB의 약한 두 루트에 넣고, 약라인(21,313)은 가장 강한 중간에 희생시킵니다.',
+      rationale: [
+        '더 강한 강라인 → HMB 왼쪽(+448, 접전이니 진짜 최강 라인을 여기에).',
+        '나머지 강라인 → HMB 오른쪽(+2,038, 여유 있는 승리).',
+        '약라인 → HMB 중간(−5,366, 어차피 못 잡으니 포기).',
+        '왼쪽은 격차가 얇아 숨은 버프·병종 비율로 뒤집힐 수 있으니, 순서 배치와 병종 규율에 신경 쓰세요.',
+      ],
+      verdict: '3:0 욕심(약라인 → HMB 오른쪽)은 비추천 — 오른쪽은 EGO를 이겼고 1~20번이 균등해, 후반 몰빵 약라인이 다시 질 수 있습니다.',
+      altTitle: '공격적 3:0 (고위험)',
+      alt: '약라인 후반 밀도가 정말 좋다면 강라인→왼쪽, 강라인→중간, 약라인→오른쪽도 가능하지만, 중간(26,679)에서 질 위험이 커 승률이 떨어집니다.',
+    }
+  return {
+    sub: '2nd match · base power at each member’s first appearance.',
+    rankNote: 'Middle is strongest (26,679); right is weakest (24,762). Right has nobody above 1,500.',
+    planTitle: 'Recommended placement (safe 2:1)',
+    planIntro: 'Send both strong lines (26,800 each) into HMB’s two weaker routes and sacrifice the rest line (21,313) into their strongest — the middle.',
+    rationale: [
+      'Stronger strong line → HMB Left (+448 — it’s tight, so put your genuine best here).',
+      'Other strong line → HMB Right (+2,038 — a comfortable win).',
+      'Rest line → HMB Middle (−5,366 — unwinnable, so give it up).',
+      'Left is a thin margin that hidden buffs / troop ratio can flip — mind ordering and troop discipline.',
+    ],
+    verdict: 'Skip the greedy 3:0 (rest line → HMB Right): Right beat EGO and rises evenly 1→20, so a back-loaded rest line can lose again.',
+    altTitle: 'Aggressive 3:0 (high risk)',
+    alt: 'If the rest line’s late-order density is genuinely strong you could try strong→Left, strong→Middle, rest→Right — but the Middle (26,679) is likely a loss, lowering overall win rate.',
+  }
+}
+
 // ---- Mystic Trial content ----
 export type MysticContent = {
   overview: string
@@ -983,6 +1242,19 @@ export type GovStatus = 'best' | 'ok' | 'no'
 export type GovMatrixRow = { item: string; days: GovStatus[] }
 export type GovIntelCase = { steps: string[]; result: string }
 export type GovIntelTip = { title: string; lead: string; day1: GovIntelCase; day35: GovIntelCase }
+export type CastlePhase = {
+  key: 'before' | 'during' | 'after'
+  title: string
+  time: string
+  rules: { ok: boolean; text: string }[]
+}
+export type CastleBattle = {
+  title: string
+  intro: string
+  phases: CastlePhase[]
+  warn: string
+}
+
 export type GovernorContent = {
   intro: string
   discrepancy: string
@@ -991,6 +1263,7 @@ export type GovernorContent = {
   matrixTitle: string
   matrixNote: string
   matrix: GovMatrixRow[]
+  castle: CastleBattle
 }
 
 export function governorContent(lang: Lang): GovernorContent {
@@ -1106,6 +1379,34 @@ export function governorContent(lang: Lang): GovernorContent {
         { item: '미스릴', days: ['no', 'no', 'no', 'best', 'best'] },
         { item: '제작 망치', days: ['no', 'no', 'no', 'best', 'best'] },
       ],
+      castle: {
+        title: '성 전투 · 도시 공격 규칙',
+        intro: '성 전투(캐슬 배틀) 전후로 양쪽 왕국에서 도시·타일을 공격할 수 있는 시간대가 정해져 있습니다. 시간은 모두 UTC 기준.',
+        phases: [
+          {
+            key: 'before',
+            title: '전투 전',
+            time: 'UTC 10:00 ~ 12:00',
+            rules: [
+              { ok: true, text: '10:00–11:30 · 양쪽 왕국 어디서든 도시·타일 자유 공격.' },
+              { ok: false, text: '11:30–12:00 · 빨강/회색 성 구역이 안전지대로 전환 — 안전지대 내 도시 정찰·공격 금지.' },
+            ],
+          },
+          {
+            key: 'during',
+            title: '전투 중',
+            time: 'UTC 12:00 ~ 18:00 (보통, 더 짧을 수 있음)',
+            rules: [{ ok: false, text: '양쪽 왕국 어디서도 도시 정찰·공격 전면 금지.' }],
+          },
+          {
+            key: 'after',
+            title: '전투 후',
+            time: '종료 30분 후 ~ UTC 22:00',
+            rules: [{ ok: true, text: '양쪽 왕국 어디서든 도시·타일 자유 공격.' }],
+          },
+        ],
+        warn: '도시가 잘못된 편(경계 반대쪽)에 있으면 5분 전 경고가 표시됩니다.',
+      },
     }
   return {
     intro: 'Prep runs for 5 days; each day competes for kingdom points with a different growth track. Tap a day above to see only what scores that day.',
@@ -1218,6 +1519,34 @@ export function governorContent(lang: Lang): GovernorContent {
       { item: 'Mithril', days: ['no', 'no', 'no', 'best', 'best'] },
       { item: 'Hammers', days: ['no', 'no', 'no', 'best', 'best'] },
     ],
+    castle: {
+      title: 'Castle Battle · city-attack rules',
+      intro: 'Around the Castle Battle, when you can attack cities & tiles in either kingdom is fixed by time window. All times are UTC.',
+      phases: [
+        {
+          key: 'before',
+          title: 'Before Castle Battle',
+          time: 'UTC 10:00 – 12:00',
+          rules: [
+            { ok: true, text: '10:00–11:30 · Free attack on cities & tiles in either kingdom.' },
+            { ok: false, text: '11:30–12:00 · Red/gray Castle areas become safe zones — no scouting or attacking cities inside them.' },
+          ],
+        },
+        {
+          key: 'during',
+          title: 'During Castle Battle',
+          time: 'UTC 12:00 – 18:00 (typical, can be shorter)',
+          rules: [{ ok: false, text: 'NO scouting or attacking cities anywhere in either kingdom.' }],
+        },
+        {
+          key: 'after',
+          title: 'After Castle Battle ends',
+          time: '30 min after the end – UTC 22:00',
+          rules: [{ ok: true, text: 'Free attack on cities & tiles in either kingdom.' }],
+        },
+      ],
+      warn: 'You get a 5-minute warning if a city is on the wrong side.',
+    },
   }
 }
 

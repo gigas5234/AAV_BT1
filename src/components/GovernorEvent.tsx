@@ -138,6 +138,52 @@ export default function GovernorEvent({ section }: { section: string }) {
     )
   }
 
+  if (section === 'castle') {
+    const cb = c.castle
+    const phaseAccent: Record<string, string> = { before: '#e2a13a', during: '#f87171', after: '#34d399' }
+    return (
+      <div className="space-y-3 px-4 pt-4">
+        <div>
+          <h2 className="text-lg font-bold text-white">{cb.title}</h2>
+          <p className="mt-1 text-[13px] leading-relaxed text-slate-300">{cb.intro}</p>
+        </div>
+
+        {cb.phases.map((p) => {
+          const ac = phaseAccent[p.key]
+          return (
+            <section key={p.key} className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
+              <div className="flex items-center gap-2 px-4 py-2.5" style={{ background: `${ac}14` }}>
+                <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: ac }} />
+                <h3 className="text-[14px] font-semibold text-white">{p.title}</h3>
+                <span className="ml-auto rounded-md bg-black/25 px-2 py-0.5 font-mono text-[11px] text-slate-300">{p.time}</span>
+              </div>
+              <ul className="divide-y divide-white/5">
+                {p.rules.map((r, i) => (
+                  <li key={i} className="flex items-start gap-2.5 px-4 py-2.5">
+                    <span
+                      className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[12px] font-bold ${r.ok ? 'bg-emerald-400/15 text-emerald-300' : 'bg-red-500/15 text-red-300'}`}
+                    >
+                      {r.ok ? '✓' : '✕'}
+                    </span>
+                    <span className={`text-[13px] leading-relaxed ${r.ok ? 'text-slate-200' : 'text-slate-300'}`}>{r.text}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        })}
+
+        <div className="flex items-start gap-2 rounded-2xl border-2 border-amber-300 bg-amber-400 px-4 py-3 text-[13px] font-semibold leading-relaxed text-[#3a2600]">
+          <svg viewBox="0 0 24 24" className="mt-0.5 h-5 w-5 shrink-0" fill="currentColor" aria-hidden="true">
+            <path d="M12 2 1 21h22z" />
+            <path d="M12 9v5M12 17v.01" stroke="#3a2600" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+          <span>{cb.warn}</span>
+        </div>
+      </div>
+    )
+  }
+
   // items — the item × day matrix
   return (
     <div className="space-y-3 px-4 pt-4">

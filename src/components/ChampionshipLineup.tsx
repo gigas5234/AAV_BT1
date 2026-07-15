@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { routeTotal, type ChampRoute, type RouteId } from '../data/championship'
 import { useT } from '../i18n'
 
@@ -11,6 +12,13 @@ const fmt = (n: number) => n.toLocaleString('en-US')
 
 export default function ChampionshipLineup({ routes }: { routes: ChampRoute[] }) {
   const t = useT()
+  const [open, setOpen] = useState<Set<RouteId>>(new Set())
+  const toggle = (id: RouteId) =>
+    setOpen((prev) => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
   const grand = routes.reduce((n, r) => n + routeTotal(r), 0)
   const total = routes.reduce((n, r) => n + r.members.length, 0)
 
@@ -34,9 +42,10 @@ export default function ChampionshipLineup({ routes }: { routes: ChampRoute[] })
       {routes.map((r) => {
         const s = ROUTE_STYLE[r.id]
         const sorted = [...r.members].sort((a, b) => b.order - a.order)
+        const isOpen = open.has(r.id)
         return (
           <section key={r.id} className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
-            <div className="flex items-center gap-2 px-4 py-2.5" style={{ background: `${s.accent}14` }}>
+            <button onClick={() => toggle(r.id)} className="flex w-full items-center gap-2 px-4 py-2.5 text-left" style={{ background: `${s.accent}14` }}>
               <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: s.accent }} />
               <h3 className="text-[14px] font-semibold text-white">{t(s.labelKey)}</h3>
               <span
@@ -49,21 +58,26 @@ export default function ChampionshipLineup({ routes }: { routes: ChampRoute[] })
               <span className="font-mono text-[13px] font-semibold" style={{ color: s.accent }}>
                 {fmt(routeTotal(r))}
               </span>
-            </div>
-            <ul className="divide-y divide-white/5">
-              {sorted.map((m) => (
-                <li key={m.order} className="flex items-center gap-2.5 px-3 py-1.5">
-                  <span
-                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[11px] font-bold"
-                    style={{ background: `${s.accent}22`, color: s.accent }}
-                  >
-                    {m.order}
-                  </span>
-                  <span className="min-w-0 flex-1 truncate text-[13px] text-slate-200">{m.name}</span>
-                  <span className="shrink-0 font-mono text-[12px] text-slate-400">{fmt(m.power)}</span>
-                </li>
-              ))}
-            </ul>
+              <svg viewBox="0 0 24 24" className={`h-4 w-4 shrink-0 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2.2">
+                <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            {isOpen && (
+              <ul className="accopen divide-y divide-white/5">
+                {sorted.map((m) => (
+                  <li key={m.order} className="flex items-center gap-2.5 px-3 py-1.5">
+                    <span
+                      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[11px] font-bold"
+                      style={{ background: `${s.accent}22`, color: s.accent }}
+                    >
+                      {m.order}
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-[13px] text-slate-200">{m.name}</span>
+                    <span className="shrink-0 font-mono text-[12px] text-slate-400">{fmt(m.power)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
         )
       })}

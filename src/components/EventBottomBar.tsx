@@ -57,6 +57,12 @@ const ICONS: Record<string, JSX.Element> = {
       <path d="M4 6h5l2 3-2 3H4zM20 6h-5l-2 3 2 3h5M11 9h2M9 18h6M12 15v3" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
+  report: (
+    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
+      <path d="M6 3h9l4 4v14H6z" strokeLinejoin="round" />
+      <path d="M14 3v4h4M9 12h6M9 16h6M9 8h2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
   tips: (
     <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
       <path d="M12 3l2.5 5 5.5.8-4 3.9 1 5.5L12 15.5 6.5 18.2l1-5.5-4-3.9L9.5 8z" strokeLinejoin="round" />
@@ -96,6 +102,12 @@ const ICONS: Record<string, JSX.Element> = {
     <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
       <rect x="3.5" y="4" width="17" height="16" rx="2" />
       <path d="M3.5 9h17M9 4v16M13 12h4M13 15.5h4" strokeLinecap="round" />
+    </svg>
+  ),
+  castle: (
+    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
+      <path d="M4 21V8l2 1.5V5l3 1.5V4l3 1.5L15 4v2.5L18 5v4.5L20 8v13z" strokeLinejoin="round" />
+      <path d="M10 21v-4a2 2 0 0 1 4 0v4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
 }
