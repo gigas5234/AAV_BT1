@@ -1,7 +1,7 @@
 // Alliance-event registry. Bear Trap is the flagship (its own rich app), the rest
 // are shown in the home hub and each gets its own tailored bottom bar of sections.
 
-export type EventId = 'championship' | 'viking' | 'mystic' | 'eternity' | 'swordland'
+export type EventId = 'governor' | 'championship' | 'viking' | 'mystic' | 'eternity' | 'swordland'
 
 /** What the app is currently showing: the home hub, Bear Trap, or a specific event. */
 export type Screen = 'home' | 'beartrap' | EventId
@@ -12,9 +12,12 @@ export type EventMeta = {
   ready: boolean
   /** Bottom-bar section ids for this event (labels via i18n `sec.*`). */
   sections: string[]
+  /** Show a red HOT label — event is live right now. */
+  hot?: boolean
 }
 
 export const EVENTS: EventMeta[] = [
+  { id: 'governor', accent: '#e2a13a', ready: false, sections: ['overview', 'tips'], hot: true },
   { id: 'championship', accent: '#f5b301', ready: true, sections: ['overview', 'lineup', 'bracket', 'tips'] },
   { id: 'viking', accent: '#4c9be8', ready: true, sections: ['overview', 'key', 'strategy', 'setup'] },
   { id: 'mystic', accent: '#a78bfa', ready: true, sections: [] },

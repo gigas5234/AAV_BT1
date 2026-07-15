@@ -31,6 +31,7 @@ const STR: Record<string, Entry> = {
   'home.beartrap': { en: 'Bear Trap', ko: '곰덫' },
   'home.otherEvents': { en: 'Other events', ko: '다른 이벤트' },
   'home.ready': { en: 'Ready', ko: '준비됨' },
+  'home.hot': { en: 'HOT', ko: 'HOT' },
   'nav.home': { en: 'Home', ko: '홈' },
   // bottom-bar section labels
   'sec.overview': { en: 'Overview', ko: '개요' },
@@ -62,6 +63,7 @@ const STR: Record<string, Entry> = {
   'events.soon': { en: 'Coming soon', ko: '준비 중' },
   'events.soonBody': { en: 'Info and tips for this event will be added here soon.', ko: '이 이벤트의 정보와 팁이 곧 여기에 추가됩니다.' },
   // event names (official English verified against Century Games / Kingshot wikis)
+  'events.governor': { en: 'Strongest Governor', ko: '최강영주' },
   'events.championship': { en: 'Alliance Championship', ko: '연맹 챔피언십' },
   'events.viking': { en: 'Viking Vengeance', ko: '바이킹의 약탈' },
   'events.mystic': { en: 'Mystic Trial', ko: '신비한 시련' },
@@ -628,7 +630,19 @@ export type VikingCard = {
   note?: string
 }
 export type VikingTip = { text: string; level?: 'critical' | 'important'; image?: 'guard' }
-export type VikingContent = { overview: VikingCard[]; keyTips: VikingTip[]; strategy: VikingCard[]; setup: VikingCard[] }
+export type VikingCase = { label: string; note: string; support: string }
+export type VikingCompare = {
+  title: string
+  intro: string
+  defenseLabel: string
+  defenseValue: string
+  good: VikingCase
+  bad: VikingCase
+  calc: string
+  scaled: string
+  conclusion: string
+}
+export type VikingContent = { overview: VikingCard[]; keyTips: VikingTip[]; compare: VikingCompare; strategy: VikingCard[]; setup: VikingCard[] }
 
 export function vikingContent(lang: Lang): VikingContent {
   if (lang === 'ko')
@@ -690,6 +704,17 @@ export function vikingContent(lang: Lang): VikingContent {
         { text: '이벤트 도중에는 치료 금지. 치료로 병력이 복귀하면 지원군 점수를 뺏을 수 있습니다.' },
         { text: '행군 대열이 부족해 전 병력을 못 빼면, 본성엔 궁병만 남기고 보/기는 최대한 밖으로 지원 보내세요.' },
       ],
+      compare: {
+        title: '왜 병력을 빼야 하나 — 실제 예시',
+        intro: '같은 전투 · 같은 승리 · 같은 방어 포인트(31,980)인데, 지원 점수가 달라집니다.',
+        defenseLabel: '방어 포인트',
+        defenseValue: '31,980',
+        good: { label: '✅ 잘된 예', note: '방어영주가 바이킹을 잡지 않음 — 지원군이 부대 전부(339,002)를 처치', support: '지원 점수 합 15,993' },
+        bad: { label: '❌ 잘못된 예', note: '방어영주가 바이킹을 잡음 — 지원군 킬을 가로챔(지원군은 268,236만)', support: '지원 점수 합 12,654' },
+        calc: '방어영주가 바이킹을 잡아도 본성 방어 포인트는 31,980으로 똑같습니다 — 절대 오르지 않아요. 잡아봤자 내 점수는 그대로, 지원군 점수만 15,993 → 12,654 (−3,339) 깎입니다.',
+        scaled: '한 라운드에 지원(수비)을 4~6명에게 보내는데, 그 4~6명이 이렇게 하면 약 13,000 ~ 20,000점 손실. 라운드마다 쌓이면 연맹 전체 점수가 크게 떨어집니다.',
+        conclusion: '그래서 반드시 본성의 보병·기병을 밖으로 빼세요.',
+      },
       strategy: [
         {
           title: '점수 구조',
@@ -829,6 +854,17 @@ export function vikingContent(lang: Lang): VikingContent {
       { text: 'Do NOT heal during the event. Healed troops returning can steal your reinforcements’ score.' },
       { text: 'If you lack march queues to send everything out, keep only archers at home and send infantry/cavalry out as support.' },
     ],
+    compare: {
+      title: 'Why you must pull troops out — a real example',
+      intro: 'Same battle · same win · same defense points (31,980) — yet the support score differs.',
+      defenseLabel: 'Defense points',
+      defenseValue: '31,980',
+      good: { label: '✅ Good', note: 'The defender killed nothing — reinforcements killed the whole force (339,002)', support: 'Support total 15,993' },
+      bad: { label: '❌ Bad', note: 'The defender killed vikings — stealing reinforcement kills (they got only 268,236)', support: 'Support total 12,654' },
+      calc: 'Even if the defender kills vikings, castle defense points stay 31,980 — they never go up. Killing gains you nothing; it only cuts support: 15,993 → 12,654 (−3,339).',
+      scaled: 'You support ~4~6 members a round — if those 4~6 do this, ~13,000 ~ 20,000 points lost. Compounded over rounds, a big alliance-wide loss.',
+      conclusion: 'So you must push your castle’s infantry/cavalry out.',
+    },
     strategy: [
       {
         title: 'Score structure',

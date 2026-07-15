@@ -6,9 +6,11 @@ import vikingImg from '../assets/events/viking.webp'
 import mysticImg from '../assets/events/mystic.webp'
 import swordlandImg from '../assets/events/swordland.webp'
 import eternityImg from '../assets/events/eternity.webp'
+import governorImg from '../assets/events/governor.webp'
 
 // Event artwork (banners). Events without art fall back to an accent gradient.
 const EVENT_IMG: Partial<Record<EventId, string>> = {
+  governor: governorImg,
   championship: championshipImg,
   viking: vikingImg,
   mystic: mysticImg,
@@ -17,6 +19,12 @@ const EVENT_IMG: Partial<Record<EventId, string>> = {
 }
 
 const EVENT_ICON: Record<EventId, JSX.Element> = {
+  governor: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5">
+      <path d="M4 8l3.5 3L12 5l4.5 6L20 8l-1.5 10h-13z" strokeLinejoin="round" />
+      <path d="M5.5 21h13" strokeLinecap="round" />
+    </svg>
+  ),
   championship: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5">
       <path d="M7 4h10v5a5 5 0 0 1-10 0z" strokeLinejoin="round" />
@@ -149,21 +157,26 @@ export default function EventHome({
             ) : (
               <ImgHint />
             )}
-            <span className="absolute right-2.5 top-2.5">
+            {e.hot && (
+              <span className="absolute left-2.5 top-2.5 z-10 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-extrabold tracking-wide text-white shadow-md ring-1 ring-red-300/50">
+                {t('home.hot')}
+              </span>
+            )}
+            <span className="absolute right-2.5 top-2.5 z-10">
               {e.ready ? (
-                <span className="rounded-full px-2 py-0.5 text-[9px] font-bold" style={{ background: e.accent, color: '#1a1200' }}>{t('home.ready')}</span>
+                <span className="rounded-full px-2 py-0.5 text-[9px] font-bold shadow" style={{ background: e.accent, color: '#1a1200' }}>{t('home.ready')}</span>
               ) : (
-                <span className="rounded-full bg-black/35 px-2 py-0.5 text-[9px] font-semibold text-amber-200/80">{t('events.soon')}</span>
+                <span className="rounded-full bg-black/50 px-2 py-0.5 text-[9px] font-semibold text-amber-100 ring-1 ring-white/10">{t('events.soon')}</span>
               )}
             </span>
-            <div className="relative flex w-full items-center gap-2.5 bg-gradient-to-t from-[#0b1220]/85 to-transparent p-3.5">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl" style={{ background: `${e.accent}26`, color: e.accent }}>
+            <div className="relative z-10 flex w-full items-center gap-2.5 bg-gradient-to-t from-black/90 via-black/45 to-transparent p-3.5 pt-7">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-black/55 ring-1 ring-white/15" style={{ color: e.accent }}>
                 {EVENT_ICON[e.id]}
               </span>
-              <span className="text-[15px] font-semibold text-white">{t(`events.${e.id}`)}</span>
-              <span
-                className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/12 text-white/80 ring-1 ring-white/15 transition-all group-hover:translate-x-0.5 group-hover:bg-white/20 group-hover:text-white"
-              >
+              <span className="text-[15px] font-bold text-white" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
+                {t(`events.${e.id}`)}
+              </span>
+              <span className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-black/40 text-white ring-1 ring-white/20 transition-all group-hover:translate-x-0.5 group-hover:bg-white/25">
                 <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </span>
             </div>

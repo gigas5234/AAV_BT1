@@ -1,6 +1,8 @@
 import { useState } from 'react'
-import { useLang, useT, vikingContent, type VikingCard, type VikingTip } from '../i18n'
+import { useLang, useT, vikingContent, type VikingCard, type VikingCompare, type VikingTip } from '../i18n'
 import guardImg from '../assets/events/viking-guard.webp'
+import goodImg from '../assets/events/viking-good.webp'
+import badImg from '../assets/events/viking-bad.webp'
 
 function CopyLine({ text }: { text: string }) {
   const t = useT()
@@ -111,7 +113,53 @@ function Card({ c }: { c: VikingCard }) {
   )
 }
 
-function KeyTips({ tips }: { tips: VikingTip[] }) {
+function Compare({ c }: { c: VikingCompare }) {
+  const cases: { data: typeof c.good; img: string; good: boolean }[] = [
+    { data: c.good, img: goodImg, good: true },
+    { data: c.bad, img: badImg, good: false },
+  ]
+  return (
+    <div className="mt-5 border-t border-white/10 pt-4">
+      <h3 className="text-[15px] font-bold text-white">{c.title}</h3>
+      <p className="mt-1 text-[12px] leading-relaxed text-slate-400">{c.intro}</p>
+
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        {cases.map((x, i) => (
+          <div
+            key={i}
+            className={`overflow-hidden rounded-xl border ${x.good ? 'border-emerald-400/40 bg-emerald-400/[0.06]' : 'border-red-500/40 bg-red-500/[0.06]'}`}
+          >
+            <img src={x.img} alt="" className="block w-full" />
+            <div className="space-y-1.5 p-2.5">
+              <span className={`text-[12px] font-bold ${x.good ? 'text-emerald-300' : 'text-red-300'}`}>{x.data.label}</span>
+              <p className="text-[11px] leading-tight text-slate-400">{x.data.note}</p>
+              <div className="flex items-baseline justify-between rounded bg-amber-400/10 px-1.5 py-1 text-[11px]">
+                <span className="text-amber-200/80">{c.defenseLabel}</span>
+                <span className="font-mono font-bold text-amber-300">{c.defenseValue}</span>
+              </div>
+              <p className={`rounded px-1.5 py-1 text-center text-[11px] font-semibold ${x.good ? 'bg-emerald-400/15 text-emerald-200' : 'bg-red-500/15 text-red-200'}`}>
+                {x.data.support}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-2.5 rounded-xl border border-amber-400/40 bg-amber-400/10 px-3.5 py-3 text-[13px] font-medium leading-relaxed text-amber-100">
+        {c.calc}
+      </div>
+      <div className="mt-2 rounded-xl border border-red-500/40 bg-red-500/[0.08] px-3.5 py-3 text-[13px] font-medium leading-relaxed text-red-100">
+        {c.scaled}
+      </div>
+      <div className="mt-2 flex items-start gap-2 rounded-xl border-2 border-red-500 bg-red-500/[0.12] px-3.5 py-3 text-[14px] font-bold leading-relaxed text-red-50">
+        <span className="text-base leading-none">➡️</span>
+        <span>{c.conclusion}</span>
+      </div>
+    </div>
+  )
+}
+
+function KeyTips({ tips, compare }: { tips: VikingTip[]; compare: VikingCompare }) {
   const t = useT()
   return (
     <div className="space-y-2 px-4 pt-4">
@@ -149,6 +197,8 @@ function KeyTips({ tips }: { tips: VikingTip[] }) {
           </div>
         )
       })}
+
+      <Compare c={compare} />
     </div>
   )
 }
@@ -158,7 +208,7 @@ export default function VikingVengeance({ section }: { section: string }) {
   const lang = useLang()
   const c = vikingContent(lang)
 
-  if (section === 'key') return <KeyTips tips={c.keyTips} />
+  if (section === 'key') return <KeyTips tips={c.keyTips} compare={c.compare} />
 
   const cards: VikingCard[] = section === 'strategy' ? c.strategy : section === 'setup' ? c.setup : c.overview
 
