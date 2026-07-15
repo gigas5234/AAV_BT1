@@ -1,0 +1,30 @@
+// Alliance-event registry. Bear Trap is the flagship (its own rich app), the rest
+// are shown in the home hub and each gets its own tailored bottom bar of sections.
+
+export type EventId = 'championship' | 'viking' | 'mystic' | 'eternity' | 'swordland'
+
+/** What the app is currently showing: the home hub, Bear Trap, or a specific event. */
+export type Screen = 'home' | 'beartrap' | EventId
+
+export type EventMeta = {
+  id: EventId
+  accent: string
+  ready: boolean
+  /** Bottom-bar section ids for this event (labels via i18n `sec.*`). */
+  sections: string[]
+}
+
+export const EVENTS: EventMeta[] = [
+  { id: 'championship', accent: '#f5b301', ready: true, sections: ['overview', 'lineup', 'bracket', 'tips'] },
+  { id: 'viking', accent: '#4c9be8', ready: true, sections: ['overview', 'key', 'strategy', 'setup'] },
+  { id: 'mystic', accent: '#a78bfa', ready: true, sections: [] },
+  { id: 'eternity', accent: '#2dd4bf', ready: false, sections: ['overview', 'tips'] },
+  { id: 'swordland', accent: '#f87171', ready: false, sections: ['overview', 'tips'] },
+]
+
+export const eventMeta = (id: EventId) => EVENTS.find((e) => e.id === id)!
+
+export const BEARTRAP_ACCENT = '#f5b301'
+/** Bear Trap's own bottom-bar sections (the four planner tools). */
+export const BEARTRAP_SECTIONS = ['plan', 'guide', 'slots', 'calc'] as const
+export type BearSection = (typeof BEARTRAP_SECTIONS)[number]

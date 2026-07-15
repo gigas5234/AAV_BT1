@@ -5,8 +5,11 @@ import { DEFAULT_SETTINGS } from './data/settings'
 import { buildPlan } from './logic/buildPlan'
 import { clearState, loadState, saveState } from './storage'
 import { LangProvider } from './i18n'
+import { BEARTRAP_ACCENT, BEARTRAP_SECTIONS, eventMeta, type BearSection, type EventId, type Screen } from './events'
 import MainLanding from './components/MainLanding'
-import BottomNav, { type Tab } from './components/BottomNav'
+import EventHome from './components/EventHome'
+import EventView from './components/EventView'
+import EventBottomBar from './components/EventBottomBar'
 import RosterTab from './components/RosterTab'
 import PlanResult from './components/PlanResult'
 import PlacementGrid from './components/PlacementGrid'
@@ -19,8 +22,35 @@ type PlanView = 'roster' | 'result' | 'placement' | 'sim'
 
 export default function App() {
   const [started, setStarted] = useState(false)
-  const [tab, setTab] = useState<Tab>('plan')
+  const [screen, setScreen] = useState<Screen>('home')
+  const [tab, setTab] = useState<BearSection>('plan')
+  const [eventSection, setEventSection] = useState<string>('overview')
   const [planView, setPlanView] = useState<PlanView>('roster')
+
+  const openEvent = (id: EventId) => {
+    setEventSection(eventMeta(id).sections[0] ?? '')
+    setScreen(id)
+  }
+
+  // red dot on Viking's "Key tips" tab until it's opened once
+  const [vkKeySeen, setVkKeySeen] = useState(() => {
+    try {
+      return localStorage.getItem('aav-bt1:vk-key-seen') === '1'
+    } catch {
+      return false
+    }
+  })
+  const selectSection = (id: string) => {
+    setEventSection(id)
+    if (screen === 'viking' && id === 'key' && !vkKeySeen) {
+      setVkKeySeen(true)
+      try {
+        localStorage.setItem('aav-bt1:vk-key-seen', '1')
+      } catch {
+        /* ignore */
+      }
+    }
+  }
 
   const [initial] = useState(loadState)
   const [members, setMembers] = useState<Member[]>(initial.members)
@@ -93,9 +123,48 @@ export default function App() {
       </LangProvider>
     )
 
+  if (screen === 'home')
+    return (
+      <LangProvider lang={settings.lang}>
+        <div className="scroll-dark mx-auto h-[100dvh] max-w-[480px] overflow-y-auto bg-[#0b1220]">
+          <EventHome
+            lang={settings.lang}
+            onSetLang={(l) => setSettings({ ...settings, lang: l })}
+            onBearTrap={() => setScreen('beartrap')}
+            onOpenEvent={openEvent}
+          />
+        </div>
+      </LangProvider>
+    )
+
+  const goHome = () => setScreen('home')
+
+  // an event (not Bear Trap): its own bottom bar of sections
+  if (screen !== 'beartrap') {
+    const meta = eventMeta(screen)
+    return (
+      <LangProvider lang={settings.lang}>
+        <div key={screen} className="evententer mx-auto flex h-[100dvh] max-w-[480px] flex-col bg-[#0b1220]">
+          <main className="no-scrollbar flex-1 overflow-y-auto">
+            <EventView eventId={screen} section={eventSection} />
+          </main>
+          <EventBottomBar
+            items={meta.sections.map((s) => ({ id: s, labelKey: `sec.${s}` }))}
+            active={eventSection}
+            accent={meta.accent}
+            dots={screen === 'viking' && !vkKeySeen ? ['key'] : []}
+            onSelect={selectSection}
+            onHome={goHome}
+          />
+        </div>
+      </LangProvider>
+    )
+  }
+
+  // Bear Trap — the full planner, with its four tools in the bottom bar
   return (
     <LangProvider lang={settings.lang}>
-    <div className="mx-auto flex h-[100dvh] max-w-[480px] flex-col bg-[#0b1220]">
+    <div key="beartrap" className="evententer mx-auto flex h-[100dvh] max-w-[480px] flex-col bg-[#0b1220]">
       <main className="no-scrollbar flex-1 overflow-y-auto">
         {tab === 'plan' && planView === 'placement' && plan ? (
           <PlacementGrid
@@ -148,7 +217,13 @@ export default function App() {
         )}
       </main>
 
-      <BottomNav tab={tab} onChange={setTab} />
+      <EventBottomBar
+        items={BEARTRAP_SECTIONS.map((s) => ({ id: s, labelKey: `tab.${s}` }))}
+        active={tab}
+        accent={BEARTRAP_ACCENT}
+        onSelect={(id) => setTab(id as BearSection)}
+        onHome={goHome}
+      />
     </div>
     </LangProvider>
   )

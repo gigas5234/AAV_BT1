@@ -21,6 +21,65 @@ const STR: Record<string, Entry> = {
   'tab.guide': { en: 'Guide', ko: '가이드' },
   'tab.slots': { en: 'Quick Slots', ko: '퀵슬롯' },
   'tab.calc': { en: 'Calc', ko: '계산기' },
+  'tab.events': { en: 'Events', ko: '이벤트' },
+
+  'events.header': { en: 'Alliance events', ko: '연맹 이벤트' },
+  'events.sub': { en: 'Info and tips for every alliance event.', ko: '연맹 이벤트별 정보와 팁.' },
+  // home hub
+  'home.title': { en: 'AAV Events', ko: 'AAV 이벤트' },
+  'home.sub': { en: 'Pick an event for its plan, guide and tips.', ko: '이벤트를 골라 계획·가이드·팁을 확인하세요.' },
+  'home.beartrap': { en: 'Bear Trap', ko: '곰덫' },
+  'home.otherEvents': { en: 'Other events', ko: '다른 이벤트' },
+  'home.ready': { en: 'Ready', ko: '준비됨' },
+  'nav.home': { en: 'Home', ko: '홈' },
+  // bottom-bar section labels
+  'sec.overview': { en: 'Overview', ko: '개요' },
+  'sec.lineup': { en: 'Lineup', ko: '배치' },
+  'sec.schedule': { en: 'Schedule', ko: '일정' },
+  'sec.ratio': { en: 'Ratio', ko: '비율' },
+  'ratio.zone': { en: 'Zone', ko: '구역' },
+  'sec.rounds': { en: 'Rounds', ko: '라운드' },
+  'sec.strategy': { en: 'Strategy', ko: '전략' },
+  'sec.setup': { en: 'Setup', ko: '편성' },
+  'sec.key': { en: 'Key tips', ko: '핵심 팁' },
+  'champ.critical': { en: 'MOST IMPORTANT', ko: '가장 중요' },
+  'champ.important': { en: 'IMPORTANT', ko: '중요' },
+  'sec.bracket': { en: 'Matchups', ko: '대진' },
+  'sec.tips': { en: 'Tips', ko: '팁' },
+  // championship lineup
+  'champ.lineupTitle': { en: 'Our route lineup', ko: '우리 루트 배치' },
+  'champ.totalPower': { en: 'Total power', ko: '총 전투력' },
+  'champ.routeLeft': { en: 'Left route', ko: '왼쪽 루트' },
+  'champ.routeMid': { en: 'Middle route', ko: '중간 루트' },
+  'champ.routeRight': { en: 'Right route', ko: '오른쪽 루트' },
+  'champ.tagStrong': { en: 'STRONG', ko: '강라인' },
+  'champ.tagRest': { en: 'REST', ko: '잔여라인' },
+  // championship group (opponents)
+  'champ.groupTitle': { en: 'This round · alliances', ko: '이번 대진 · 연맹' },
+  'champ.score': { en: 'Score', ko: '점수' },
+  'champ.flags': { en: 'Flags', ko: '깃발' },
+  'champ.us': { en: 'US', ko: '우리' },
+  'events.soon': { en: 'Coming soon', ko: '준비 중' },
+  'events.soonBody': { en: 'Info and tips for this event will be added here soon.', ko: '이 이벤트의 정보와 팁이 곧 여기에 추가됩니다.' },
+  // event names (official English verified against Century Games / Kingshot wikis)
+  'events.championship': { en: 'Alliance Championship', ko: '연맹 챔피언십' },
+  'events.viking': { en: 'Viking Vengeance', ko: '바이킹의 약탈' },
+  'events.mystic': { en: 'Mystic Trial', ko: '신비한 시련' },
+  'events.eternity': { en: "Eternity's Reach", ko: '사라진 유적' },
+  'events.swordland': { en: 'Swordland Showdown', ko: '성검 쟁탈' },
+  // championship scaffold
+  'champ.coverTitle': { en: 'Alliance Championship', ko: '연맹 챔피언십' },
+  'champ.coverSub': { en: 'Weekly power showdown between alliances', ko: '연맹 간 주간 전력 대결' },
+  'champ.imgHint': { en: 'Event artwork will go here', ko: '이벤트 이미지가 여기에 들어갑니다' },
+  'champ.dateLabel': { en: 'Next match', ko: '다음 대결' },
+  'champ.dateTbd': { en: 'Date TBD', ko: '일정 미정' },
+  'champ.overviewTitle': { en: 'Overview', ko: '개요' },
+  'champ.overviewBody': { en: 'What the championship is and how scoring works — coming soon.', ko: '챔피언십이 무엇인지와 점수 계산 방식 — 곧 추가됩니다.' },
+  'champ.bracketTitle': { en: 'Matchup simulation', ko: '대진 시뮬레이션' },
+  'champ.bracketBody': { en: 'The bracket and match-by-match simulation will be built here.', ko: '대진표와 대결별 시뮬레이션이 여기에 만들어집니다.' },
+  'champ.tipsTitle': { en: 'Tips', ko: '공략 팁' },
+  'champ.tipsBody': { en: 'Prep checklist and strategy tips — coming soon.', ko: '준비 체크리스트와 전략 팁 — 곧 추가됩니다.' },
+  'champ.wip': { en: 'In preparation', ko: '준비 중' },
 
   'calc.header': { en: 'Troop calculator', ko: '병종 계산기' },
   'calc.sub': {
@@ -443,6 +502,416 @@ export function calcGuide(lang: Lang): string[] {
   ]
 }
 
+// ---- Championship tips ----
+export type ChampTip = { title: string; body: string }
+export type ChampTipsContent = { highlight: string; rulesTitle: string; rules: ChampTip[]; strategyTitle: string; strategy: ChampTip[] }
+
+export function champTips(lang: Lang): ChampTipsContent {
+  if (lang === 'ko')
+    return {
+      highlight: '가장 중요 — 등록하는 순간의 스탯이 그대로 고정됩니다. 실시간이 아니에요!',
+      rulesTitle: '우리 규칙',
+      rules: [
+        {
+          title: '등록 = 그 순간의 스냅샷',
+          body: '병력·버프·상황이 등록하는 순간 그대로 적용됩니다(실시간 아님). 관직 버프를 받고 등록하면 그 버프가 그대로 들어가고, 엘크 스킬도 적용됩니다. → 버프를 전부 켠 상태로 등록하세요.',
+        },
+        { title: '파워 갱신 시 재등록', body: '자신의 전투력이 갱신되면 다시 등록해 최신 상태로 업데이트해 주세요.' },
+        { title: '병력 비율 50 / 20 / 30', body: '보병 50 · 기병 20 · 궁병 30 을 최대한 유지하세요.' },
+        { title: '최강 영웅 3명', body: '보유한 가장 강력한 영웅 3명을 배치하세요.' },
+      ],
+      strategyTitle: '추가 전략',
+      strategy: [
+        {
+          title: '라인 카운터로 2/3 승리',
+          body: '약한 라인은 상대 최강 라인에, 최강 라인은 상대 2등 라인에, 2등 라인은 상대 최약 라인에 붙이면 3라인 중 2라인을 이길 확률이 높습니다. (지금 2강 라인 전략의 근거)',
+        },
+        { title: '공격형 영웅', body: '최강 병력에는 아마데우스 같은 공격형 영웅을 배치해 상대 병력을 최대한 많이 잡으세요.' },
+        { title: '사전 확정 · 소통', body: '라인 배정은 R4/R5와 미리 확정하고 잠그세요. 막판 영웅 교체보다 사전 준비와 라운드 간 소통이 승패를 가릅니다.' },
+      ],
+    }
+  return {
+    highlight: 'Most important — your stats lock the moment you register. It is NOT real-time!',
+    rulesTitle: 'Our rules',
+    rules: [
+      {
+        title: 'Registration = a snapshot',
+        body: 'Your troops, buffs and state are captured exactly as they are at sign-up (not real-time). If you register while an office (appointment) buff is active it stays applied, and the Elk skill applies too. → Turn on every buff before you register.',
+      },
+      { title: 'Re-register when your power changes', body: 'Whenever your combat power updates, register again to refresh your snapshot.' },
+      { title: 'Troop ratio 50 / 20 / 30', body: 'Keep Infantry 50 · Cavalry 20 · Archers 30 as much as possible.' },
+      { title: 'Your 3 strongest heroes', body: 'Deploy the three strongest heroes you own.' },
+    ],
+    strategyTitle: 'Extra strategy',
+    strategy: [
+      {
+        title: 'Counter lanes to win 2 of 3',
+        body: 'Put your weakest lane vs their strongest, your strongest vs their 2nd, your 2nd vs their weakest — a strong chance to take 2 of the 3 lanes. (the reason for our two-strong-lane setup)',
+      },
+      { title: 'Offensive heroes', body: 'On your strongest troops, run offensive heroes like Amadeus to wipe out as many enemy units as possible.' },
+      { title: 'Lock lanes early · communicate', body: 'Confirm and lock lane assignments with R4/R5 in advance. Prep and between-round comms win it — not last-second hero swaps.' },
+    ],
+  }
+}
+
+// ---- Mystic Trial content ----
+export type MysticContent = {
+  overview: string
+  scheduleTitle: string
+  schedule: { days: string; dungeon: string; stat: string; final?: boolean }[]
+  ratioIntro: string[]
+  ratioStart: string
+  ratioTable: { zone: string; ratio: string; note: string }[]
+  ratioTip: string
+}
+
+export function mysticContent(lang: Lang): MysticContent {
+  if (lang === 'ko')
+    return {
+      overview: '각 던전은 특정 능력치 시스템을 분리해 평가합니다. 성공은 총 전투력이 아니라 전략적 깊이에 달려 있어요.',
+      scheduleTitle: '주간 던전 · 버프 일정',
+      schedule: [
+        { days: '월 - 화', dungeon: '콜로세움', stat: '영웅 능력치 · 영웅 장비' },
+        { days: '수 - 목', dungeon: '생명의 숲 & 수정 동굴', stat: '펫 스킬 · 영주 보석' },
+        { days: '금 - 토', dungeon: '지식의 넥서스 & 용암 요새', stat: '아카데미 / 전쟁 아카데미 기술 · 영주 장비' },
+        { days: '일', dungeon: '빛나는 첨탑', stat: '최종 시험 — 모든 전투력 적용. 이 구역은 자신의 실제 부대 병력을 사용합니다.', final: true },
+      ],
+      ratioIntro: [
+        '빛나는 첨탑을 제외한 대부분 구역은 게임이 Lv.10 병사를 제공합니다. 그래서 병종 자체보다 내 계정의 원정 보너스와 구역 특성이 더 중요합니다.',
+        'AI는 기본적으로 보병 / 기병 / 궁병을 33 / 33 / 33 비슷하게 쓰고, 10단계쯤엔 약 53 / 27 / 20 으로 바뀌는 것으로 보는 경우가 많습니다.',
+      ],
+      ratioStart: '무난한 시작 — 확신이 없으면 우선 50 / 20 / 30 으로 시작하세요.',
+      ratioTable: [
+        { zone: '결투장', ratio: '50 / 10 / 40', note: '후열 비중을 조금 더 높게' },
+        { zone: '생명의 숲', ratio: '50 / 15 / 35', note: '펫 보조를 감안한 균형형' },
+        { zone: '수정 광산', ratio: '60 / 20 / 20', note: '전열을 더 두껍게' },
+        { zone: '지식의 전당', ratio: '50 / 20 / 30', note: '기본 안정형' },
+        { zone: '용암 요새', ratio: '60 / 15 / 25', note: '전면 유지력 위주' },
+        { zone: '빛나는 첨탑', ratio: '50 / 15 / 35', note: '계정 스펙 영향이 더 큼' },
+      ],
+      ratioTip: '이 비율은 유연하게 바꿔도 됩니다. 그날 활성 버프에 맞춰 미세 조정하고, 매일 주어지는 5번의 도전으로 여러 조합을 테스트하세요.',
+    }
+  return {
+    overview: 'Each dungeon scores a specific stat system on its own. Winning comes from strategic depth, not raw total power.',
+    scheduleTitle: 'Weekly dungeons · buffs',
+    schedule: [
+      { days: 'Mon - Tue', dungeon: 'Colosseum', stat: 'Hero stats · hero gear' },
+      { days: 'Wed - Thu', dungeon: 'Forest of Life & Crystal Cave', stat: 'Pet skills · lord gems' },
+      { days: 'Fri - Sat', dungeon: 'Nexus of Knowledge & Lava Fortress', stat: 'Academy / War Academy tech · lord gear' },
+      { days: 'Sun', dungeon: 'Shining Spire', stat: 'Final test — every stat applies. This zone uses your real troop count.', final: true },
+    ],
+    ratioIntro: [
+      'Except for the Shining Spire, most zones hand you Lv.10 troops. So your account expedition bonuses and the zone traits matter more than the troop type itself.',
+      'The AI tends to run Infantry / Cavalry / Archer near 33 / 33 / 33, shifting to roughly 53 / 27 / 20 around step 10.',
+    ],
+    ratioStart: 'Safe start — when unsure, open with 50 / 20 / 30.',
+    ratioTable: [
+      { zone: 'Arena', ratio: '50 / 10 / 40', note: 'Lean a bit more on the back line' },
+      { zone: 'Forest of Life', ratio: '50 / 15 / 35', note: 'Balanced, accounting for pet support' },
+      { zone: 'Crystal Mine', ratio: '60 / 20 / 20', note: 'Thicker front line' },
+      { zone: 'Hall of Knowledge', ratio: '50 / 20 / 30', note: 'Default, stable' },
+      { zone: 'Lava Fortress', ratio: '60 / 15 / 25', note: 'Front-line durability first' },
+      { zone: 'Shining Spire', ratio: '50 / 15 / 35', note: 'Account power matters most' },
+    ],
+    ratioTip: 'These ratios are flexible. Fine-tune to the day’s active buff, and use your 5 daily attempts to test combinations.',
+  }
+}
+
+// ---- Viking Vengeance content ----
+export type VikingStep = { n: string; title: string; items?: string[]; copy?: string }
+export type VikingCard = {
+  title?: string
+  highlight?: string
+  items?: string[]
+  table?: { head: [string, string]; rows: [string, string][] }
+  steps?: VikingStep[]
+  note?: string
+}
+export type VikingTip = { text: string; level?: 'critical' | 'important'; image?: 'guard' }
+export type VikingContent = { overview: VikingCard[]; keyTips: VikingTip[]; strategy: VikingCard[]; setup: VikingCard[] }
+
+export function vikingContent(lang: Lang): VikingContent {
+  if (lang === 'ko')
+    return {
+      overview: [
+        {
+          title: '기본 규칙',
+          items: [
+            '총 20웨이브의 AI 바이킹이 공격해옵니다.',
+            '각 웨이브 방어 성공 = 공격 병력의 50% 이상 처치.',
+            '공격 대상은 전체 멤버 / 접속자만 / HQ 전용 라운드로 나뉩니다.',
+            '2번 패배하면 내 도시 추가 공격이 멈출 수 있지만, 이후에도 지원으로 점수 획득은 가능합니다.',
+          ],
+        },
+        {
+          title: '핵심 개념',
+          items: [
+            '내 점수는 내 성에서 죽은 바이킹 수의 영향을 받습니다.',
+            '하지만 최고점은 남을 지원하며 얻는 지원 점수에서 크게 갈립니다.',
+            '그래서 본성 비우기 + 접속자 우선 지원이 가장 강한 운영입니다.',
+          ],
+        },
+        {
+          title: '공격 라운드 · 타겟',
+          table: {
+            head: ['구간', '타겟'],
+            rows: [
+              ['1~6', '전체 멤버'],
+              ['7 / 14 / 17', '접속 중인 멤버만'],
+              ['8~9 / 11~13 / 15~16 / 18~19', '전체 멤버'],
+              ['10 / 20', '연맹 HQ만'],
+              ['비접속자', '7·14·17에서는 공격받지 않음'],
+              ['권장 HQ', '평원(Plains) HQ 선호'],
+            ],
+          },
+          note: '접속자만 공격하는 라운드가 있어서, 지원은 접속자부터 넣는 것이 가장 효율적입니다.',
+        },
+        {
+          title: '10 / 20 라운드 HQ 방어',
+          items: [
+            '10·20 라운드는 바이킹 왕이 HQ만 공격합니다.',
+            '9·19가 완전히 끝난 뒤에만 병력을 회수하세요 (일찍 빼면 지원 점수 손해).',
+            '강한 1개 행군(보병 위주)을 HQ로 보내 방어합니다.',
+            'HQ 방어가 끝나면 원래 지원하던 연맹원에게 복귀합니다.',
+          ],
+        },
+      ],
+      keyTips: [
+        {
+          text: '경비초소에 수비할 영웅 3명을 꼭 지정하세요. 이 영웅 + 지원받은 병력이 바이킹과 싸웁니다. 영웅을 전부 밖으로 내보내면 영웅 없이 싸우게 되어 패배할 수 있어요. 바이킹 이벤트 때는 「방어 영웅 출정 불가」 체크박스를 켜서 주 영웅이 나가지 않게 하세요. (영웅 전용 장비에 수성부대 툴팁이 있으면 방어에도 함께 적용되니 확인하세요.)',
+          level: 'critical',
+          image: 'guard',
+        },
+        { text: '지원 병력은 1인당 250K 정도로 맞추세요. 한 사람에게 너무 많이 몰리면 지원자끼리 점수를 나눠 가져 전체 점수가 떨어집니다. 지원자가 많은 쪽이면 지원이 부족한 곳으로 옮기세요.', level: 'important' },
+        { text: '내 성에 보병·기병이 남아 있으면 지원군의 킬을 가로채 동료 점수를 깎습니다. 가능한 한 본성을 비우세요.' },
+        { text: '지원 점수가 핵심 — 지원군이 만든 킬은 내 지원 점수로 별도 생성됩니다. 상대 점수를 뺏는 구조가 아니에요.' },
+        { text: '오프라인 유저는 병력이 성에 남아 있을 확률이 높으니, 접속자부터 협업하세요.' },
+        { text: 'HQ 방어용 강한 1개 행군을 미리 정해두고, 끝나면 즉시 지원으로 복귀하세요.' },
+        { text: '이벤트 도중에는 치료 금지. 치료로 병력이 복귀하면 지원군 점수를 뺏을 수 있습니다.' },
+        { text: '행군 대열이 부족해 전 병력을 못 빼면, 본성엔 궁병만 남기고 보/기는 최대한 밖으로 지원 보내세요.' },
+      ],
+      strategy: [
+        {
+          title: '점수 구조',
+          items: [
+            '내 성 점수: 내 성에서 바이킹이 죽을수록 올라갑니다. 100% 처리하면 점수도 100%에 가깝게.',
+            '지원 점수(핵심): 지원군이 만든 킬이 내 지원 점수로 별도 생성됩니다. 상대 점수를 뺏는 구조가 아닙니다.',
+            '역할 분담이 잘 되면 양쪽 모두 점수를 크게 끌어올릴 수 있습니다.',
+          ],
+        },
+        {
+          title: '고득점 플레이 흐름',
+          steps: [
+            {
+              n: '1',
+              title: '초기 지원 (0~19 유지)',
+              items: [
+                '접속 중인 연맹원 6명 전후에게 지원을 보냅니다.',
+                '지원 병력은 보병+기병 중심, 초보·신서버는 보병 100%도 효율적.',
+                '내 성의 보/기가 남으면 지원군 점수를 뺏으니 먼저 밖으로 빼세요.',
+              ],
+            },
+            {
+              n: '2',
+              title: '본부 방어 (10 / 20)',
+              items: ['10·20은 바이킹 왕이 HQ만 공격합니다.', '9·19가 끝난 뒤 강한 1개 행군(보병 위주)을 HQ로 보냅니다.'],
+            },
+            {
+              n: '3',
+              title: '연맹 협업 문구',
+              copy: '내가 19라운드까지 지원 유지할게요. 궁병 제외한 보/기는 다른 곳으로 지원 보내서 성을 비워주세요.',
+              items: ['오프라인 유저는 병력이 성에 남아 있을 확률이 높아, 접속자부터 협업하는 것이 좋습니다.'],
+            },
+            {
+              n: '4',
+              title: '본성 수성 (점수 몰아주기)',
+              items: [
+                '내 성 방어는 궁병 100%로 운영해도 됩니다. 고웨이브 3턴까지 가도 점수 영향은 작은 경우가 많습니다.',
+                '친한 유저에게 보병 지원을 받아 내 성 점수를 몰아주는 운영도 가능.',
+                '지원군이 약하면 궁병 턴까지 가서 궁병이 킬을 먹습니다(지원군 세기 부족).',
+              ],
+            },
+          ],
+        },
+      ],
+      setup: [
+        {
+          title: '본성 수성 — 왜 비우나',
+          items: [
+            '내 성에 병력이 남으면 바이킹과 싸워 킬을 가져갑니다.',
+            '그 킬은 내 이득보다 지원해준 동료 점수를 깎는 쪽에 가깝습니다.',
+            '보/기는 최대한 빼고, 필요 시 궁병만 남기는 구조가 유리합니다.',
+          ],
+        },
+        {
+          title: '병과 효율',
+          items: [
+            '보/기/궁 모두 데미지는 정상 적용됩니다.',
+            '신서버·낮은 난이도는 보병 100%가 매우 효율적, 고난이도에서도 보병은 강한 편.',
+            '후반 궁병 턴까지 가도 점수 영향은 생각보다 작은 경우가 많습니다.',
+          ],
+        },
+        {
+          title: '영웅 운용',
+          items: [
+            '지원(공격형 우선): 킬 확보가 목표 → 첸코·아마데우스·연우·아마네 같은 공격 기여 영웅.',
+            '방어형 영웅은 이 이벤트에서 효율이 낮습니다.',
+            '내 성에 남길 때: 최강 수비 영웅 3명만. 예(Gen1) F2P 제이벨/하워드/퀸, P2W 아마데우스(또는 헬가)/제이벨/사울.',
+          ],
+        },
+        {
+          title: '최종 체크리스트',
+          items: [
+            '시작 전: 접속 인원이 많은 시간대를 선택.',
+            '0~19: 접속자에게 보/기 지원, 내 성 보/기는 최대한 비우기.',
+            '7/14/17: 접속자만 공격 → 접속자 우선 지원.',
+            '10/20: 9/19 완전 종료 후 강한 1개 행군을 HQ로.',
+            '이벤트 중: 치료는 최대한 미루고, HQ 방어 끝나면 지원 복귀.',
+          ],
+        },
+      ],
+    }
+  return {
+    overview: [
+      {
+        title: 'Basic rules',
+        items: [
+          '20 waves of AI vikings attack.',
+          "Each wave is defended by killing 50%+ of the attacking force.",
+          'Targets rotate: all members / online only / HQ-only rounds.',
+          'After 2 losses your city may stop taking extra attacks, but you can still score through support.',
+        ],
+      },
+      {
+        title: 'Core idea',
+        items: [
+          'Your score is affected by vikings killed at your own castle.',
+          'But the top scores are decided by SUPPORT points — kills you help make on others.',
+          'So emptying your castle + supporting online members first is the strongest play.',
+        ],
+      },
+      {
+        title: 'Attack rounds · targets',
+        table: {
+          head: ['Range', 'Target'],
+          rows: [
+            ['1~6', 'All members'],
+            ['7 / 14 / 17', 'Online members only'],
+            ['8~9 / 11~13 / 15~16 / 18~19', 'All members'],
+            ['10 / 20', 'Alliance HQ only'],
+            ['Offline', 'Not attacked on 7 · 14 · 17'],
+            ['HQ', 'Plains HQ preferred'],
+          ],
+        },
+        note: 'Because some rounds hit online members only, sending support to online players first is the most efficient.',
+      },
+      {
+        title: 'HQ defense (rounds 10 / 20)',
+        items: [
+          'On rounds 10 · 20 the Viking King attacks the HQ only.',
+          'Pull troops back only after 9 · 19 fully end (too early = lost support points).',
+          'Send one strong march (infantry-heavy) to defend the HQ.',
+          'When HQ defense ends, return to the ally you were supporting.',
+        ],
+      },
+    ],
+    keyTips: [
+      {
+        text: 'Always assign 3 defense heroes to the guard post. These heroes + the support you receive are what fight the vikings. If you send every hero out, you fight with NO hero and can lose. During the Viking event, turn on the “Defense heroes can’t deploy” checkbox so your main heroes stay home. (If your hero-exclusive gear has a garrison-troop tooltip, it also applies on defense — check it.)',
+        level: 'critical',
+        image: 'guard',
+      },
+      { text: 'Cap support at ~250K per person. If one player gets flooded with support, the supporters split the score and the total drops. If a member already has many supporters, move your support to someone short.', level: 'important' },
+      { text: 'If infantry/cavalry stay in your castle they steal your reinforcements’ kills and cut your allies’ scores. Empty your castle as much as possible.' },
+      { text: 'Support is the key — kills your reinforcements make are created as your own support points. It never steals the other person’s score.' },
+      { text: 'Offline players likely still have troops at home, so coordinate with online players first.' },
+      { text: 'Assign one strong march for HQ defense in advance, and jump straight back to support when it ends.' },
+      { text: 'Do NOT heal during the event. Healed troops returning can steal your reinforcements’ score.' },
+      { text: 'If you lack march queues to send everything out, keep only archers at home and send infantry/cavalry out as support.' },
+    ],
+    strategy: [
+      {
+        title: 'Score structure',
+        items: [
+          'Own castle: the more vikings die at your castle, the higher your score. Clear 100% → near-100% score.',
+          'Support (key): kills your reinforcements make are created as your own support points — it never steals the other person’s score.',
+          'With good role-splitting, both sides raise their scores a lot.',
+        ],
+      },
+      {
+        title: 'High-score play flow',
+        steps: [
+          {
+            n: '1',
+            title: 'Early support (hold 0~19)',
+            items: [
+              'Send support to ~6 online alliance members.',
+              'Support troops lean infantry + cavalry; for new players / new servers 100% infantry is efficient too.',
+              'Infantry/cavalry left in your castle steal support points — move them out first.',
+            ],
+          },
+          {
+            n: '2',
+            title: 'HQ defense (10 / 20)',
+            items: ['Rounds 10 · 20: the Viking King hits the HQ only.', 'After 9 · 19 end, send one strong (infantry-heavy) march to the HQ.'],
+          },
+          {
+            n: '3',
+            title: 'Alliance coordination',
+            copy: 'I’ll keep support up until round 19. Send your infantry/cavalry (not archers) to support others and empty your castle.',
+            items: ['Offline players likely still have troops in their castle, so coordinate with online players first.'],
+          },
+          {
+            n: '4',
+            title: 'Hold your castle (funnel score)',
+            items: [
+              'Defending with 100% archers is fine. Even reaching turn 3 on high waves usually has little score impact.',
+              'You can also have close friends send infantry support to funnel score into your castle.',
+              'If your reinforcements are weak it reaches the archer turn and archers take the kills — that means support strength is short.',
+            ],
+          },
+        ],
+      },
+    ],
+    setup: [
+      {
+        title: 'Why empty your castle',
+        items: [
+          'Troops left in your castle fight the vikings and take the kills.',
+          'Those kills help you less than they cut your supporters’ score.',
+          'So push infantry/cavalry out, and keep only archers if needed.',
+        ],
+      },
+      {
+        title: 'Troop efficiency',
+        items: [
+          'Infantry / cavalry / archers all deal damage normally.',
+          '100% infantry is very efficient on new servers / low difficulty, and infantry stays strong even on high difficulty.',
+          'Even reaching the archer turn late usually has less score impact than you’d think.',
+        ],
+      },
+      {
+        title: 'Heroes',
+        items: [
+          'Support (offensive first): the goal is kills → attack-contributing heroes like Chenko, Amadeus, Yeonwoo, Amane.',
+          'Defensive heroes are low-value in this event.',
+          'Leaving heroes at home: keep only your 3 strongest defenders. e.g. Gen1 F2P Jabel/Howard/Quinn, P2W Amadeus (or Helga)/Jabel/Saul.',
+        ],
+      },
+      {
+        title: 'Final checklist',
+        items: [
+          'Before start: pick a time slot with many members online.',
+          '0~19: send inf/cav support to online members, empty your own inf/cav.',
+          '7/14/17: online-only attacks → keep supporting online players first.',
+          '10/20: after 9/19 fully end, send one strong march to the HQ.',
+          'During the event: delay healing as long as possible; return to support when HQ defense ends.',
+        ],
+      },
+    ],
+  }
+}
+
 // ---- Slots tab content ---- (troop counts in K, ~250K budget, infantry capped ~50K)
 export type Slot = { n: number; title: string; purpose: string; infK: number; cavK: number; arcK: number; note?: string }
 export type SlotCardData = { title: string; tag: string; rawK?: number; slots: Slot[] }
@@ -549,7 +1018,7 @@ export function slotsContent(lang: Lang): SlotsContent {
         '참여(JOIN) 영웅: 첸코 · 연우 · 아마네.',
       ],
       forbiddenTitle: '첫 배치(1번 영웅) 금지',
-      forbidden: ['제이빌', '헬가', '사울', '파드', '고든', '다이애나', '하워드', '퀸', '조이', '말린', '파란(블루) 영웅 전체'],
+      forbidden: ['제이벨', '헬가', '사울', '파드', '고든', '다이애나', '하워드', '퀸', '조이', '말린', '파란(블루) 영웅 전체'],
       forbiddenNote: '집결 참여 시 1번 영웅은 첸코·연우·아마네만 허용 — 그 외 모든 영웅은 1번 슬롯 금지(다른 슬롯엔 OK). 파란(블루) 등급 영웅도 처음에 넣는 사람이 있는데 전부 금지입니다. 1번 영웅의 원정 스킬만 적용되기 때문.',
       conditional: ['아마데우스', '힐데'],
       conditionalNote: '스킬레벨에 따라 1번 영웅으로 써도 됩니다 — 단 원정 스킬이 3레벨 이하면 그냥 첸코가 낫습니다.',
