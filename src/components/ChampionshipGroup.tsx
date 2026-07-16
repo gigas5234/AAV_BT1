@@ -3,26 +3,22 @@ import { useT } from '../i18n'
 
 const fmt = (n: number) => n.toLocaleString('en-US')
 
+type GroupResult = { tag: string; won: boolean; scoreLabel: string; hasReport: boolean }
+
 export default function ChampionshipGroup({
   group,
-  matchedTag,
-  won,
-  scoreLabel,
+  results,
   onOpenReport,
-  scoutTag,
+  scoutTags,
   onOpenScout,
 }: {
   group: ChampAlliance[]
-  /** tag of the alliance we were matched against (has a report) */
-  matchedTag?: string
-  /** result vs the matched opponent */
-  won?: boolean
-  /** e.g. "2 : 1" */
-  scoreLabel?: string
-  onOpenReport?: () => void
-  /** tag of an upcoming opponent we have scouting for */
-  scoutTag?: string
-  onOpenScout?: () => void
+  /** finished matches (score badge; tappable only when hasReport) */
+  results?: GroupResult[]
+  onOpenReport?: (tag: string) => void
+  /** tags of upcoming opponents we have scouting for */
+  scoutTags?: string[]
+  onOpenScout?: (tag: string) => void
 }) {
   const t = useT()
   return (
@@ -41,12 +37,12 @@ export default function ChampionshipGroup({
 
       <ul className="space-y-2">
         {group.map((a) => {
-          const matched = !!matchedTag && a.tag === matchedTag
-          const scoutable = !!scoutTag && a.tag === scoutTag
+          const result = results?.find((r) => r.tag === a.tag)
+          const scoutable = !!scoutTags && scoutTags.includes(a.tag)
           const rowClass = a.us
             ? 'border-emerald-400/50 bg-emerald-400/10'
-            : matched
-            ? `${won ? 'border-emerald-400/40' : 'border-red-400/40'} bg-white/[0.04]`
+            : result
+            ? `${result.won ? 'border-emerald-400/40' : 'border-red-400/40'} bg-white/[0.04]`
             : scoutable
             ? 'border-sky-400/40 bg-sky-400/[0.05]'
             : 'border-white/10 bg-white/[0.04]'
@@ -58,14 +54,14 @@ export default function ChampionshipGroup({
                   <span className="text-slate-400">[{a.tag}]</span>
                   {a.name}
                   {a.us && <span className="ml-1.5 text-[10px] font-bold text-emerald-300">{t('champ.us')}</span>}
-                  {matched && (
+                  {result && (
                     <span
-                      className={`ml-1.5 rounded-md px-1.5 py-0.5 text-[10px] font-bold ${won ? 'bg-emerald-400/20 text-emerald-300' : 'bg-red-500/20 text-red-300'}`}
+                      className={`ml-1.5 rounded-md px-1.5 py-0.5 text-[10px] font-bold ${result.won ? 'bg-emerald-400/20 text-emerald-300' : 'bg-red-500/20 text-red-300'}`}
                     >
-                      {won ? t('champ.win') : t('champ.loss')} {scoreLabel}
+                      {result.won ? t('champ.win') : t('champ.loss')} {result.scoreLabel}
                     </span>
                   )}
-                  {scoutable && (
+                  {scoutable && !result && (
                     <span className="ml-1.5 rounded-md bg-sky-400/20 px-1.5 py-0.5 text-[10px] font-bold text-sky-300">
                       {t('champ.nextOpp')}
                     </span>
@@ -80,7 +76,7 @@ export default function ChampionshipGroup({
                   </span>
                 </p>
               </div>
-              {matched && (
+              {result?.hasReport && (
                 <span className="flex shrink-0 items-center gap-0.5 rounded-lg bg-amber-400/15 px-2 py-1 text-[11px] font-semibold text-amber-300">
                   {t('champ.viewReport')}
                   <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2">
@@ -88,7 +84,7 @@ export default function ChampionshipGroup({
                   </svg>
                 </span>
               )}
-              {scoutable && (
+              {scoutable && !result?.hasReport && (
                 <span className="flex shrink-0 items-center gap-0.5 rounded-lg bg-sky-400/15 px-2 py-1 text-[11px] font-semibold text-sky-300">
                   {t('champ.scout')}
                   <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2">
@@ -99,7 +95,12 @@ export default function ChampionshipGroup({
             </>
           )
           const cls = `flex w-full items-center gap-3 rounded-2xl border px-3.5 py-3 text-left ${rowClass}`
-          const onClick = matched && onOpenReport ? onOpenReport : scoutable && onOpenScout ? onOpenScout : undefined
+          const onClick =
+            result?.hasReport && onOpenReport
+              ? () => onOpenReport(a.tag)
+              : scoutable && onOpenScout
+              ? () => onOpenScout(a.tag)
+              : undefined
           return (
             <li key={a.state}>
               {onClick ? (

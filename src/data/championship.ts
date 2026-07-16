@@ -192,9 +192,111 @@ const SCOUT_HMB: ChampScout = {
   ],
 }
 
+// THE (EternalThrones) — an upcoming match. Middle route has 18 registered members (#19–20 unregistered).
+const SCOUT_THE: ChampScout = {
+  oppTag: 'THE',
+  opp: 'EternalThrones',
+  routes: [
+    {
+      id: 'left',
+      members: [
+        { order: 1, name: 'Rozvi', power: 914 },
+        { order: 2, name: 'Supah', power: 1021 },
+        { order: 3, name: 'SmaKal ETERNAL', power: 1046 },
+        { order: 4, name: 'FLOKI', power: 1080 },
+        { order: 5, name: 'riff', power: 1084 },
+        { order: 6, name: 'rukus1234', power: 1118 },
+        { order: 7, name: 'ZoeGaWa BANDIT', power: 1168 },
+        { order: 8, name: 'Irving1043', power: 1178 },
+        { order: 9, name: 'Gladiator', power: 1246 },
+        { order: 10, name: 'NAIROBI', power: 1258 },
+        { order: 11, name: 'Malice ETERNAL', power: 1277 },
+        { order: 12, name: 'Shisui', power: 1301 },
+        { order: 13, name: 'HAN', power: 1304 },
+        { order: 14, name: 'Absolute', power: 1306 },
+        { order: 15, name: 'Stryfe', power: 1315 },
+        { order: 16, name: '五星級將軍', power: 1338 },
+        { order: 17, name: 'Pakasimbang', power: 1339 },
+        { order: 18, name: 'Chooty', power: 1436 },
+        { order: 19, name: 'Bumi', power: 1442 },
+        { order: 20, name: 'King Moon', power: 2024 },
+      ],
+    },
+    {
+      id: 'mid',
+      members: [
+        { order: 1, name: 'MeisyaMaya 182', power: 1192 },
+        { order: 2, name: 'GaZaX WARRIOR', power: 1195 },
+        { order: 3, name: 'Bayone', power: 1232 },
+        { order: 4, name: 'WHITE RABBIT', power: 1266 },
+        { order: 5, name: 'Zero', power: 1292 },
+        { order: 6, name: 'Break Of Dawn', power: 1306 },
+        { order: 7, name: 'MorningStar', power: 1310 },
+        { order: 8, name: 'Zoe', power: 1310 },
+        { order: 9, name: 'Can tan Thai', power: 1341 },
+        { order: 10, name: 'MINATO yondaime', power: 1343 },
+        { order: 11, name: 'Cúp3büNñy', power: 1344 },
+        { order: 12, name: 'TOKYO', power: 1345 },
+        { order: 13, name: 'sam', power: 1354 },
+        { order: 14, name: 'STOCKHOLM', power: 1363 },
+        { order: 15, name: 'DENVER', power: 1364 },
+        { order: 16, name: 'M3HNET', power: 1385 },
+        { order: 17, name: "William'", power: 1430 },
+        { order: 18, name: 'Arikanami', power: 1554 },
+      ],
+    },
+    {
+      id: 'right',
+      members: [
+        { order: 1, name: 'Luciano', power: 925 },
+        { order: 2, name: 'simracing', power: 948 },
+        { order: 3, name: 'MoonLight', power: 962 },
+        { order: 4, name: 'SiphonalMovie27', power: 964 },
+        { order: 5, name: 'KokoLokko', power: 981 },
+        { order: 6, name: 'Alhafiz³7', power: 1006 },
+        { order: 7, name: 'Gofchi DEVIL', power: 1055 },
+        { order: 8, name: '吉利小熊', power: 1063 },
+        { order: 9, name: 'SIMBA BANDIT', power: 1064 },
+        { order: 10, name: 'Zane', power: 1072 },
+        { order: 11, name: 'Nightrae', power: 1084 },
+        { order: 12, name: "Beatrix's", power: 1177 },
+        { order: 13, name: 'AryaTheDistroyer', power: 1206 },
+        { order: 14, name: 'IMLC EMPIRE', power: 1273 },
+        { order: 15, name: 'Karyn', power: 1332 },
+        { order: 16, name: 'BEATLES ETERNAL', power: 1337 },
+        { order: 17, name: 'Emp1xC', power: 1341 },
+        { order: 18, name: 'Linting', power: 1343 },
+        { order: 19, name: 'Kesatria BANDIT', power: 1469 },
+        { order: 20, name: 'T angerine', power: 1850 },
+      ],
+    },
+  ],
+}
+
+// A finished match result. Full write-ups live in champReports (keyed by oppTag); a
+// result without a report just shows the score badge.
+export type ChampResult = { oppTag: string; usScore: number; oppScore: number }
+
 // One matchup per date — add a new round entry each day; newest first.
-export type ChampRound = { date: string; label: string; routes: ChampRoute[]; group: ChampAlliance[]; scout?: ChampScout }
+export type ChampRound = {
+  date: string
+  label: string
+  routes: ChampRoute[]
+  group: ChampAlliance[]
+  results?: ChampResult[]
+  scouts?: ChampScout[]
+}
 
 export const CHAMP_ROUNDS: ChampRound[] = [
-  { date: '2026-07-15', label: '7/15', routes: ROUTES_0715, group: GROUP_0715, scout: SCOUT_HMB },
+  {
+    date: '2026-07-15',
+    label: '7/15',
+    routes: ROUTES_0715,
+    group: GROUP_0715,
+    results: [
+      { oppTag: 'RCb', usScore: 2, oppScore: 1 },
+      { oppTag: 'HMB', usScore: 2, oppScore: 1 },
+    ],
+    scouts: [SCOUT_HMB, SCOUT_THE],
+  },
 ]

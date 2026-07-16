@@ -13,17 +13,25 @@ export default function ChampionshipMatchup() {
   const lang = useLang()
   const reports = champReports(lang)
   const [idx, setIdx] = useState(0)
-  const [reportOpen, setReportOpen] = useState(false)
-  const [scoutOpen, setScoutOpen] = useState(false)
+  const [reportTag, setReportTag] = useState<string | null>(null)
+  const [scoutTag, setScoutTag] = useState<string | null>(null)
   const round = CHAMP_ROUNDS[idx]
-  const report = reports.find((r) => r.date === round.date)
-  const scout = round.scout
-  const won = report ? report.usScore > report.oppScore : false
+  const scouts = round.scouts ?? []
+  const openScout = scouts.find((s) => s.oppTag === scoutTag)
+  const openReport = reports.find((r) => r.oppTag === reportTag)
+
+  // finished matches: score badge for all, tappable report only where a write-up exists
+  const groupResults = (round.results ?? []).map((res) => ({
+    tag: res.oppTag,
+    won: res.usScore > res.oppScore,
+    scoreLabel: `${res.usScore} : ${res.oppScore}`,
+    hasReport: reports.some((r) => r.oppTag === res.oppTag),
+  }))
 
   const pick = (i: number) => {
     setIdx(i)
-    setReportOpen(false)
-    setScoutOpen(false)
+    setReportTag(null)
+    setScoutTag(null)
   }
 
   return (
@@ -56,18 +64,16 @@ export default function ChampionshipMatchup() {
       <div key={round.date} className="tabfade space-y-3">
         <ChampionshipGroup
           group={round.group}
-          matchedTag={report?.oppTag}
-          won={won}
-          scoreLabel={report ? `${report.usScore} : ${report.oppScore}` : undefined}
-          onOpenReport={report ? () => setReportOpen(true) : undefined}
-          scoutTag={scout?.oppTag}
-          onOpenScout={scout ? () => setScoutOpen(true) : undefined}
+          results={groupResults}
+          onOpenReport={(tag) => setReportTag(tag)}
+          scoutTags={scouts.map((s) => s.oppTag)}
+          onOpenScout={(tag) => setScoutTag(tag)}
         />
         <ChampionshipLineup routes={round.routes} />
       </div>
 
-      {report && reportOpen && <ReportModal report={report} onClose={() => setReportOpen(false)} />}
-      {scout && scoutOpen && <ScoutModal scout={scout} ourRoutes={round.routes} onClose={() => setScoutOpen(false)} />}
+      {openReport && <ReportModal report={openReport} onClose={() => setReportTag(null)} />}
+      {openScout && <ScoutModal scout={openScout} ourRoutes={round.routes} onClose={() => setScoutTag(null)} />}
     </div>
   )
 }

@@ -8,6 +8,20 @@ import supportConfirmImg from '../assets/events/viking-support-confirm.webp'
 
 const CARD_IMG: Record<string, string> = { send: supportSendImg, confirm: supportConfirmImg }
 
+/** Render inline `**...**` markers as a strong amber highlight (used for the Plains HQ 70k cap). */
+function hi(text: string) {
+  if (!text.includes('**')) return text
+  return text.split(/\*\*(.+?)\*\*/g).map((seg, i) =>
+    i % 2 === 1 ? (
+      <mark key={i} className="mx-0.5 rounded bg-amber-300 px-1 font-extrabold text-[#3a2600]">
+        {seg}
+      </mark>
+    ) : (
+      seg
+    ),
+  )
+}
+
 function CopyLine({ text }: { text: string }) {
   const t = useT()
   const [done, setDone] = useState(false)
@@ -52,7 +66,7 @@ function Card({ c }: { c: VikingCard }) {
           {c.items.map((it, i) => (
             <li key={i} className="flex gap-2">
               <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-slate-500" />
-              <span>{it}</span>
+              <span>{hi(it)}</span>
             </li>
           ))}
         </ul>
@@ -71,7 +85,7 @@ function Card({ c }: { c: VikingCard }) {
               {c.table.rows.map((r, i) => (
                 <tr key={i} className="border-t border-white/5">
                   <td className="py-2 pl-3 pr-2 font-mono text-[12px] font-semibold text-sky-300">{r[0]}</td>
-                  <td className="py-2 pl-2 pr-3 text-[13px] text-slate-200">{r[1]}</td>
+                  <td className="py-2 pl-2 pr-3 text-[13px] text-slate-200">{hi(r[1])}</td>
                 </tr>
               ))}
             </tbody>
@@ -92,7 +106,7 @@ function Card({ c }: { c: VikingCard }) {
                   {s.items.map((it, i) => (
                     <li key={i} className="flex gap-2">
                       <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-slate-500" />
-                      <span>{it}</span>
+                      <span>{hi(it)}</span>
                     </li>
                   ))}
                 </ul>
@@ -190,7 +204,7 @@ function KeyTips({ tips, compare }: { tips: VikingTip[]; compare: VikingCompare 
           return (
             <div key={i} className="rounded-2xl border border-red-500/50 bg-red-500/[0.08] p-4">
               <span className="inline-flex items-center gap-1 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white">★ {t('champ.critical')}</span>
-              <p className="mt-2 text-[13.5px] font-medium leading-relaxed text-red-50">{tip.text}</p>
+              <p className="mt-2 text-[13.5px] font-medium leading-relaxed text-red-50">{hi(tip.text)}</p>
               {tip.image === 'guard' && (
                 <img src={guardImg} alt="" className="mt-3 w-full rounded-xl border border-white/10" />
               )}
@@ -200,7 +214,7 @@ function KeyTips({ tips, compare }: { tips: VikingTip[]; compare: VikingCompare 
           return (
             <div key={i} className="rounded-2xl border border-amber-400/45 bg-amber-400/[0.1] p-4">
               <span className="rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-[#3a2600]">{t('champ.important')}</span>
-              <p className="mt-2 text-[13.5px] font-medium leading-relaxed text-amber-100">{tip.text}</p>
+              <p className="mt-2 text-[13.5px] font-medium leading-relaxed text-amber-100">{hi(tip.text)}</p>
             </div>
           )
         return (
@@ -208,7 +222,7 @@ function KeyTips({ tips, compare }: { tips: VikingTip[]; compare: VikingCompare 
             <svg viewBox="0 0 24 24" className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" fill="currentColor" aria-hidden="true">
               <path d="M13 2 3 14h7l-1 8 10-12h-7z" />
             </svg>
-            <span className="text-[13px] leading-relaxed text-slate-200">{tip.text}</span>
+            <span className="text-[13px] leading-relaxed text-slate-200">{hi(tip.text)}</span>
           </div>
         )
       })}

@@ -173,15 +173,31 @@ function PlanTab({ scout, ourRoutes }: { scout: ChampScout; ourRoutes: ChampRout
   const lang = useLang()
   const c = champScout(lang)
 
-  const strong = Math.max(...ourRoutes.filter((r) => r.kind === 'strong').map(routeTotal))
+  // our two strong lines (equal-ish) and the one rest line
+  const strongLines = ourRoutes.filter((r) => r.kind === 'strong').map(routeTotal).sort((a, b) => b - a)
   const restRoute = ourRoutes.find((r) => r.kind === 'rest')
   const rest = restRoute ? routeTotal(restRoute) : 0
-  const hmb = (id: RouteId) => scoutTotal(scout.routes.find((r) => r.id === id)!)
 
-  const pairs: { ours: number; oursKey: string; hmb: RouteId; diff: number; win: boolean }[] = [
-    { ours: strong, oursKey: 'champ.strongLine', hmb: 'left', diff: strong - hmb('left'), win: strong > hmb('left') },
-    { ours: strong, oursKey: 'champ.strongLine', hmb: 'right', diff: strong - hmb('right'), win: strong > hmb('right') },
-    { ours: rest, oursKey: 'champ.restLine', hmb: 'mid', diff: rest - hmb('mid'), win: rest > hmb('mid') },
+  // enemy routes ranked strongest → weakest
+  const enemyRanked = [...scout.routes].sort((a, b) => scoutTotal(b) - scoutTotal(a))
+  const strongestEnemy = enemyRanked[0]
+  const weakerEnemies = enemyRanked.slice(1) // the two weaker routes
+
+  // sacrifice the rest line into the enemy's strongest; strong lines take the two weaker
+  const pairs: { ours: number; oursKey: string; enemy: RouteId; et: number; diff: number; win: boolean }[] = [
+    ...weakerEnemies.map((e, i) => {
+      const ours = strongLines[i] ?? strongLines[strongLines.length - 1] ?? 0
+      const et = scoutTotal(e)
+      return { ours, oursKey: 'champ.strongLine', enemy: e.id, et, diff: ours - et, win: ours > et }
+    }),
+    {
+      ours: rest,
+      oursKey: 'champ.restLine',
+      enemy: strongestEnemy.id,
+      et: scoutTotal(strongestEnemy),
+      diff: rest - scoutTotal(strongestEnemy),
+      win: rest > scoutTotal(strongestEnemy),
+    },
   ]
 
   return (
@@ -194,7 +210,7 @@ function PlanTab({ scout, ourRoutes }: { scout: ChampScout; ourRoutes: ChampRout
       {/* pairing rows */}
       <section className="space-y-2">
         {pairs.map((p, i) => {
-          const s = ROUTE_STYLE[p.hmb]
+          const s = ROUTE_STYLE[p.enemy]
           return (
             <div
               key={i}
@@ -207,8 +223,8 @@ function PlanTab({ scout, ourRoutes }: { scout: ChampScout; ourRoutes: ChampRout
                 <p className="mt-0.5 flex items-center gap-1.5 text-[12px] text-slate-400">
                   <span>{t('champ.vs')}</span>
                   <span className="h-2 w-2 rounded-full" style={{ background: s.accent }} />
-                  <span>HMB {t(s.labelKey)}</span>
-                  <span className="font-mono text-slate-500">({fmt(hmb(p.hmb))})</span>
+                  <span>{scout.oppTag} {t(s.labelKey)}</span>
+                  <span className="font-mono text-slate-500">({fmt(p.et)})</span>
                 </p>
               </div>
               <div className="shrink-0 text-right">
