@@ -2,8 +2,83 @@ import { useState } from 'react'
 import { governorContent, useLang, useT, type GovStatus } from '../i18n'
 import vsImg from '../assets/events/governor-vs.webp'
 import castleMapImg from '../assets/events/castle-map.webp'
+import CastleAttackSetup from './CastleAttackSetup'
+import CastleDefenseSetup from './CastleDefenseSetup'
+import CastleHealing from './CastleHealing'
 
 const DAY_ACCENT = '#e2a13a'
+
+/**
+ * Collapsible group for the castle attack/defense setups. Collapsed it still shows the
+ * key values as chips plus an Open pill, so it reads as tappable and worth tapping.
+ */
+function SetupGroup({
+  accent,
+  icon,
+  title,
+  label,
+  chips,
+  hint,
+  openLabel,
+  closeLabel,
+  open,
+  onToggle,
+  children,
+}: {
+  accent: string
+  icon: JSX.Element
+  title: string
+  /** Optional emphasis badge next to the title (e.g. "IMPORTANT"). */
+  label?: string
+  chips: string[]
+  hint: string
+  openLabel: string
+  closeLabel: string
+  open: boolean
+  onToggle: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <section className="overflow-hidden rounded-2xl border-2" style={{ borderColor: `${accent}66`, background: `${accent}0f` }}>
+      <button onClick={onToggle} aria-expanded={open} className="flex w-full items-center gap-2.5 px-3.5 py-3 text-left">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl" style={{ background: `${accent}26`, color: accent }}>
+          {icon}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="flex flex-wrap items-center gap-1.5">
+            <span className="text-[15px] font-bold text-white">{title}</span>
+            {label && (
+              <span className="rounded-full bg-red-500 px-1.5 py-0.5 text-[9px] font-extrabold tracking-wide text-white ring-1 ring-red-300/50">
+                {label}
+              </span>
+            )}
+          </span>
+          {open ? (
+            <span className="mt-0.5 block text-[11px] text-slate-400">{hint}</span>
+          ) : (
+            <span className="mt-1 flex flex-wrap gap-1">
+              {chips.map((c, i) => (
+                <span key={i} className="rounded-md px-1.5 py-0.5 text-[10.5px] font-bold" style={{ background: `${accent}26`, color: accent }}>
+                  {c}
+                </span>
+              ))}
+            </span>
+          )}
+        </span>
+        <span
+          className="flex shrink-0 items-center gap-0.5 rounded-full px-2.5 py-1 text-[11px] font-extrabold"
+          style={{ background: accent, color: '#1a1200' }}
+        >
+          {open ? closeLabel : openLabel}
+          <svg viewBox="0 0 24 24" className={`h-3.5 w-3.5 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="3">
+            <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+      </button>
+      {open && <div className="accopen px-3.5 pb-3.5">{children}</div>}
+    </section>
+  )
+}
 
 /** A colored status cell for the item × day matrix. */
 function Cell({ s }: { s: GovStatus }) {
@@ -19,6 +94,7 @@ export default function GovernorEvent({ section }: { section: string }) {
   const lang = useLang()
   const c = governorContent(lang)
   const [day, setDay] = useState(0) // index 0..4
+  const [openSetup, setOpenSetup] = useState<'atk' | 'def' | 'heal' | null>(null)
   const [openStep, setOpenStep] = useState<Set<number>>(new Set())
   const toggleStep = (i: number) =>
     setOpenStep((prev) => {
@@ -151,6 +227,25 @@ export default function GovernorEvent({ section }: { section: string }) {
     const phaseAccent: Record<string, string> = { before: '#e2a13a', during: '#f87171', after: '#34d399' }
     return (
       <div className="space-y-3 px-4 pt-4">
+        {/* alliance notice — the single most important rule of the day */}
+        <section className="rounded-2xl border-2 border-red-500 bg-red-500/[0.12] p-4">
+          <h3 className="flex items-center gap-1.5 text-[14px] font-extrabold text-red-100">
+            <svg viewBox="0 0 24 24" className="h-4.5 w-4.5 shrink-0" fill="currentColor" aria-hidden="true">
+              <path d="M12 2 1 21h22z" />
+              <path d="M12 9v5M12 17v.01" stroke="#7f1d1d" strokeWidth="1.6" strokeLinecap="round" />
+            </svg>
+            {cb.notice.title}
+          </h3>
+          <ul className="mt-2 space-y-1.5">
+            {cb.notice.lines.map((l, i) => (
+              <li key={i} className="flex gap-2 text-[13px] font-semibold leading-relaxed text-red-50">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-red-300" />
+                <span>{l}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
         <div>
           <h2 className="text-lg font-bold text-white">{cb.title}</h2>
           <p className="mt-1 text-[13px] leading-relaxed text-slate-300">{cb.intro}</p>
@@ -186,7 +281,67 @@ export default function GovernorEvent({ section }: { section: string }) {
                 </ul>
               </section>
 
-              {/* the minute-by-minute playbook lives under "during" */}
+              {/* attack/defense settings + the minute-by-minute playbook live under "during" */}
+              {p.key === 'during' && (
+                <>
+                  <SetupGroup
+                    accent="#f5b301"
+                    icon={
+                      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
+                        <path d="M14.5 3H20v5.5l-9 9-2 .5.5-2zM6 15l3 3M4.5 17.5 3 21l3.5-1.5z" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    }
+                    title={cb.atkTitle}
+                    chips={cb.atkChips}
+                    hint={cb.grpHint}
+                    openLabel={cb.grpOpen}
+                    closeLabel={cb.grpClose}
+                    open={openSetup === 'atk'}
+                    onToggle={() => setOpenSetup((v) => (v === 'atk' ? null : 'atk'))}
+                  >
+                    <CastleAttackSetup cb={cb} />
+                  </SetupGroup>
+
+                  <SetupGroup
+                    accent="#34d399"
+                    icon={
+                      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
+                        <path d="M12 3l7 3v5c0 4.2-2.8 7.5-7 9-4.2-1.5-7-4.8-7-9V6z" strokeLinejoin="round" />
+                        <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    }
+                    title={cb.defTitle}
+                    chips={cb.defChips}
+                    hint={cb.grpHint}
+                    openLabel={cb.grpOpen}
+                    closeLabel={cb.grpClose}
+                    open={openSetup === 'def'}
+                    onToggle={() => setOpenSetup((v) => (v === 'def' ? null : 'def'))}
+                  >
+                    <CastleDefenseSetup cb={cb} />
+                  </SetupGroup>
+
+                  <SetupGroup
+                    accent="#38bdf8"
+                    icon={
+                      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
+                        <path d="M9 3h6v4h4v6h-4v4H9v-4H5V7h4z" strokeLinejoin="round" />
+                        <path d="M7 20h10" strokeLinecap="round" />
+                      </svg>
+                    }
+                    title={cb.heal.title}
+                    label={cb.heal.label}
+                    chips={cb.heal.chips}
+                    hint={cb.grpHint}
+                    openLabel={cb.grpOpen}
+                    closeLabel={cb.grpClose}
+                    open={openSetup === 'heal'}
+                    onToggle={() => setOpenSetup((v) => (v === 'heal' ? null : 'heal'))}
+                  >
+                    <CastleHealing cb={cb} />
+                  </SetupGroup>
+                </>
+              )}
               {p.key === 'during' && (
                 <div className="space-y-2 rounded-2xl border border-red-400/25 bg-red-500/[0.04] p-3">
                   <div className="px-1">

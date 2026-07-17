@@ -1255,11 +1255,63 @@ export type CastleStep = {
   groups: { label?: string; items: string[] }[]
 }
 export type CastleBattle = {
+  /** Top-of-section alliance notice: no solo action. */
+  notice: { title: string; lines: string[] }
   title: string
   intro: string
   mapCaption: string
   phases: CastlePhase[]
   warn: string
+  /** Collapsed-header affordance for the two setup groups. */
+  grpOpen: string
+  grpClose: string
+  grpHint: string
+  /** Settings to copy when joining a castle rally as an attacker. */
+  atkTitle: string
+  atkChips: string[]
+  atkLead: string
+  atkHero: { caption: string; badge: string; note: string }
+  atkRatio: { caption: string; badge: string; note: string }
+  /** Tower defense: two valid setups each — pick whichever is stronger for you. */
+  defTitle: string
+  defChips: string[]
+  defLead: string
+  defPick: string
+  defRatioTitle: string
+  defRatioOpts: { label: string; value: string }[]
+  defRatioNote: string
+  defHeroTitle: string
+  /** Each option = who sits in hero slot 1; slots 2–3 are free. */
+  defHeroOpts: { label: string; badge: string }[]
+  defHeroNote: string
+  /** Shared label for the dimmed hero slots 2–3 (attack and defense). */
+  heroFree: string
+  /** Alliance batch healing — heal in 15–20 min chunks on alliance help, no speedups. */
+  heal: {
+    title: string
+    label: string
+    chips: string[]
+    lead: string
+    stepsTitle: string
+    steps: string[]
+    loopTitle: string
+    loop: string[]
+    rulesTitle: string
+    rules: { ok: boolean; text: string }[]
+    /** The infirmary screenshot: only the troop count and the heal timer matter. */
+    shotCaption: string
+    shotBadgeQty: string
+    shotBadgeTime: string
+    shotNote: string
+    whyTitle: string
+    why: string[]
+    /** Why the healable amount differs per player. */
+    varyTitle: string
+    varyIntro: string
+    varyFactors: string[]
+    varyNote: string
+    caution: string
+  }
   timelineTitle: string
   timelineNote: string
   timeline: CastleStep[]
@@ -1390,6 +1442,14 @@ export function governorContent(lang: Lang): GovernorContent {
         { item: '제작 망치', days: ['no', 'no', 'no', 'best', 'best'] },
       ],
       castle: {
+        notice: {
+          title: '성 전투 · 개인 행동 금지',
+          lines: [
+            '성 전투 중에는 개인 행동을 하지 말아 주세요.',
+            '개인으로는 이길 수 없습니다 — 적에게 포인트만 넘겨주게 됩니다.',
+            '단체 행동과 오더를 꼭 따라주시면 감사하겠습니다.',
+          ],
+        },
         title: '성 전투 · 도시 공격 규칙',
         intro: '성 전투(캐슬 배틀) 전후로 양쪽 왕국에서 도시·타일을 공격할 수 있는 시간대가 정해져 있습니다. 시간은 모두 UTC 기준.',
         mapCaption: '우리 진영(1974)과 캐슬·포탑 배치. 노란 구역이 우리 쪽입니다.',
@@ -1417,6 +1477,81 @@ export function governorContent(lang: Lang): GovernorContent {
           },
         ],
         warn: '도시가 잘못된 편(경계 반대쪽)에 있으면 5분 전 경고가 표시됩니다.',
+        grpOpen: '열기',
+        grpClose: '닫기',
+        grpHint: '탭해서 내 설정 확인',
+        atkTitle: '집결 공격',
+        atkChips: ['1번 = 첸코', '50 / 20 / 30'],
+        atkLead: '캐슬 집결에 참여할 때는 아래 두 가지를 그대로 맞추세요. 이 두 개만 틀려도 내 병력이 제 몫을 못 합니다.',
+        atkHero: {
+          caption: '영웅 배치 — 1번 영웅은 반드시 첸코',
+          badge: '1번 = 첸코',
+          note: '집결 참여자는 병력 + 1번 영웅의 1번 원정 스킬만 적용됩니다. 맨 왼쪽 자리에 첸코가 없으면 치명 +25%가 통째로 사라집니다. (첸코가 없으면 연우 · 아마네 순)',
+        },
+        atkRatio: {
+          caption: '병력 비율 — 50 / 20 / 30 유지',
+          badge: '50 / 20 / 30',
+          note: '보병 50 · 기병 20 · 궁병 30. 캐슬 공격은 보병이 앞에서 버텨줘야 뒤의 딜이 들어갑니다. 임의로 궁병을 올리지 마세요.',
+        },
+        defTitle: '타워 수비',
+        defChips: ['1번 = 하워드 / 고든', '60/40/0 · 60/20/20'],
+        defLead: '수비는 비율·영웅 각각 두 가지 세팅이 모두 가능합니다. 둘 중 아무거나 골라도 되고, 본인 병력과 영웅 기준으로 더 강한 쪽으로 맞추면 됩니다.',
+        defPick: '2가지 다 가능 · 더 강한 쪽 선택',
+        defRatioTitle: '방어 병력 비율',
+        defRatioOpts: [
+          { label: '옵션 A', value: '보병 60 · 기병 40 · 궁병 0' },
+          { label: '옵션 B', value: '보병 60 · 기병 20 · 궁병 20' },
+        ],
+        defRatioNote: '두 세팅 모두 보병 60은 그대로입니다. 차이는 나머지 40을 기병에 몰아주느냐(A), 기병·궁병에 반씩 나누느냐(B)뿐입니다. 본인 병력이 더 강한 쪽으로 고르세요.',
+        defHeroTitle: '방어 영웅 — 1번 자리가 핵심',
+        defHeroOpts: [
+          { label: '옵션 A', badge: '1번 = 하워드' },
+          { label: '옵션 B', badge: '1번 = 고든' },
+        ],
+        defHeroNote: '방어는 1번 자리에 하워드 또는 고든이 들어갔는지만 보면 됩니다. 둘 다 가능하니 본인 기준 더 강한 쪽을 1번에 두세요. 2·3번 자리는 아무 영웅이나 넣어도 괜찮습니다.',
+        heroFree: '2·3번은 자유',
+        heal: {
+          title: '연맹 치료 방법',
+          label: '중요',
+          chips: ['15~20분 분할', '연맹 도움 요청'],
+          lead: '치료할 병력이 많을 때 치료 가속을 쓰지 않고, 연맹 도움만으로 치유하는 방법입니다. 치유는 접속 중인 연맹원의 도움을 받아 가속되므로, 우리 연맹은 치료 시간을 한 번에 15~20분으로 맞춥니다.',
+          stepsTitle: '치료 순서',
+          steps: [
+            '의무실에 들어갑니다.',
+            '전체 병력을 선택하지 않습니다.',
+            '치료 시간이 15~20분 정도가 되도록 병력 수를 줄입니다.',
+            '치료를 시작하고 연맹 도움을 요청합니다.',
+            '연맹원들은 도움 버튼을 계속 눌러줍니다.',
+            '치료가 완료되면 다음 병력을 다시 15~20분으로 설정합니다.',
+            '부상병이 없어질 때까지 반복합니다.',
+          ],
+          loopTitle: '전투 중 반복 방식',
+          loop: ['캐슬 집결 참여', '부상병 발생', '15~20분 분할 치유', '연맹 도움 요청', '치료 완료', '다음 집결 참여'],
+          rulesTitle: '중요사항',
+          rules: [
+            { ok: false, text: '전체 부상병을 한 번에 일괄 치료하지 않기.' },
+            { ok: false, text: '치료 가속을 바로 사용하지 않기.' },
+            { ok: true, text: '치료는 보병부터 진행하기.' },
+            { ok: true, text: '반드시 연맹 도움을 요청하기.' },
+            { ok: true, text: '전투 중 도움 버튼을 자주 눌러주기.' },
+            { ok: true, text: '치료가 완료되면 바로 다음 묶음 시작하기.' },
+            { ok: true, text: '의무실이 가득 차기 전에 계속 비우기.' },
+          ],
+          shotCaption: '이 두 개만 보면 됩니다 — 병력 수와 치료 시간',
+          shotBadgeQty: '병력 수',
+          shotBadgeTime: '치료 시간',
+          shotNote: '자신의 보유 수량에 맞게 병력 수를 조절하고, 치료와 연맹 협조를 같이 신청하면 바로 치유됩니다.',
+          whyTitle: '왜 15~20분인가',
+          why: [
+            '짧게 설정하면 연맹 도움만으로 빠르게 끝나, 집결 사이에 부상병을 계속 비울 수 있습니다.',
+            '너무 길게 설정하면 연맹 도움을 다 받아도 시간이 남아 다음 전투 참여가 늦어집니다.',
+          ],
+          varyTitle: '사람마다 속도가 다른 이유',
+          varyIntro: '아래 3가지에 따라 “바로 치료 가능한 수량”이 달라집니다.',
+          varyFactors: ['치료 연구 속도', '대사관 레벨 (연맹원 도움 시간)', '접속 중인 연맹원 수'],
+          varyNote: '그래서 15~20분은 기준일 뿐입니다. 접속 인원이 많으면 20~30분도 한 번에 치료될 수 있습니다. 가속을 쓰지 않고 바로 치유되는 본인만의 최적 수량을 찾으세요.',
+          caution: '연맹 분할 치유는 의무실에 들어간 부상병을 치료하는 방법입니다.',
+        },
         timelineTitle: '전투 중 상세 타임라인',
         timelineNote: '12:00 시작부터 소모전까지. 각 구간을 눌러 펼치세요.',
         timeline: [
@@ -1626,6 +1761,14 @@ export function governorContent(lang: Lang): GovernorContent {
       { item: 'Hammers', days: ['no', 'no', 'no', 'best', 'best'] },
     ],
     castle: {
+      notice: {
+        title: 'Castle Battle · no solo action',
+        lines: [
+          'Please do not act on your own during the Castle Battle.',
+          'You cannot win alone — you only hand the enemy free points.',
+          'Please move together and follow the orders.',
+        ],
+      },
       title: 'Castle Battle · city-attack rules',
       intro: 'Around the Castle Battle, when you can attack cities & tiles in either kingdom is fixed by time window. All times are UTC.',
       mapCaption: 'Our side (1974) with the castle and turret layout. The yellow zone is ours.',
@@ -1653,6 +1796,81 @@ export function governorContent(lang: Lang): GovernorContent {
         },
       ],
       warn: 'You get a 5-minute warning if a city is on the wrong side.',
+      grpOpen: 'Open',
+      grpClose: 'Close',
+      grpHint: 'Tap to check your setup',
+      atkTitle: 'Rally attack',
+      atkChips: ['1st = Chenko', '50 / 20 / 30'],
+      atkLead: 'Copy both of these exactly when you join a castle rally. Get either wrong and your troops underperform.',
+      atkHero: {
+        caption: 'Heroes — slot 1 MUST be Chenko',
+        badge: '1st = Chenko',
+        note: 'As a rally joiner only your troops and your 1st hero’s first expedition skill apply. Without Chenko in the left-most slot you lose the whole +25% crit. (No Chenko? Use Yeonwoo, then Amane.)',
+      },
+      atkRatio: {
+        caption: 'Troop ratio — keep 50 / 20 / 30',
+        badge: '50 / 20 / 30',
+        note: 'Infantry 50 · Cavalry 20 · Archer 30. On a castle attack the infantry must hold the front for the damage behind it to land. Don’t raise archers on your own.',
+      },
+      defTitle: 'Tower defense',
+      defChips: ['1st = Howard / Gordon', '60/40/0 · 60/20/20'],
+      defLead: 'On defense both setups work — for the ratio and for the heroes. Either is fine; go with whichever is stronger for your own troops and heroes.',
+      defPick: 'Both work · take the stronger one',
+      defRatioTitle: 'Defensive troop ratio',
+      defRatioOpts: [
+        { label: 'Option A', value: 'Infantry 60 · Cavalry 40 · Archer 0' },
+        { label: 'Option B', value: 'Infantry 60 · Cavalry 20 · Archer 20' },
+      ],
+      defRatioNote: 'Both keep infantry at 60. The only difference is whether the other 40 all goes to cavalry (A) or splits evenly between cavalry and archers (B). Pick the side your troops are stronger in.',
+      defHeroTitle: 'Defensive heroes — slot 1 is what matters',
+      defHeroOpts: [
+        { label: 'Option A', badge: '1st = Howard' },
+        { label: 'Option B', badge: '1st = Gordon' },
+      ],
+      defHeroNote: 'On defense all that matters is having Howard or Gordon in slot 1. Both work — put whichever is stronger for you first. Slots 2 and 3 can be any heroes.',
+      heroFree: 'Slots 2–3: any',
+      heal: {
+        title: 'Alliance healing',
+        label: 'IMPORTANT',
+        chips: ['15–20 min batches', 'Request help'],
+        lead: 'How to heal a lot of wounded without spending healing speedups — on alliance help alone. Help from online members speeds the heal up, so we set each heal to about 15–20 minutes.',
+        stepsTitle: 'Healing steps',
+        steps: [
+          'Open the infirmary.',
+          'Do NOT select all your troops.',
+          'Cut the troop count until the heal time is about 15–20 minutes.',
+          'Start the heal and request alliance help.',
+          'Alliance members keep pressing the help button.',
+          'When it finishes, set the next batch to 15–20 minutes again.',
+          'Repeat until no wounded are left.',
+        ],
+        loopTitle: 'The in-battle loop',
+        loop: ['Join the castle rally', 'Take wounded', 'Heal a 15–20 min batch', 'Request alliance help', 'Heal completes', 'Join the next rally'],
+        rulesTitle: 'Key rules',
+        rules: [
+          { ok: false, text: 'Never heal all your wounded in one go.' },
+          { ok: false, text: 'Don’t burn healing speedups straight away.' },
+          { ok: true, text: 'Heal infantry first.' },
+          { ok: true, text: 'Always request alliance help.' },
+          { ok: true, text: 'Press the help button often during the battle.' },
+          { ok: true, text: 'Start the next batch as soon as one finishes.' },
+          { ok: true, text: 'Keep emptying the infirmary before it fills up.' },
+        ],
+        shotCaption: 'Only these two matter — the troop count and the heal timer',
+        shotBadgeQty: 'Troop count',
+        shotBadgeTime: 'Heal time',
+        shotNote: 'Set the troop count to suit how many you have, then start the heal and request alliance help together — it heals right away.',
+        whyTitle: 'Why 15–20 minutes',
+        why: [
+          'A short timer finishes on alliance help alone, so you can keep clearing wounded between rallies.',
+          'Set it too long and even full alliance help leaves time on the clock, delaying your next rally.',
+        ],
+        varyTitle: 'Why the speed differs per player',
+        varyIntro: 'How much you can heal instantly depends on these three things.',
+        varyFactors: ['Healing research speed', 'Embassy level (alliance help time)', 'How many members are online'],
+        varyNote: 'So 15–20 minutes is only a baseline. With a lot of members online, even 20–30 minutes can clear in one go. Find your own optimal amount — the largest batch that finishes without any speedups.',
+        caution: 'Alliance batch healing only applies to wounded that are already in the infirmary.',
+      },
       timelineTitle: 'In-battle timeline',
       timelineNote: 'From the 12:00 start through the war of attrition. Tap a block to expand.',
       timeline: [

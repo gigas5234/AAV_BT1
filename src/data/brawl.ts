@@ -52,7 +52,7 @@ export function brawlContent(lang: Lang): BrawlContent {
       ],
       joinTitle: '참가 조건 (가장 중요)',
       joinRule:
-        '매칭이 시작되는 일요일 23:00 UTC — 한국 시간 월요일 오전 8시 이전에 해당 연맹에 있어야 합니다. 그 이후 가입한 인원은 이번 시즌 연맹 점수에 참여할 수 없습니다.',
+        '매칭이 시작되는 일요일 23:00 UTC 이전에 해당 연맹에 있어야 합니다. 그 이후 가입한 인원은 이번 시즌 연맹 점수에 참여할 수 없습니다.',
       scheduleTitle: '전체 일정',
       schedule: [
         { n: '1', title: '도시의 부흥', horns: 1 },
@@ -302,7 +302,7 @@ export function brawlContent(lang: Lang): BrawlContent {
         {
           title: '연맹 가입 시점 주의',
           points: [
-            '일요일 23:00 UTC(한국 월요일 08:00) 매칭 시점에 연맹에 있어야 참여 가능.',
+            '일요일 23:00 UTC 매칭 시점에 연맹에 있어야 참여 가능.',
             '그 이후 가입한 인원은 이번 연맹 결투에 점수를 낼 수 없습니다.',
           ],
         },
@@ -346,7 +346,7 @@ export function brawlContent(lang: Lang): BrawlContent {
     ],
     joinTitle: 'Entry rule (most important)',
     joinRule:
-      'You must already be in the alliance when matching starts — Sunday 23:00 UTC (Monday 08:00 KST). Anyone who joins after that cannot contribute to the alliance score this season.',
+      'You must already be in the alliance when matching starts — Sunday 23:00 UTC. Anyone who joins after that cannot contribute to the alliance score this season.',
     scheduleTitle: 'Full schedule',
     schedule: [
       { n: '1', title: 'City revival', horns: 1 },
@@ -596,7 +596,7 @@ export function brawlContent(lang: Lang): BrawlContent {
       {
         title: 'Mind the join deadline',
         points: [
-          'You must be in the alliance at matching — Sunday 23:00 UTC (Mon 08:00 KST).',
+          'You must be in the alliance at matching — Sunday 23:00 UTC.',
           'Anyone joining later cannot score for this brawl.',
         ],
       },
