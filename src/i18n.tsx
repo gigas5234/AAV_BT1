@@ -32,6 +32,7 @@ const STR: Record<string, Entry> = {
   'home.otherEvents': { en: 'Other events', ko: '다른 이벤트' },
   'home.ready': { en: 'Ready', ko: '준비됨' },
   'home.hot': { en: 'HOT', ko: 'HOT' },
+  'home.comingSoon': { en: 'COMING SOON', ko: '곧 시작' },
   'nav.home': { en: 'Home', ko: '홈' },
   // bottom-bar section labels
   'sec.overview': { en: 'Overview', ko: '개요' },
@@ -100,6 +101,7 @@ const STR: Record<string, Entry> = {
   'events.championship': { en: 'Alliance Championship', ko: '연맹 챔피언십' },
   'events.viking': { en: 'Viking Vengeance', ko: '바이킹의 약탈' },
   'events.mystic': { en: 'Mystic Trial', ko: '신비한 시련' },
+  'events.brawl': { en: 'Alliance Brawl', ko: '연맹 결투' },
   'events.eternity': { en: "Eternity's Reach", ko: '사라진 유적' },
   'events.swordland': { en: 'Swordland Showdown', ko: '성검 쟁탈' },
   // championship scaffold
@@ -1246,11 +1248,21 @@ export type CastlePhase = {
   time: string
   rules: { ok: boolean; text: string }[]
 }
+/** One block of the in-battle timeline; groups are labelled sub-lists (e.g. "if we hold" / "if they hold"). */
+export type CastleStep = {
+  time: string
+  title: string
+  groups: { label?: string; items: string[] }[]
+}
 export type CastleBattle = {
   title: string
   intro: string
+  mapCaption: string
   phases: CastlePhase[]
   warn: string
+  timelineTitle: string
+  timelineNote: string
+  timeline: CastleStep[]
 }
 
 export type GovernorContent = {
@@ -1380,6 +1392,7 @@ export function governorContent(lang: Lang): GovernorContent {
       castle: {
         title: '성 전투 · 도시 공격 규칙',
         intro: '성 전투(캐슬 배틀) 전후로 양쪽 왕국에서 도시·타일을 공격할 수 있는 시간대가 정해져 있습니다. 시간은 모두 UTC 기준.',
+        mapCaption: '우리 진영(1974)과 캐슬·포탑 배치. 노란 구역이 우리 쪽입니다.',
         phases: [
           {
             key: 'before',
@@ -1404,6 +1417,101 @@ export function governorContent(lang: Lang): GovernorContent {
           },
         ],
         warn: '도시가 잘못된 편(경계 반대쪽)에 있으면 5분 전 경고가 표시됩니다.',
+        timelineTitle: '전투 중 상세 타임라인',
+        timelineNote: '12:00 시작부터 소모전까지. 각 구간을 눌러 펼치세요.',
+        timeline: [
+          {
+            time: '12:00',
+            title: '캐슬전투 시작',
+            groups: [
+              {
+                label: '즉시 해야 할 일',
+                items: [
+                  '메인 집결자가 캐슬 집결 시작.',
+                  '참여자는 메인 집결부터 최우선으로 채우기.',
+                  '포탑팀은 지시받은 포탑만 공격.',
+                  '임의 단독 공격 금지.',
+                  '메인 집결이 가득 찬 뒤 남는 인원은 예비 집결 대기.',
+                ],
+              },
+              {
+                label: '핵심',
+                items: ['첫 집결은 "가장 강하게".', '병력 분산 금지.', '집결 여러 개를 동시에 아무나 열지 않기.'],
+              },
+            ],
+          },
+          {
+            time: '12:05~12:30',
+            title: '첫 충돌 · 첫 점령 여부 판단',
+            groups: [
+              {
+                label: 'A. 캐슬 점령 성공 시',
+                items: [
+                  '즉시 수비 프리셋으로 전환.',
+                  '수비 병종 60/20/20으로 증원.',
+                  '수비 영웅으로 교체.',
+                  '점령 시작 시각 기록.',
+                  '적 역집결 타이머 확인.',
+                  '병원 소량 치료 시작.',
+                ],
+              },
+              {
+                label: 'B. 첫 공격 실패 시',
+                items: [
+                  '보고서 확인.',
+                  '병종 비율 / 영웅 / 참여자 1번 확인.',
+                  '예비 집결 타이밍 조정.',
+                  '포탑 상황 체크.',
+                  '무작정 연속 공격하지 말고 지휘 후 재집결.',
+                ],
+              },
+            ],
+          },
+          {
+            time: '12:30~13:30',
+            title: '초반 안정화 구간',
+            groups: [
+              {
+                label: '우리가 점령 중이면',
+                items: [
+                  '캐슬 증원 최우선.',
+                  '개인 공격 금지.',
+                  '포탑 상태 체크.',
+                  '병원 계속 소량 치료.',
+                  '적 집결 도착 시간 공유.',
+                  '적이 역집결하면 병력 미리 채워놓기.',
+                ],
+              },
+              {
+                label: '상대가 점령 중이면',
+                items: [
+                  '메인/예비 집결 도착 시간 맞추기.',
+                  '포탑팀은 적 점령 유지 방해.',
+                  '참여자 분산 금지.',
+                  '강한 인원은 반드시 메인 집결 우선.',
+                ],
+              },
+            ],
+          },
+          {
+            time: '13:30~14:30',
+            title: '집결 반복 · 소모전 시작',
+            groups: [
+              {
+                label: '이 시간부터 중요한 것',
+                items: ['병력 회전.', '치료 속도.', '집결 도착 간격.', '포탑 유지 여부.'],
+              },
+              {
+                label: '개인 행동 원칙',
+                items: ['집결 참여 → 전투 종료 → 치료 → 다시 집결 참여 (반복).', '단독 공격 금지.'],
+              },
+              {
+                label: '지휘부 체크',
+                items: ['적 메인 집결자 위치.', '적 포탑 점령 상태.', '우리 캐슬 병력 밀도.', '누적 점령시간 우세 여부.'],
+              },
+            ],
+          },
+        ],
       },
     }
   return {
@@ -1520,6 +1628,7 @@ export function governorContent(lang: Lang): GovernorContent {
     castle: {
       title: 'Castle Battle · city-attack rules',
       intro: 'Around the Castle Battle, when you can attack cities & tiles in either kingdom is fixed by time window. All times are UTC.',
+      mapCaption: 'Our side (1974) with the castle and turret layout. The yellow zone is ours.',
       phases: [
         {
           key: 'before',
@@ -1544,6 +1653,101 @@ export function governorContent(lang: Lang): GovernorContent {
         },
       ],
       warn: 'You get a 5-minute warning if a city is on the wrong side.',
+      timelineTitle: 'In-battle timeline',
+      timelineNote: 'From the 12:00 start through the war of attrition. Tap a block to expand.',
+      timeline: [
+        {
+          time: '12:00',
+          title: 'Castle Battle starts',
+          groups: [
+            {
+              label: 'Do immediately',
+              items: [
+                'Main rally leader opens the castle rally.',
+                'Everyone fills the main rally first.',
+                'Turret team hits only its assigned turret.',
+                'No freelance solo attacks.',
+                'Once the main rally is full, the rest wait for the backup rally.',
+              ],
+            },
+            {
+              label: 'Key points',
+              items: ['Make the first rally the strongest one.', 'Never split your troops.', 'Don’t let people open several rallies at once.'],
+            },
+          ],
+        },
+        {
+          time: '12:05–12:30',
+          title: 'First clash · did we take it?',
+          groups: [
+            {
+              label: 'A. If we captured the castle',
+              items: [
+                'Switch to the defense preset immediately.',
+                'Reinforce with a 60/20/20 defensive mix.',
+                'Swap in your defense heroes.',
+                'Log the capture start time.',
+                'Check the enemy counter-rally timer.',
+                'Start healing a few troops at a time.',
+              ],
+            },
+            {
+              label: 'B. If the first attack failed',
+              items: [
+                'Read the battle report.',
+                'Check troop ratio / heroes / the #1 joiner.',
+                'Adjust the backup rally timing.',
+                'Check the turret situation.',
+                'Don’t just keep attacking — regroup on command.',
+              ],
+            },
+          ],
+        },
+        {
+          time: '12:30–13:30',
+          title: 'Early stabilisation',
+          groups: [
+            {
+              label: 'If we hold the castle',
+              items: [
+                'Reinforcing the castle is the top priority.',
+                'No individual attacks.',
+                'Check turret status.',
+                'Keep healing in small batches.',
+                'Share the enemy rally arrival time.',
+                'If they counter-rally, top up troops in advance.',
+              ],
+            },
+            {
+              label: 'If they hold the castle',
+              items: [
+                'Line up main and backup rally arrival times.',
+                'Turret team disrupts their hold.',
+                'Joiners must not split up.',
+                'Strong players always fill the main rally first.',
+              ],
+            },
+          ],
+        },
+        {
+          time: '13:30–14:30',
+          title: 'Rally cycling · war of attrition',
+          groups: [
+            {
+              label: 'What matters now',
+              items: ['Troop turnaround.', 'Healing speed.', 'Gaps between rally arrivals.', 'Whether the turrets hold.'],
+            },
+            {
+              label: 'Individual routine',
+              items: ['Join rally → fight ends → heal → join the next rally (repeat).', 'No solo attacks.'],
+            },
+            {
+              label: 'Command checks',
+              items: ['Where the enemy main rally leader is.', 'Enemy turret capture status.', 'Our troop density in the castle.', 'Whether we lead on cumulative hold time.'],
+            },
+          ],
+        },
+      ],
     },
   }
 }

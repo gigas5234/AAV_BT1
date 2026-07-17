@@ -1,0 +1,632 @@
+// Alliance Brawl — a ~7-day growth-score duel between two alliances. 13 horns total;
+// the final stage alone is worth 4, so it decides most brawls.
+//
+// Score values follow the 2026-07-15 Kingshot Optimizer table. Rows for Refined Truegold,
+// Truegold Dust and Master-system items only appear once those systems are unlocked, so
+// the in-game score sheet for the day is always the final authority.
+import { type Lang } from '../i18n'
+
+export type BrawlScore = { action: string; basis: string; pts: string }
+export type BrawlDay = {
+  n: string
+  title: string
+  horns: number
+  focus: string
+  scores: BrawlScore[]
+  boxes: string[]
+  note?: string
+}
+export type BrawlTip = { title: string; points: string[] }
+export type BrawlContent = {
+  intro: string
+  facts: { label: string; value: string }[]
+  joinTitle: string
+  joinRule: string
+  scheduleTitle: string
+  schedule: { n: string; title: string; horns: number }[]
+  hornWin: string
+  boxTitle: string
+  days: BrawlDay[]
+  tips: BrawlTip[]
+  saveTitle: string
+  saveIntro: string
+  save: string[]
+  opsTitle: string
+  ops: string[]
+  caution: string
+}
+
+const BOXES_A = ['100', '25,000', '50,000', '87,500', '125,000']
+const BOXES_B = ['100', '37,500', '75,000', '125,000', '187,500']
+
+export function brawlContent(lang: Lang): BrawlContent {
+  if (lang === 'ko')
+    return {
+      intro:
+        '연맹 결투는 직접 싸우는 이벤트가 아니라, 두 연맹이 약 일주일 동안 매일 지정된 성장 과제로 점수를 겨루는 이벤트입니다. 하루를 이길 때마다 나팔을 얻고, 나팔을 더 많이 가진 연맹이 최종 승리합니다.',
+      facts: [
+        { label: '기간', value: '약 6.5~7일' },
+        { label: '총 나팔', value: '13개' },
+        { label: '승리 조건', value: '7개 이상 확보' },
+        { label: '마지막 단계', value: '나팔 4개 · 36시간' },
+      ],
+      joinTitle: '참가 조건 (가장 중요)',
+      joinRule:
+        '매칭이 시작되는 일요일 23:00 UTC — 한국 시간 월요일 오전 8시 이전에 해당 연맹에 있어야 합니다. 그 이후 가입한 인원은 이번 시즌 연맹 점수에 참여할 수 없습니다.',
+      scheduleTitle: '전체 일정',
+      schedule: [
+        { n: '1', title: '도시의 부흥', horns: 1 },
+        { n: '2', title: '영웅 육성', horns: 2 },
+        { n: '3', title: '펫 훈련', horns: 2 },
+        { n: '4', title: '장비 강화', horns: 2 },
+        { n: '5', title: '무역 남작', horns: 2 },
+        { n: '6', title: '전면 경쟁', horns: 4 },
+      ],
+      hornWin: '마지막 단계가 4나팔이라 초반에 밀려도 역전할 수 있습니다.',
+      boxTitle: '개인 상자 기준',
+      days: [
+        {
+          n: '1',
+          title: '도시의 부흥',
+          horns: 1,
+          focus: '나팔이 1개뿐 — 무리하게 가속을 쏟지 말고 상대 점수에 맞춰 최소한으로 운영하세요.',
+          scores: [
+            { action: '정제 트루골드 사용', basis: '1개', pts: '18,750' },
+            { action: '최고급 호송 완료', basis: '1회', pts: '10,000' },
+            { action: '호송 약탈 성공', basis: '1회', pts: '10,000' },
+            { action: '마스터 엠블럼 사용', basis: '1개', pts: '3,600' },
+            { action: '트루골드 사용', basis: '1개', pts: '1,250' },
+            { action: '트루골드 가루 연구', basis: '1개', pts: '625' },
+            { action: '마스터 원고 사용', basis: '1개', pts: '36' },
+            { action: '건설 가속', basis: '1분', pts: '18' },
+            { action: '연구 가속', basis: '1분', pts: '18' },
+            { action: '병력 훈련·진급 가속', basis: '1분', pts: '18' },
+            { action: '마스터 스킬 학습 가속', basis: '1분', pts: '18' },
+            { action: '충전 포인트', basis: '1포인트', pts: '6' },
+            { action: '야외 빵 채집', basis: '2,000', pts: '2' },
+            { action: '야외 목재 채집', basis: '2,000', pts: '2' },
+            { action: '야외 석재 채집', basis: '400', pts: '2' },
+            { action: '야외 철 채집', basis: '100', pts: '2' },
+            { action: '보석 사용', basis: '1개', pts: '1' },
+          ],
+          boxes: BOXES_A,
+          note: '정제 트루골드는 TG8 이후, 트루골드 가루는 전쟁 아카데미 개방 이후, 마스터 항목은 해당 시스템 개방 이후에만 표시됩니다.',
+        },
+        {
+          n: '2',
+          title: '영웅 육성',
+          horns: 2,
+          focus: '정보 임무 1회가 3,000점 — 전날 완료하지 말고 저장했다가 이날 몰아서 마무리하세요.',
+          scores: [
+            { action: '정제 트루골드 사용', basis: '1개', pts: '18,750' },
+            { action: '호송 완료', basis: '1회', pts: '10,000' },
+            { action: '호송 약탈', basis: '1회', pts: '10,000' },
+            { action: '마스터 엠블럼 사용', basis: '1개', pts: '3,600' },
+            { action: '정보 임무 완료', basis: '1회', pts: '3,000' },
+            { action: '전설 영웅 조각 사용', basis: '1개', pts: '1,875' },
+            { action: '트루골드 사용', basis: '1개', pts: '1,250' },
+            { action: '에픽 영웅 조각 사용', basis: '1개', pts: '750' },
+            { action: '트루골드 가루 연구', basis: '1개', pts: '625' },
+            { action: '희귀 영웅 조각 사용', basis: '1개', pts: '210' },
+            { action: '마스터 원고 사용', basis: '1개', pts: '36' },
+            { action: '건설 가속', basis: '1분', pts: '18' },
+            { action: '연구 가속', basis: '1분', pts: '18' },
+            { action: '병력 훈련·진급 가속', basis: '1분', pts: '18' },
+            { action: '마스터 스킬 학습 가속', basis: '1분', pts: '18' },
+            { action: '충전 포인트', basis: '1포인트', pts: '6' },
+            { action: '보석 사용', basis: '1개', pts: '1' },
+          ],
+          boxes: BOXES_A,
+          note: '영웅 조각은 보유만으로는 점수가 없고, 실제로 영웅 승급에 사용해야 반영됩니다.',
+        },
+        {
+          n: '3',
+          title: '펫 훈련',
+          horns: 2,
+          focus: '고급 조련 표식 1개가 9,370점으로 최대 점수원 — 펫 재료가 많은 사람이 크게 벌 수 있는 날입니다.',
+          scores: [
+            { action: '호송 완료', basis: '1회', pts: '10,000' },
+            { action: '호송 약탈', basis: '1회', pts: '10,000' },
+            { action: '고급 조련 표식 사용', basis: '1개', pts: '9,370' },
+            { action: '일반 조련 표식 사용', basis: '1개', pts: '680' },
+            { action: '영주 장비 부적 최대 점수 증가', basis: '1점', pts: '45' },
+            { action: '펫 성장·진급 점수 증가', basis: '1점', pts: '30' },
+            { action: '충전 포인트', basis: '1포인트', pts: '6' },
+            { action: '야외 빵 채집', basis: '2,000', pts: '2' },
+            { action: '야외 목재 채집', basis: '2,000', pts: '2' },
+            { action: '야외 석재 채집', basis: '400', pts: '2' },
+            { action: '야외 철 채집', basis: '100', pts: '2' },
+            { action: '보석 사용', basis: '1개', pts: '1' },
+          ],
+          boxes: BOXES_A,
+          note: '펫 점수는 먹이 사용량이 아니라 성장·돌파로 실제 오른 성장 점수 × 30입니다. 참고 성장 점수: Lv.10 500 · Lv.20 1,000 · Lv.30 2,000 · Lv.40 3,000 · Lv.50 4,500 · Lv.60 6,750 · Lv.70 10,000 · Lv.80 12,000 · Lv.90 14,500 · Lv.100 17,500. 사자를 기다리는 2세대 구간이라면 개인 점수만 보고 펫 재료를 전부 쓰지 말고, 무스 Lv.15 조건까지만 맞춘 뒤 일부는 남기세요.',
+        },
+        {
+          n: '4',
+          title: '장비 강화',
+          horns: 2,
+          focus: '가속량이 아니라 완료된 병력 수로 점수가 붙습니다 — 전날 밤 훈련을 걸어 리셋 직후 완료시키세요.',
+          scores: [
+            { action: '미스릴 사용', basis: '1개', pts: '18,750' },
+            { action: '호송 완료', basis: '1회', pts: '10,000' },
+            { action: '호송 약탈', basis: '1회', pts: '10,000' },
+            { action: '영웅 전용장비 위젯 사용', basis: '1개', pts: '3,750' },
+            { action: '정보 임무 완료', basis: '1회', pts: '3,000' },
+            { action: '단조 망치 사용', basis: '1개', pts: '1,875' },
+            { action: '영주 장비 부적 최대 점수 증가', basis: '1점', pts: '45' },
+            { action: 'T11 병력 훈련', basis: '1명', pts: '30' },
+            { action: 'T10 병력 훈련', basis: '1명', pts: '24' },
+            { action: 'T9 병력 훈련', basis: '1명', pts: '18' },
+            { action: 'T8 병력 훈련', basis: '1명', pts: '14' },
+            { action: 'T7 병력 훈련', basis: '1명', pts: '10' },
+            { action: 'T6 병력 훈련', basis: '1명', pts: '7' },
+            { action: '충전 포인트', basis: '1포인트', pts: '6' },
+            { action: 'T5 병력 훈련', basis: '1명', pts: '4' },
+            { action: 'T4 병력 훈련', basis: '1명', pts: '3' },
+            { action: 'T3 병력 훈련', basis: '1명', pts: '2' },
+            { action: 'T2 병력 훈련', basis: '1명', pts: '1' },
+            { action: 'T1 병력 훈련', basis: '1명', pts: '1' },
+            { action: '보석 사용', basis: '1개', pts: '1' },
+          ],
+          boxes: BOXES_A,
+          note: '진급은 신규 생산과 달리 기존 티어를 뺀 차액만 반영될 수 있습니다(예: T7→T8은 14점이 아닐 수 있음). 진행 전 인게임 예상 점수를 확인하세요.',
+        },
+        {
+          n: '5',
+          title: '무역 남작',
+          horns: 2,
+          focus: '행동력과 회복 아이템을 미리 모아뒀다가 공포 집결(1회 15,000)을 연속으로 도는 날입니다.',
+          scores: [
+            { action: '정제 트루골드 사용', basis: '1개', pts: '18,750' },
+            { action: '공포 집결 소집 후 처치', basis: '1회', pts: '15,000' },
+            { action: '호송 완료', basis: '1회', pts: '10,000' },
+            { action: '호송 약탈', basis: '1회', pts: '10,000' },
+            { action: 'Lv.26~30 야수 처치', basis: '1마리', pts: '6,000' },
+            { action: 'Lv.21~25 야수 처치', basis: '1마리', pts: '5,500' },
+            { action: 'Lv.16~20 야수 처치', basis: '1마리', pts: '5,000' },
+            { action: 'Lv.11~15 야수 처치', basis: '1마리', pts: '4,500' },
+            { action: 'Lv.1~10 야수 처치', basis: '1마리', pts: '4,000' },
+            { action: '트루골드 사용', basis: '1개', pts: '1,250' },
+            { action: '트루골드 가루 연구', basis: '1개', pts: '625' },
+            { action: '영주 장비 최대 점수 증가', basis: '1점', pts: '22' },
+            { action: '건설 가속', basis: '1분', pts: '18' },
+            { action: '연구 가속', basis: '1분', pts: '18' },
+            { action: '병력 훈련·진급 가속', basis: '1분', pts: '18' },
+            { action: '마스터 스킬 학습 가속', basis: '1분', pts: '18' },
+            { action: '충전 포인트', basis: '1포인트', pts: '6' },
+            { action: '보석 사용', basis: '1개', pts: '1' },
+          ],
+          boxes: BOXES_B,
+          note: '공포는 참여만으로는 안 되고 집결 소집 후 최종 처치가 완료돼야 15,000점입니다. 행동력이 충분하면 고레벨 야수를 개별로 잡는 것보다 공포 집결 반복이 효율이 좋습니다.',
+        },
+        {
+          n: '6',
+          title: '전면 경쟁',
+          horns: 4,
+          focus: '36시간 · 나팔 4개 — 연맹 결투에서 가장 중요한 날입니다. 남겨둔 재료를 여기서 터뜨리세요.',
+          scores: [
+            { action: '미스릴 사용', basis: '1개', pts: '18,750' },
+            { action: '정제 트루골드 사용', basis: '1개', pts: '18,750' },
+            { action: '공포 집결 소집 후 처치', basis: '1회', pts: '15,000' },
+            { action: '호송 완료', basis: '1회', pts: '10,000' },
+            { action: '호송 약탈', basis: '1회', pts: '10,000' },
+            { action: '고급 조련 표식 사용', basis: '1개', pts: '9,370' },
+            { action: 'Lv.26~30 야수 처치', basis: '1마리', pts: '6,000' },
+            { action: 'Lv.21~25 야수 처치', basis: '1마리', pts: '5,500' },
+            { action: 'Lv.16~20 야수 처치', basis: '1마리', pts: '5,000' },
+            { action: 'Lv.11~15 야수 처치', basis: '1마리', pts: '4,500' },
+            { action: 'Lv.1~10 야수 처치', basis: '1마리', pts: '4,000' },
+            { action: '영웅 전용장비 위젯 사용', basis: '1개', pts: '3,750' },
+            { action: '단조 망치 사용', basis: '1개', pts: '1,875' },
+            { action: '전설 영웅 조각 사용', basis: '1개', pts: '1,875' },
+            { action: '트루골드 사용', basis: '1개', pts: '1,250' },
+            { action: '에픽 영웅 조각 사용', basis: '1개', pts: '750' },
+            { action: '일반 조련 표식 사용', basis: '1개', pts: '680' },
+            { action: '트루골드 가루 연구', basis: '1개', pts: '625' },
+            { action: '희귀 영웅 조각 사용', basis: '1개', pts: '210' },
+            { action: '영주 부적 최대 점수 증가', basis: '1점', pts: '45' },
+            { action: '펫 성장 점수 증가', basis: '1점', pts: '30' },
+            { action: '영주 장비 최대 점수 증가', basis: '1점', pts: '22' },
+            { action: '건설 가속', basis: '1분', pts: '18' },
+            { action: '연구 가속', basis: '1분', pts: '18' },
+            { action: '병력 훈련·진급 가속', basis: '1분', pts: '18' },
+            { action: '마스터 학습 가속', basis: '1분', pts: '18' },
+            { action: '충전 포인트', basis: '1포인트', pts: '6' },
+            { action: '보석 사용', basis: '1개', pts: '1' },
+          ],
+          boxes: BOXES_B,
+          note: '주의 — 6일차에는 병력 생산 완료·정보 임무·야외 채집·마스터 엠블럼/원고가 포함되지 않습니다. "모든 항목이 열린다"고 생각하고 미리 쓰면 점수를 놓칩니다.',
+        },
+      ],
+      tips: [
+        {
+          title: '정보 임무는 저장했다가 완료',
+          points: [
+            '정보 임무 완료는 2일차·4일차에만 점수(3,000)가 붙습니다.',
+            '임무를 미리 열어두고 완료하지 않은 채 대기 → 점수 적용일에 몰아서 완료.',
+          ],
+        },
+        {
+          title: '병력은 전날 훈련을 걸어두기',
+          points: [
+            '4일차는 가속 사용량이 아니라 완료된 병력 수로 점수가 붙습니다.',
+            '전날 밤 긴 훈련 시작 → 리셋 직후 완료 → 즉시 다음 훈련 → 필요 시 가속.',
+            '이렇게 하면 자연 경과 시간까지 점수로 바꿀 수 있습니다.',
+          ],
+        },
+        {
+          title: '채집은 리셋 전에 미리 보내기',
+          points: [
+            '채집 점수는 시작 시점이 아니라 자원을 회수한 시점에 반영됩니다.',
+            '전날 자원지에 보내두고, 해당 단계가 시작된 뒤 귀환시키세요.',
+            '서버별로 조건이 다를 수 있으니 인게임 점수표로 확인 후 적용.',
+          ],
+        },
+        {
+          title: '모든 날을 이기려 하지 말 것',
+          points: [
+            '자원 대비 이길 수 있는 단계만 고르는 것이 가장 중요한 전략입니다.',
+            '상대가 조련 표식을 대량으로 쓰면 그날은 포기하고, 영웅 조각·병력 훈련·사냥·마지막 종합에 집중.',
+            '마지막 단계는 여러 항목이 동시에 열려 역전 가능성이 가장 큽니다.',
+          ],
+        },
+        {
+          title: '마지막 날을 위해 30~50% 저장',
+          points: [
+            '초반에 재료를 전부 쓰면 4나팔이 걸린 마지막 날에 대응할 수 없습니다.',
+            '여러 종류를 조금씩 남긴 사람이 종합 단계에서 가장 유리합니다.',
+          ],
+        },
+        {
+          title: '펫은 레벨업보다 조련 표식',
+          points: [
+            '고급 조련 표식(9,370)이 일반 펫 성장 점수보다 훨씬 높습니다.',
+            '불필요한 펫에 먹이를 쓰기보다, 필요한 돌파와 표식을 점수 날에 맞추세요.',
+            '무스 Lv.15 조건 확보 → 치타 과투자 중단 → 사자용 재료 보존 → 승부처에만 표식 일부 사용.',
+          ],
+        },
+        {
+          title: '호송은 시간대를 조절',
+          points: [
+            '리셋 직후는 약탈 경쟁이 심하니 호송은 리셋 4~6시간 뒤 출발.',
+            '반대로 약탈은 상대 호송이 많이 나오는 리셋 초반에 노리세요.',
+          ],
+        },
+        {
+          title: '개인 상자와 연맹 승리를 분리',
+          points: [
+            '점수 차가 크면 개인 보상 상자까지만 획득하고 나머지 재료는 저장.',
+            '근소한 차이면 전원이 한꺼번에 쓰지 말고, 소수가 조금씩 올려 상대 반응을 보며 투입.',
+          ],
+        },
+        {
+          title: '연맹 가입 시점 주의',
+          points: [
+            '일요일 23:00 UTC(한국 월요일 08:00) 매칭 시점에 연맹에 있어야 참여 가능.',
+            '그 이후 가입한 인원은 이번 연맹 결투에 점수를 낼 수 없습니다.',
+          ],
+        },
+      ],
+      saveTitle: '마지막 날까지 남겨둘 것',
+      saveIntro: '아래 재료는 초반에 전부 쓰지 말고 최소 30% 이상 남기세요.',
+      save: [
+        '전설·에픽 영웅 조각',
+        '일반·고급 조련 표식',
+        '단조 망치',
+        '영웅 전용장비 위젯',
+        '미스릴',
+        '영주 장비·부적 재료',
+        '대량의 일반 가속',
+        '행동력 회복 아이템',
+      ],
+      opsTitle: '연맹 운영 핵심',
+      ops: [
+        '매일 리셋 직후 상대 점수를 먼저 확인.',
+        '이길 수 있는 날인지 판단한 뒤 재료 사용.',
+        '정보 임무는 영웅(2일)·장비(4일) 단계용으로 저장.',
+        '병력은 전날 훈련해 리셋 후 완료.',
+        '채집은 전날 보내고 점수 단계 시작 후 회수.',
+        '조련 표식·망치·위젯·미스릴은 일부 저장.',
+        '초반에 자원을 다 쓰지 말고 마지막 종합전 대비.',
+        '격차가 크면 개인 상자까지만 달성하고 중단.',
+        '근소한 승부는 소수 인원이 순차적으로 투입.',
+        '세부 점수는 반드시 당일 인게임 점수표로 확인.',
+      ],
+      caution:
+        '※ 점수는 2026-07-15 Kingshot Optimizer 기준이며, 서버 세대·업데이트에 따라 달라질 수 있습니다(펫 세대·트루골드 개방 여부에 따라 항목이 추가/제외). 최종 기준은 항상 인게임 당일 점수표입니다.',
+    }
+  return {
+    intro:
+      'Alliance Brawl is not a combat event — two alliances compete for a week by scoring the day’s assigned growth tasks. Each day you win earns horns, and the alliance with more horns wins overall.',
+    facts: [
+      { label: 'Length', value: '~6.5–7 days' },
+      { label: 'Total horns', value: '13' },
+      { label: 'To win', value: '7 or more' },
+      { label: 'Final stage', value: '4 horns · 36 h' },
+    ],
+    joinTitle: 'Entry rule (most important)',
+    joinRule:
+      'You must already be in the alliance when matching starts — Sunday 23:00 UTC (Monday 08:00 KST). Anyone who joins after that cannot contribute to the alliance score this season.',
+    scheduleTitle: 'Full schedule',
+    schedule: [
+      { n: '1', title: 'City revival', horns: 1 },
+      { n: '2', title: 'Hero growth', horns: 2 },
+      { n: '3', title: 'Pet training', horns: 2 },
+      { n: '4', title: 'Gear upgrade', horns: 2 },
+      { n: '5', title: 'Trade baron', horns: 2 },
+      { n: '6', title: 'Total showdown', horns: 4 },
+    ],
+    hornWin: 'The final stage is worth 4 horns, so you can still come back from behind.',
+    boxTitle: 'Personal chest thresholds',
+    days: [
+      {
+        n: '1',
+        title: 'City revival',
+        horns: 1,
+        focus: 'Only 1 horn — don’t dump speedups. Spend the minimum needed to match the enemy score.',
+        scores: [
+          { action: 'Refined Truegold', basis: '1', pts: '18,750' },
+          { action: 'Top-grade convoy completed', basis: '1', pts: '10,000' },
+          { action: 'Convoy plunder success', basis: '1', pts: '10,000' },
+          { action: 'Master emblem', basis: '1', pts: '3,600' },
+          { action: 'Truegold', basis: '1', pts: '1,250' },
+          { action: 'Truegold dust research', basis: '1', pts: '625' },
+          { action: 'Master manuscript', basis: '1', pts: '36' },
+          { action: 'Build speedup', basis: '1 min', pts: '18' },
+          { action: 'Research speedup', basis: '1 min', pts: '18' },
+          { action: 'Training / promotion speedup', basis: '1 min', pts: '18' },
+          { action: 'Master skill speedup', basis: '1 min', pts: '18' },
+          { action: 'Charge points', basis: '1 pt', pts: '6' },
+          { action: 'Gather bread', basis: '2,000', pts: '2' },
+          { action: 'Gather wood', basis: '2,000', pts: '2' },
+          { action: 'Gather stone', basis: '400', pts: '2' },
+          { action: 'Gather iron', basis: '100', pts: '2' },
+          { action: 'Spend gems', basis: '1', pts: '1' },
+        ],
+        boxes: BOXES_A,
+        note: 'Refined Truegold shows only after TG8, Truegold dust after the War Academy opens, and Master rows once that system is unlocked.',
+      },
+      {
+        n: '2',
+        title: 'Hero growth',
+        horns: 2,
+        focus: 'One intel mission is 3,000 pts — bank them the day before and finish them all today.',
+        scores: [
+          { action: 'Refined Truegold', basis: '1', pts: '18,750' },
+          { action: 'Convoy completed', basis: '1', pts: '10,000' },
+          { action: 'Convoy plunder', basis: '1', pts: '10,000' },
+          { action: 'Master emblem', basis: '1', pts: '3,600' },
+          { action: 'Intel mission completed', basis: '1', pts: '3,000' },
+          { action: 'Legendary hero shard', basis: '1', pts: '1,875' },
+          { action: 'Truegold', basis: '1', pts: '1,250' },
+          { action: 'Epic hero shard', basis: '1', pts: '750' },
+          { action: 'Truegold dust research', basis: '1', pts: '625' },
+          { action: 'Rare hero shard', basis: '1', pts: '210' },
+          { action: 'Master manuscript', basis: '1', pts: '36' },
+          { action: 'Build speedup', basis: '1 min', pts: '18' },
+          { action: 'Research speedup', basis: '1 min', pts: '18' },
+          { action: 'Training / promotion speedup', basis: '1 min', pts: '18' },
+          { action: 'Master skill speedup', basis: '1 min', pts: '18' },
+          { action: 'Charge points', basis: '1 pt', pts: '6' },
+          { action: 'Spend gems', basis: '1', pts: '1' },
+        ],
+        boxes: BOXES_A,
+        note: 'Holding shards scores nothing — you must actually spend them on a hero star-up for the points to register.',
+      },
+      {
+        n: '3',
+        title: 'Pet training',
+        horns: 2,
+        focus: 'An Advanced training manual is 9,370 pts — by far the biggest source. A big pet stock wins this day.',
+        scores: [
+          { action: 'Convoy completed', basis: '1', pts: '10,000' },
+          { action: 'Convoy plunder', basis: '1', pts: '10,000' },
+          { action: 'Advanced training manual', basis: '1', pts: '9,370' },
+          { action: 'Basic training manual', basis: '1', pts: '680' },
+          { action: 'Lord charm top rating +', basis: '1 pt', pts: '45' },
+          { action: 'Pet advancement score +', basis: '1 pt', pts: '30' },
+          { action: 'Charge points', basis: '1 pt', pts: '6' },
+          { action: 'Gather bread', basis: '2,000', pts: '2' },
+          { action: 'Gather wood', basis: '2,000', pts: '2' },
+          { action: 'Gather stone', basis: '400', pts: '2' },
+          { action: 'Gather iron', basis: '100', pts: '2' },
+          { action: 'Spend gems', basis: '1', pts: '1' },
+        ],
+        boxes: BOXES_A,
+        note: 'Pet points come from the actual advancement-score gain (× 30), not from food spent. Reference scores: Lv.10 500 · Lv.20 1,000 · Lv.30 2,000 · Lv.40 3,000 · Lv.50 4,500 · Lv.60 6,750 · Lv.70 10,000 · Lv.80 12,000 · Lv.90 14,500 · Lv.100 17,500. On a Gen-2 server waiting for the Lion, don’t burn every pet material for personal score — hit the Moose Lv.15 requirement and keep some back.',
+      },
+      {
+        n: '4',
+        title: 'Gear upgrade',
+        horns: 2,
+        focus: 'Points come from troops finished, not speedups spent — start a long training the night before and finish it right after reset.',
+        scores: [
+          { action: 'Mithril', basis: '1', pts: '18,750' },
+          { action: 'Convoy completed', basis: '1', pts: '10,000' },
+          { action: 'Convoy plunder', basis: '1', pts: '10,000' },
+          { action: 'Hero exclusive-gear widget', basis: '1', pts: '3,750' },
+          { action: 'Intel mission completed', basis: '1', pts: '3,000' },
+          { action: 'Forge hammer', basis: '1', pts: '1,875' },
+          { action: 'Lord charm top rating +', basis: '1 pt', pts: '45' },
+          { action: 'T11 troop trained', basis: '1', pts: '30' },
+          { action: 'T10 troop trained', basis: '1', pts: '24' },
+          { action: 'T9 troop trained', basis: '1', pts: '18' },
+          { action: 'T8 troop trained', basis: '1', pts: '14' },
+          { action: 'T7 troop trained', basis: '1', pts: '10' },
+          { action: 'T6 troop trained', basis: '1', pts: '7' },
+          { action: 'Charge points', basis: '1 pt', pts: '6' },
+          { action: 'T5 troop trained', basis: '1', pts: '4' },
+          { action: 'T4 troop trained', basis: '1', pts: '3' },
+          { action: 'T3 troop trained', basis: '1', pts: '2' },
+          { action: 'T2 troop trained', basis: '1', pts: '1' },
+          { action: 'T1 troop trained', basis: '1', pts: '1' },
+          { action: 'Spend gems', basis: '1', pts: '1' },
+        ],
+        boxes: BOXES_A,
+        note: 'Promotion may only credit the tier gap rather than the full tier value (e.g. T7→T8 may not give the full 14). Check the in-game estimate before committing.',
+      },
+      {
+        n: '5',
+        title: 'Trade baron',
+        horns: 2,
+        focus: 'Bank stamina and recovery items, then chain Dread rallies (15,000 each) all day.',
+        scores: [
+          { action: 'Refined Truegold', basis: '1', pts: '18,750' },
+          { action: 'Dread rally called & killed', basis: '1', pts: '15,000' },
+          { action: 'Convoy completed', basis: '1', pts: '10,000' },
+          { action: 'Convoy plunder', basis: '1', pts: '10,000' },
+          { action: 'Beast Lv.26–30 killed', basis: '1', pts: '6,000' },
+          { action: 'Beast Lv.21–25 killed', basis: '1', pts: '5,500' },
+          { action: 'Beast Lv.16–20 killed', basis: '1', pts: '5,000' },
+          { action: 'Beast Lv.11–15 killed', basis: '1', pts: '4,500' },
+          { action: 'Beast Lv.1–10 killed', basis: '1', pts: '4,000' },
+          { action: 'Truegold', basis: '1', pts: '1,250' },
+          { action: 'Truegold dust research', basis: '1', pts: '625' },
+          { action: 'Lord gear top rating +', basis: '1 pt', pts: '22' },
+          { action: 'Build speedup', basis: '1 min', pts: '18' },
+          { action: 'Research speedup', basis: '1 min', pts: '18' },
+          { action: 'Training / promotion speedup', basis: '1 min', pts: '18' },
+          { action: 'Master skill speedup', basis: '1 min', pts: '18' },
+          { action: 'Charge points', basis: '1 pt', pts: '6' },
+          { action: 'Spend gems', basis: '1', pts: '1' },
+        ],
+        boxes: BOXES_B,
+        note: 'Joining a Dread isn’t enough — the rally must be called and the kill completed to score 15,000. With enough stamina, repeating Dread rallies beats soloing high-level beasts.',
+      },
+      {
+        n: '6',
+        title: 'Total showdown',
+        horns: 4,
+        focus: '36 hours · 4 horns — the day that decides the brawl. Spend everything you saved here.',
+        scores: [
+          { action: 'Mithril', basis: '1', pts: '18,750' },
+          { action: 'Refined Truegold', basis: '1', pts: '18,750' },
+          { action: 'Dread rally called & killed', basis: '1', pts: '15,000' },
+          { action: 'Convoy completed', basis: '1', pts: '10,000' },
+          { action: 'Convoy plunder', basis: '1', pts: '10,000' },
+          { action: 'Advanced training manual', basis: '1', pts: '9,370' },
+          { action: 'Beast Lv.26–30 killed', basis: '1', pts: '6,000' },
+          { action: 'Beast Lv.21–25 killed', basis: '1', pts: '5,500' },
+          { action: 'Beast Lv.16–20 killed', basis: '1', pts: '5,000' },
+          { action: 'Beast Lv.11–15 killed', basis: '1', pts: '4,500' },
+          { action: 'Beast Lv.1–10 killed', basis: '1', pts: '4,000' },
+          { action: 'Hero exclusive-gear widget', basis: '1', pts: '3,750' },
+          { action: 'Forge hammer', basis: '1', pts: '1,875' },
+          { action: 'Legendary hero shard', basis: '1', pts: '1,875' },
+          { action: 'Truegold', basis: '1', pts: '1,250' },
+          { action: 'Epic hero shard', basis: '1', pts: '750' },
+          { action: 'Basic training manual', basis: '1', pts: '680' },
+          { action: 'Truegold dust research', basis: '1', pts: '625' },
+          { action: 'Rare hero shard', basis: '1', pts: '210' },
+          { action: 'Lord charm top rating +', basis: '1 pt', pts: '45' },
+          { action: 'Pet advancement score +', basis: '1 pt', pts: '30' },
+          { action: 'Lord gear top rating +', basis: '1 pt', pts: '22' },
+          { action: 'Build speedup', basis: '1 min', pts: '18' },
+          { action: 'Research speedup', basis: '1 min', pts: '18' },
+          { action: 'Training / promotion speedup', basis: '1 min', pts: '18' },
+          { action: 'Master skill speedup', basis: '1 min', pts: '18' },
+          { action: 'Charge points', basis: '1 pt', pts: '6' },
+          { action: 'Spend gems', basis: '1', pts: '1' },
+        ],
+        boxes: BOXES_B,
+        note: 'Careful — day 6 does NOT include troop training, intel missions, field gathering, or Master emblems/manuscripts. Assuming "everything opens" and pre-spending those will cost you points.',
+      },
+    ],
+    tips: [
+      {
+        title: 'Bank intel missions, finish them later',
+        points: [
+          'Intel completion only scores (3,000) on days 2 and 4.',
+          'Open the missions but leave them incomplete → finish them all on the scoring day.',
+        ],
+      },
+      {
+        title: 'Start troop training the night before',
+        points: [
+          'Day 4 scores troops finished, not speedups spent.',
+          'Start a long training the previous night → finish right after reset → start the next batch → speed up if needed.',
+          'That turns natural elapsed time into points.',
+        ],
+      },
+      {
+        title: 'Send gatherers out before reset',
+        points: [
+          'Gathering scores when the resources are collected, not when gathering starts.',
+          'Send troops to nodes the day before and bring them home after the stage opens.',
+          'Conditions vary by server — confirm on the in-game score sheet first.',
+        ],
+      },
+      {
+        title: 'Don’t try to win every day',
+        points: [
+          'The key strategy is picking only the stages you can win for the resources you have.',
+          'If the enemy is dumping training manuals, concede that day and focus on hero shards, troop training, hunting, and the final stage.',
+          'The final stage opens many categories at once — the best comeback window.',
+        ],
+      },
+      {
+        title: 'Keep 30–50% for the last day',
+        points: [
+          'Spend everything early and you can’t contest the 4-horn finale.',
+          'Whoever kept a little of many material types handles the showdown best.',
+        ],
+      },
+      {
+        title: 'Pets: manuals beat leveling',
+        points: [
+          'Advanced manuals (9,370) far outweigh ordinary pet growth points.',
+          'Rather than feeding pets you don’t need, line up the breakthroughs and manuals for the scoring day.',
+          'Secure Moose Lv.15 → stop over-investing in Cheetah → preserve Lion materials → spend manuals only where the day is winnable.',
+        ],
+      },
+      {
+        title: 'Time your convoys',
+        points: [
+          'Plunder competition spikes right after reset — send convoys 4–6 hours later.',
+          'Conversely, plunder early after reset when enemy convoys are plentiful.',
+        ],
+      },
+      {
+        title: 'Separate personal chests from the alliance win',
+        points: [
+          'If the gap is large, take your personal chests and bank the rest.',
+          'If it’s close, don’t let everyone spend at once — have a few players add score gradually and watch the enemy react.',
+        ],
+      },
+      {
+        title: 'Mind the join deadline',
+        points: [
+          'You must be in the alliance at matching — Sunday 23:00 UTC (Mon 08:00 KST).',
+          'Anyone joining later cannot score for this brawl.',
+        ],
+      },
+    ],
+    saveTitle: 'Save for the final day',
+    saveIntro: 'Don’t burn these early — keep at least 30% for the 4-horn showdown.',
+    save: [
+      'Legendary / Epic hero shards',
+      'Basic & Advanced training manuals',
+      'Forge hammers',
+      'Hero exclusive-gear widgets',
+      'Mithril',
+      'Lord gear & charm materials',
+      'Bulk general speedups',
+      'Stamina recovery items',
+    ],
+    opsTitle: 'Alliance playbook',
+    ops: [
+      'Check the enemy score first, right after every reset.',
+      'Decide whether the day is winnable before spending materials.',
+      'Bank intel missions for the hero (day 2) and gear (day 4) stages.',
+      'Train troops the night before and finish after reset.',
+      'Send gatherers the day before; collect after the stage opens.',
+      'Hold back some manuals, hammers, widgets and Mithril.',
+      'Don’t spend everything early — prepare for the final showdown.',
+      'If the gap is big, stop at your personal chests.',
+      'In a close race, feed score in gradually with a few players.',
+      'Always confirm exact values on that day’s in-game score sheet.',
+    ],
+    caution:
+      '※ Values follow the 2026-07-15 Kingshot Optimizer table and can change with server generation and updates (rows are added/removed based on pet generation and Truegold unlocks). The in-game score sheet for the day is always the final authority.',
+  }
+}

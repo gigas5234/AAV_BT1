@@ -41,6 +41,12 @@ const EVENT_ICON: Record<EventId, JSX.Element> = {
       <path d="M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8zM18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9z" strokeLinejoin="round" />
     </svg>
   ),
+  brawl: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5">
+      <path d="M4 15c2-1 3.5-2.5 5-5l2 1.5c1.5-2.5 3-4 5-5l3 3c-1 2-2.5 3.5-5 5L12.5 13c-2.5 1.5-4 3-5 5z" strokeLinejoin="round" />
+      <path d="M3 20h18" strokeLinecap="round" />
+    </svg>
+  ),
   eternity: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5">
       <circle cx="12" cy="12" r="9" />
@@ -163,7 +169,11 @@ export default function EventHome({
               </span>
             )}
             <span className="absolute right-2.5 top-2.5 z-10">
-              {e.ready ? (
+              {e.soon ? (
+                <span className="rounded-full bg-sky-500 px-2 py-0.5 text-[9px] font-extrabold tracking-wide text-white shadow-md ring-1 ring-sky-300/50">
+                  {t('home.comingSoon')}
+                </span>
+              ) : e.ready ? (
                 <span className="rounded-full px-2 py-0.5 text-[9px] font-bold shadow" style={{ background: e.accent, color: '#1a1200' }}>{t('home.ready')}</span>
               ) : (
                 <span className="rounded-full bg-black/50 px-2 py-0.5 text-[9px] font-semibold text-amber-100 ring-1 ring-white/10">{t('events.soon')}</span>

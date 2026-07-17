@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { governorContent, useLang, useT, type GovStatus } from '../i18n'
 import vsImg from '../assets/events/governor-vs.webp'
+import castleMapImg from '../assets/events/castle-map.webp'
 
 const DAY_ACCENT = '#e2a13a'
 
@@ -18,6 +19,13 @@ export default function GovernorEvent({ section }: { section: string }) {
   const lang = useLang()
   const c = governorContent(lang)
   const [day, setDay] = useState(0) // index 0..4
+  const [openStep, setOpenStep] = useState<Set<number>>(new Set())
+  const toggleStep = (i: number) =>
+    setOpenStep((prev) => {
+      const next = new Set(prev)
+      next.has(i) ? next.delete(i) : next.add(i)
+      return next
+    })
 
   if (section === 'overview')
     return (
@@ -148,28 +156,85 @@ export default function GovernorEvent({ section }: { section: string }) {
           <p className="mt-1 text-[13px] leading-relaxed text-slate-300">{cb.intro}</p>
         </div>
 
+        {/* our castle / turret layout */}
+        <figure className="overflow-hidden rounded-2xl border border-white/10">
+          <img src={castleMapImg} alt="" className="block w-full" />
+          <figcaption className="bg-black/30 px-3 py-2 text-[11px] leading-relaxed text-slate-400">{cb.mapCaption}</figcaption>
+        </figure>
+
         {cb.phases.map((p) => {
           const ac = phaseAccent[p.key]
           return (
-            <section key={p.key} className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
-              <div className="flex items-center gap-2 px-4 py-2.5" style={{ background: `${ac}14` }}>
-                <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: ac }} />
-                <h3 className="text-[14px] font-semibold text-white">{p.title}</h3>
-                <span className="ml-auto rounded-md bg-black/25 px-2 py-0.5 font-mono text-[11px] text-slate-300">{p.time}</span>
-              </div>
-              <ul className="divide-y divide-white/5">
-                {p.rules.map((r, i) => (
-                  <li key={i} className="flex items-start gap-2.5 px-4 py-2.5">
-                    <span
-                      className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[12px] font-bold ${r.ok ? 'bg-emerald-400/15 text-emerald-300' : 'bg-red-500/15 text-red-300'}`}
-                    >
-                      {r.ok ? '✓' : '✕'}
-                    </span>
-                    <span className={`text-[13px] leading-relaxed ${r.ok ? 'text-slate-200' : 'text-slate-300'}`}>{r.text}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            <div key={p.key} className="space-y-3">
+              <section className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
+                <div className="flex items-center gap-2 px-4 py-2.5" style={{ background: `${ac}14` }}>
+                  <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: ac }} />
+                  <h3 className="text-[14px] font-semibold text-white">{p.title}</h3>
+                  <span className="ml-auto rounded-md bg-black/25 px-2 py-0.5 font-mono text-[11px] text-slate-300">{p.time}</span>
+                </div>
+                <ul className="divide-y divide-white/5">
+                  {p.rules.map((r, i) => (
+                    <li key={i} className="flex items-start gap-2.5 px-4 py-2.5">
+                      <span
+                        className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[12px] font-bold ${r.ok ? 'bg-emerald-400/15 text-emerald-300' : 'bg-red-500/15 text-red-300'}`}
+                      >
+                        {r.ok ? '✓' : '✕'}
+                      </span>
+                      <span className={`text-[13px] leading-relaxed ${r.ok ? 'text-slate-200' : 'text-slate-300'}`}>{r.text}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+
+              {/* the minute-by-minute playbook lives under "during" */}
+              {p.key === 'during' && (
+                <div className="space-y-2 rounded-2xl border border-red-400/25 bg-red-500/[0.04] p-3">
+                  <div className="px-1">
+                    <h4 className="text-[13px] font-bold text-red-200">{cb.timelineTitle}</h4>
+                    <p className="mt-0.5 text-[11px] text-slate-400">{cb.timelineNote}</p>
+                  </div>
+                  {cb.timeline.map((st, i) => {
+                    const isOpen = openStep.has(i)
+                    return (
+                      <section key={i} className="overflow-hidden rounded-xl border border-white/10 bg-[#131c2b]">
+                        <button onClick={() => toggleStep(i)} className="flex w-full items-center gap-2 px-3 py-2.5 text-left">
+                          <span className="shrink-0 rounded-md bg-red-500/20 px-1.5 py-0.5 font-mono text-[11px] font-bold text-red-300">
+                            {st.time}
+                          </span>
+                          <h5 className="min-w-0 flex-1 truncate text-[13px] font-semibold text-white">{st.title}</h5>
+                          <svg
+                            viewBox="0 0 24 24"
+                            className={`h-4 w-4 shrink-0 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.2"
+                          >
+                            <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+                        {isOpen && (
+                          <div className="accopen space-y-2.5 border-t border-white/5 px-3 py-2.5">
+                            {st.groups.map((g, j) => (
+                              <div key={j}>
+                                {g.label && <p className="mb-1 text-[12px] font-bold text-amber-300">{g.label}</p>}
+                                <ul className="space-y-1 text-[12.5px] leading-relaxed text-slate-300">
+                                  {g.items.map((it, k) => (
+                                    <li key={k} className="flex gap-2">
+                                      <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-slate-500" />
+                                      <span>{it}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </section>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
           )
         })}
 
