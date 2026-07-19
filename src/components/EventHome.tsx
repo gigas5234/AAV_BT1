@@ -7,6 +7,7 @@ import mysticImg from '../assets/events/mystic.webp'
 import swordlandImg from '../assets/events/swordland.webp'
 import eternityImg from '../assets/events/eternity.webp'
 import governorImg from '../assets/events/governor.webp'
+import brawlImg from '../assets/events/brawl.webp'
 
 // Event artwork (banners). Events without art fall back to an accent gradient.
 const EVENT_IMG: Partial<Record<EventId, string>> = {
@@ -14,6 +15,7 @@ const EVENT_IMG: Partial<Record<EventId, string>> = {
   championship: championshipImg,
   viking: vikingImg,
   mystic: mysticImg,
+  brawl: brawlImg,
   eternity: eternityImg,
   swordland: swordlandImg,
 }
