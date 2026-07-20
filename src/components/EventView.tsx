@@ -6,6 +6,7 @@ import MysticTrial from './MysticTrial'
 import VikingVengeance from './VikingVengeance'
 import GovernorEvent from './GovernorEvent'
 import BrawlEvent from './BrawlEvent'
+import SwordlandEvent from './SwordlandEvent'
 
 function Championship({ section }: { section: string }) {
   if (section === 'matchup') return <ChampionshipMatchup />
@@ -48,6 +49,8 @@ export default function EventView({ eventId, section }: { eventId: EventId; sect
         <VikingVengeance section={section} />
       ) : meta.ready && eventId === 'brawl' ? (
         <BrawlEvent section={section} />
+      ) : meta.ready && eventId === 'swordland' ? (
+        <SwordlandEvent section={section} />
       ) : (
         <ComingSoon name={t(`events.${eventId}`)} section={section} />
       )}

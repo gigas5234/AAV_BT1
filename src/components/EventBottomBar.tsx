@@ -110,6 +110,18 @@ const ICONS: Record<string, JSX.Element> = {
       <path d="M10 21v-4a2 2 0 0 1 4 0v4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
+  build: (
+    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
+      <path d="M3 21h18M6 21V8h5v13M13 21V4h5v17" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8 11h1M8 14h1M8 17h1M15 8h1M15 11h1M15 14h1" strokeLinecap="round" />
+    </svg>
+  ),
+  timeline: (
+    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
 }
 
 export type BarItem = { id: string; labelKey: string }
