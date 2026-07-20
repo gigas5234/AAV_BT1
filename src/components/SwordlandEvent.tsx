@@ -2,6 +2,7 @@ import { swordlandContent } from '../data/swordland'
 import { useLang, useT } from '../i18n'
 import SwordlandMap from './SwordlandMap'
 import antiScoutImg from '../assets/events/swordland-antiscout.webp'
+import probeImg from '../assets/events/swordland-probe.webp'
 
 const ACCENT = '#f87171'
 
@@ -220,6 +221,14 @@ export default function SwordlandEvent({ section }: { section: string }) {
         </div>
         <p className="text-[13px] leading-relaxed text-slate-300">{c.antiScout}</p>
         <p className="mt-2 rounded-lg bg-black/25 px-3 py-2 text-[12.5px] font-semibold leading-relaxed text-slate-200">{c.antiScoutNote}</p>
+      </Card>
+
+      {/* probe with 1 troop */}
+      <Card title={c.probeTitle}>
+        <div className="mb-2 overflow-hidden rounded-xl border border-white/10">
+          <img src={probeImg} alt="" className="block w-full" />
+        </div>
+        <Bullets items={c.probe} />
       </Card>
 
       {/* ── In the fight ── */}

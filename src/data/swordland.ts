@@ -101,6 +101,8 @@ export type SwordlandContent = {
   antiScoutTitle: string
   antiScout: string
   antiScoutNote: string
+  probeTitle: string
+  probe: string[]
   changeTitle: string
   change: string
   surviveTitle: string
@@ -252,6 +254,12 @@ export function swordlandContent(lang: Lang): SwordlandContent {
       antiScoutTitle: '정찰 방지(Anti-Scout)를 켜고 시작',
       antiScout: '전장 시작 전에 2시간 정찰 방지를 사용하세요. 적이 내 도시와 밖에 주둔한 병력을 정찰하지 못하면, 내 허실을 몰라 쉽게 공격하지 못합니다.',
       antiScoutNote: '연맹원 도시가 직접 타격받으면 즉시 지원군을 보내 막아주세요. 정찰 방지 + 상호 수비 지원이 초반 생존의 핵심입니다.',
+      probeTitle: '적 병력 규모 파악 — 1병력 정찰',
+      probe: [
+        '적이 정찰 방지를 켜고 있어 병력 규모를 알 수 없을 때는, 병력 1개를 보내 규모를 파악하세요.',
+        '내 공격이 130k라도 예시처럼 454k가 도시에 주둔해 있으면 혼자서는 못 이깁니다. 그 사람이 다른 곳을 공격하거나 수비에 병력을 많이 투자해 도시가 빌 때를 기다렸다가 치세요.',
+        '병력을 1개씩 계속 보내 괴롭히는 것도 좋습니다. 전투가 길어지면 다 치유하지 못해 병력이 점점 줄고, 그 틈을 노려 공격하면 나보다 파워가 높은 상대도 텔레포트시킬 수 있습니다.',
+      ],
       changeTitle: '2026년 7월 변경점',
       surviveTitle: '텔레포트로 살아남기',
       survive: [
@@ -433,6 +441,12 @@ export function swordlandContent(lang: Lang): SwordlandContent {
     antiScoutTitle: 'Turn on Anti-Scout before you start',
     antiScout: 'Use the 2-hour Anti-Scout before the battle starts. If enemies can’t scout your city and the troops stationed outside, they don’t know your strength and can’t attack you easily.',
     antiScoutNote: 'When a member’s city is hit directly, send reinforcements to block it immediately. Anti-Scout plus mutual defense support is the key to surviving the opening.',
+    probeTitle: 'Probe with 1 troop to read their size',
+    probe: [
+      'When an enemy runs Anti-Scout and you can’t see their troop count, send a single troop to find out how big they are.',
+      'Even a 130k attack can’t solo a city holding 454k like the example. Wait until they attack elsewhere or over-invest in defense so their city is empty, then strike.',
+      'Poking with one troop at a time also works well: a long fight means they can’t heal everything, so their count slowly drops — hit that window and you can teleport even someone with more power than you.',
+    ],
     changeTitle: 'July 2026 change',
     surviveTitle: 'Survive with teleport',
     survive: [
