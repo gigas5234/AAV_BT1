@@ -6,3 +6,6 @@ dist-ssr
 .vscode/*
 !.vscode/extensions.json
 heros/
+
+# Raw source screenshots — originals of the webp assets in src/assets/events/
+source-images/
