@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { slotsContent, useLang, useT, type Slot } from '../i18n'
+import tierImg from '../assets/guide/beartrap-hero-tier.webp'
 
 const INF = '#8b98a5'
 const CAV = '#4c9be8'
@@ -214,6 +215,18 @@ export default function SlotsTab() {
 
       {panel === 'ban' && (
         <div className="accopen space-y-3">
+          {/* hero tier list — quick reference at the top of the ban panel */}
+          <figure className="m-0 overflow-hidden rounded-xl border border-white/10">
+            <figcaption className="flex items-center gap-1.5 bg-white/[0.06] px-3 py-2 text-[12px] font-semibold text-slate-200">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" />
+              {t('slots.tierTitle')}
+            </figcaption>
+            <div className="overflow-x-auto scroll-dark">
+              <img src={tierImg} alt={t('slots.tierTitle')} className="block h-[240px] w-auto max-w-none" />
+            </div>
+            <p className="bg-black/25 px-3 py-2 text-[11.5px] leading-relaxed text-slate-400">{t('slots.tierCaption')}</p>
+          </figure>
+
           <div className="space-y-3 rounded-xl border-2 border-red-500 bg-red-500/10 px-4 py-3">
             <div>
               <p className="flex items-center gap-2 text-[16px] font-bold text-red-300">

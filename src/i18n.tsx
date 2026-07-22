@@ -335,6 +335,11 @@ const STR: Record<string, Entry> = {
   'slots.pillWhy': { en: 'Why this ratio', ko: '왜 이 비율?' },
   'slots.pillHow': { en: 'Setup', ko: '설정법' },
   'slots.pillBan': { en: 'Banned', ko: '금지 영웅' },
+  'slots.tierTitle': { en: 'Bear Trap hero tier list', ko: '곰덫 영웅 티어표' },
+  'slots.tierCaption': {
+    en: 'Rally lead & join reference. S/A = use; Avoid and “Never Use These” = don’t bring them.',
+    ko: '집결 리더·참여 기준. S/A = 사용, Avoid·Never Use These = 데려가지 마세요.',
+  },
   'roster.byLevel': { en: 'By level', ko: '레벨별' },
 }
 
