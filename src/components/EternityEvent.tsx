@@ -1,15 +1,132 @@
 import { useState } from 'react'
-import { ETERNITY_PINS, eternityContent, type EternitySide } from '../data/eternity'
+import { ETERNITY_PINS, eternityContent, type EternitySide, type EternityTip } from '../data/eternity'
 import { useLang, useT } from '../i18n'
 import treeImg from '../assets/events/eternity-skilltree.webp'
 
 const ACCENT = '#2dd4bf'
 
-export default function EternityEvent() {
+/** Arrow-chained steps. */
+function Flow({ steps }: { steps: string[] }) {
+  return (
+    <div className="flex flex-wrap items-center gap-1">
+      {steps.map((s, i) => (
+        <span key={i} className="flex items-center gap-1">
+          <span className="rounded-md px-2 py-1 text-[12px] font-semibold" style={{ background: `${ACCENT}1f`, color: '#ccfbf1' }}>
+            {s}
+          </span>
+          {i < steps.length - 1 && (
+            <svg viewBox="0 0 24 24" className="h-3 w-3 shrink-0" fill="none" stroke={ACCENT} strokeWidth="3" aria-hidden="true">
+              <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
+        </span>
+      ))}
+    </div>
+  )
+}
+
+function TipCard({ tip }: { tip: EternityTip }) {
+  return (
+    <section className="rounded-xl border border-white/10 bg-[#131c2b] p-3.5">
+      <h4 className="flex items-start gap-2 text-[13.5px] font-bold text-white">
+        <span
+          className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md font-mono text-[11px] font-extrabold"
+          style={{ background: `${ACCENT}26`, color: ACCENT }}
+        >
+          {tip.n}
+        </span>
+        <span>{tip.title}</span>
+      </h4>
+
+      {tip.body && <p className="mt-1.5 text-[12.5px] leading-relaxed text-slate-300">{tip.body}</p>}
+
+      {tip.doList && (
+        <ul className="mt-2 space-y-1.5">
+          {tip.doList.map((d, i) => (
+            <li key={i} className="flex items-start gap-2.5">
+              <span
+                className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[12px] font-bold ${d.ok ? 'bg-emerald-400/15 text-emerald-300' : 'bg-red-500/15 text-red-300'}`}
+              >
+                {d.ok ? '✓' : '✕'}
+              </span>
+              <span className="text-[12.5px] leading-relaxed text-slate-200">{d.text}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {tip.bullets && (
+        <ul className="mt-2 space-y-1 text-[12.5px] leading-relaxed text-slate-300">
+          {tip.bullets.map((b, i) => (
+            <li key={i} className="flex gap-2">
+              <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-slate-500" />
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {tip.flow && (
+        <div className="mt-2">
+          <Flow steps={tip.flow} />
+        </div>
+      )}
+
+      {tip.note && <p className="mt-2 rounded-lg bg-black/25 px-3 py-2 text-[12px] leading-relaxed text-slate-400">{tip.note}</p>}
+    </section>
+  )
+}
+
+export default function EternityEvent({ section }: { section: string }) {
   const t = useT()
   const lang = useLang()
   const c = eternityContent(lang)
   const [sel, setSel] = useState<number | null>(null)
+  const [openGroups, setOpenGroups] = useState<Set<number>>(new Set([0]))
+  const toggleGroup = (i: number) =>
+    setOpenGroups((prev) => {
+      const next = new Set(prev)
+      next.has(i) ? next.delete(i) : next.add(i)
+      return next
+    })
+
+  if (section === 'tips')
+    return (
+      <div className="space-y-3 px-4 pt-4">
+        <p className="text-[12.5px] leading-relaxed text-slate-400">{c.tipsIntro}</p>
+        {c.tipGroups.map((g, gi) => {
+          const open = openGroups.has(gi)
+          return (
+            <section key={gi} className="overflow-hidden rounded-2xl border-2" style={{ borderColor: `${ACCENT}66`, background: `${ACCENT}0f` }}>
+              <button onClick={() => toggleGroup(gi)} aria-expanded={open} className="flex w-full items-center gap-2.5 px-3.5 py-3 text-left">
+                <span className="min-w-0 flex-1 text-[15px] font-bold text-white">{g.header}</span>
+                <span className="shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold" style={{ background: `${ACCENT}26`, color: ACCENT }}>
+                  {g.tips.length}
+                  {c.tipCount}
+                </span>
+                <svg
+                  viewBox="0 0 24 24"
+                  className={`h-4 w-4 shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
+                  style={{ color: ACCENT }}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.6"
+                >
+                  <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+              {open && (
+                <div className="accopen space-y-2 px-3 pb-3">
+                  {g.tips.map((tip) => (
+                    <TipCard key={tip.n} tip={tip} />
+                  ))}
+                </div>
+              )}
+            </section>
+          )
+        })}
+      </div>
+    )
 
   const sideLabel = (s: EternitySide) => (s === 'L' ? c.sideL : c.sideR)
   const active = sel !== null ? ETERNITY_PINS[sel] : null

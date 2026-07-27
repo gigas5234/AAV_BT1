@@ -116,6 +116,14 @@ const ICONS: Record<string, JSX.Element> = {
       <path d="M8 11h1M8 14h1M8 17h1M15 8h1M15 11h1M15 14h1" strokeLinecap="round" />
     </svg>
   ),
+  skill: (
+    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
+      <circle cx="12" cy="4.5" r="2" />
+      <circle cx="6" cy="19.5" r="2" />
+      <circle cx="18" cy="19.5" r="2" />
+      <path d="M12 6.5v5m0 0-4.6 6m4.6-6 4.6 6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
   timeline: (
     <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
       <circle cx="12" cy="12" r="9" />

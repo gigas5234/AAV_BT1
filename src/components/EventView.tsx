@@ -53,7 +53,7 @@ export default function EventView({ eventId, section }: { eventId: EventId; sect
       ) : meta.ready && eventId === 'swordland' ? (
         <SwordlandEvent section={section} />
       ) : meta.ready && eventId === 'eternity' ? (
-        <EternityEvent />
+        <EternityEvent section={section} />
       ) : (
         <ComingSoon name={t(`events.${eventId}`)} section={section} />
       )}
