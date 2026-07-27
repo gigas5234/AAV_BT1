@@ -22,6 +22,14 @@ export default function EternityEvent() {
         <p className="mt-1 text-[13px] leading-relaxed text-slate-300">{c.intro}</p>
       </div>
 
+      {/* how skill levels are earned — read this first */}
+      <div className="flex items-start gap-2 rounded-2xl border-2 border-amber-300 bg-amber-400 px-4 py-3 text-[14px] font-bold leading-relaxed text-[#3a2600]">
+        <svg viewBox="0 0 24 24" className="mt-0.5 h-5 w-5 shrink-0" fill="currentColor" aria-hidden="true">
+          <path d="M13 2 3 14h7l-1 8 10-12h-7z" />
+        </svg>
+        <span>{c.levelUp}</span>
+      </div>
+
       {/* the route at a glance */}
       <section className="rounded-2xl border-2 p-4" style={{ borderColor: `${ACCENT}80`, background: `${ACCENT}14` }}>
         <h3 className="text-[13px] font-bold" style={{ color: ACCENT }}>

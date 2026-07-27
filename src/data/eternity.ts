@@ -20,6 +20,8 @@ export type EternitySkill = { effect: string; why: string }
 export type EternityContent = {
   title: string
   intro: string
+  /** How skill levels are earned — the thing to internalise before anything else. */
+  levelUp: string
   pathTitle: string
   pathNote: string
   sideL: string
@@ -39,6 +41,7 @@ export function eternityContent(lang: Lang): EternityContent {
     return {
       title: '스킬트리 추천 경로',
       intro: '사라진 유적은 단계마다 왼쪽·오른쪽 스킬 중 하나를 고릅니다. 가장 널리 검증된 경로는 아래와 같습니다.',
+      levelUp: '스킬 레벨은 체사레를 사냥해야 얻을 수 있습니다. 초반에는 광맥보다 체사레를 빠르게 많이 처치하세요.',
       pathTitle: '추천 경로',
       pathNote: '초반에는 구리 수급과 회전 속도를, 중반부터는 광맥 점령·채집 효율을 챙기는 순서입니다.',
       sideL: '왼쪽',
@@ -60,6 +63,7 @@ export function eternityContent(lang: Lang): EternityContent {
   return {
     title: 'Recommended skill path',
     intro: 'In Eternity’s Reach each level makes you pick the left or the right skill. The most widely verified route is below.',
+    levelUp: 'Skill levels only come from hunting Cesare. Early on, prioritise killing Cesare fast and often over working veins.',
     pathTitle: 'Recommended route',
     pathNote: 'It front-loads copper income and rotation speed, then shifts to vein capture and gathering efficiency.',
     sideL: 'Left',
