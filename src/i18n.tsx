@@ -49,6 +49,8 @@ const STR: Record<string, Entry> = {
   'sec.castle': { en: 'Castle', ko: '성 전투' },
   'sec.build': { en: 'Buildings', ko: '건물' },
   'sec.skill': { en: 'Skills', ko: '스킬트리' },
+  'sec.stamp': { en: 'Run of show', ko: '타임스탬프' },
+  'sec.score': { en: 'Scoring', ko: '점수' },
   'sec.timeline': { en: 'Timeline', ko: '시간표' },
   'gov.day': { en: 'Day', ko: '일차' },
   'gov.selectDay': { en: 'Tap a day to see its scoring', ko: '일차를 눌러 그날 점수를 확인' },

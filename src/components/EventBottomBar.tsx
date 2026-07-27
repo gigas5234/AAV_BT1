@@ -124,6 +124,18 @@ const ICONS: Record<string, JSX.Element> = {
       <path d="M12 6.5v5m0 0-4.6 6m4.6-6 4.6 6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
+  score: (
+    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
+      <ellipse cx="12" cy="6.5" rx="7" ry="3" />
+      <path d="M5 6.5v11c0 1.7 3.1 3 7 3s7-1.3 7-3v-11M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3" strokeLinecap="round" />
+    </svg>
+  ),
+  stamp: (
+    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
+      <circle cx="12" cy="13.5" r="7.5" />
+      <path d="M12 10v3.5l2.5 1.5M9.5 2.5h5M12 2.5V6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
   timeline: (
     <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
       <circle cx="12" cy="12" r="9" />

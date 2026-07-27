@@ -90,6 +90,167 @@ export default function EternityEvent({ section }: { section: string }) {
       return next
     })
 
+  if (section === 'score')
+    return (
+      <div className="space-y-3 px-4 pt-4">
+        <p className="text-[12.5px] leading-relaxed text-slate-400">{c.scoreIntro}</p>
+
+        {/* 1. where the points come from, ranked */}
+        <section className="overflow-hidden rounded-2xl border-2" style={{ borderColor: `${ACCENT}66`, background: `${ACCENT}0f` }}>
+          <h3 className="px-3.5 py-2.5 text-[14px] font-bold text-white">{c.srcTitle}</h3>
+          <div className="grid grid-cols-[1fr_7.5rem] gap-x-2 px-3.5 py-1.5 text-[11px] font-bold" style={{ background: `${ACCENT}1a`, color: ACCENT }}>
+            <span>{c.srcHead[0]}</span>
+            <span className="text-right">{c.srcHead[1]}</span>
+          </div>
+          {c.sources.map((s, i) => (
+            <div key={i} className="grid grid-cols-[1fr_7.5rem] items-start gap-x-2 border-t border-white/5 px-3.5 py-2">
+              <span className="min-w-0">
+                <span className="flex items-baseline gap-1.5">
+                  <span className="font-mono text-[11px] font-bold" style={{ color: ACCENT }}>
+                    {i + 1}
+                  </span>
+                  <span className="text-[13px] font-semibold text-white">{s.source}</span>
+                </span>
+                <span className="mt-0.5 block text-[11.5px] leading-relaxed text-slate-400">{s.cond}</span>
+              </span>
+              <span className="text-right text-[12.5px] font-bold" style={{ color: i < 3 ? ACCENT : '#cbd5e1' }}>
+                {s.gain}
+              </span>
+            </div>
+          ))}
+          <p className="border-t border-white/5 bg-black/25 px-3.5 py-2 text-[12px] leading-relaxed text-slate-400">{c.srcNote}</p>
+        </section>
+
+        {/* 2. value of each recommended pick */}
+        <section className="overflow-hidden rounded-2xl border border-white/10">
+          <h3 className="bg-white/[0.06] px-3.5 py-2.5 text-[13.5px] font-semibold text-white">{c.skillScoreTitle}</h3>
+          {c.skillScores.map((s, i) => (
+            <div key={i} className="flex items-start gap-2 border-t border-white/5 px-3.5 py-2">
+              <span className="flex shrink-0 items-center gap-1">
+                <span className="font-mono text-[11.5px] font-bold text-slate-300">{s.lv}</span>
+                <span className="rounded px-1.5 py-0.5 text-[10px] font-bold" style={{ background: `${ACCENT}26`, color: ACCENT }}>
+                  {s.side}
+                </span>
+              </span>
+              <span className="min-w-0 flex-1 text-[12.5px] leading-relaxed text-slate-200">{s.effect}</span>
+              <span className="shrink-0 text-right font-mono text-[12px] font-bold text-white">{s.score}</span>
+            </div>
+          ))}
+        </section>
+
+        {/* 3. base gather rates */}
+        <section className="overflow-hidden rounded-2xl border border-white/10">
+          <h3 className="bg-white/[0.06] px-3.5 py-2.5 text-[13.5px] font-semibold text-white">{c.rateTitle}</h3>
+          <div className="grid grid-cols-[1fr_5rem_6rem] gap-x-2 px-3.5 py-1.5 text-[11px] font-semibold text-slate-400">
+            <span>{c.rateHead[0]}</span>
+            <span className="text-right">{c.rateHead[1]}</span>
+            <span className="text-right">{c.rateHead[2]}</span>
+          </div>
+          {c.rates.map((r, i) => (
+            <div key={i} className="grid grid-cols-[1fr_5rem_6rem] gap-x-2 border-t border-white/5 px-3.5 py-2 text-[12.5px]">
+              <span className="text-slate-200">{r.vein}</span>
+              <span className="text-right font-mono text-slate-300">{r.rate}</span>
+              <span className="text-right font-mono font-bold text-white">{r.perMin}</span>
+            </div>
+          ))}
+          <p className="border-t border-white/5 bg-black/25 px-3.5 py-2 text-[12px] leading-relaxed text-slate-400">{c.rateNote}</p>
+        </section>
+
+        {/* 4. rates with skills applied */}
+        <section className="overflow-hidden rounded-2xl border border-white/10">
+          <h3 className="bg-white/[0.06] px-3.5 py-2.5 text-[13.5px] font-semibold text-white">{c.boostTitle}</h3>
+          <div className="grid grid-cols-5 gap-x-1 px-3 py-1.5 text-[11px] font-semibold text-slate-400">
+            {c.boostHead.map((h, i) => (
+              <span key={i} className={i === 0 ? '' : 'text-right'}>
+                {h}
+              </span>
+            ))}
+          </div>
+          {c.boosts.map((b, i) => (
+            <div key={i} className="grid grid-cols-5 gap-x-1 border-t border-white/5 px-3 py-2 text-[12px]">
+              <span className="font-semibold text-slate-200">{b.vein}</span>
+              <span className="text-right font-mono text-slate-400">{b.base}</span>
+              <span className="text-right font-mono text-slate-300">{b.lv4}</span>
+              <span className="text-right font-mono text-slate-300">{b.lv5}</span>
+              <span className="text-right font-mono font-bold" style={{ color: ACCENT }}>
+                {b.both}
+              </span>
+            </div>
+          ))}
+          <p className="border-t border-white/5 bg-black/25 px-3.5 py-2 text-[12px] leading-relaxed text-slate-400">{c.boostNote}</p>
+        </section>
+
+        {/* 5. worked example */}
+        <section className="overflow-hidden rounded-2xl border-2 border-amber-300/60 bg-amber-400/[0.08]">
+          <h3 className="px-3.5 py-2.5 text-[13.5px] font-bold text-amber-100">{c.exTitle}</h3>
+          <div className="grid grid-cols-[1fr_5.5rem] gap-x-2 bg-amber-400/10 px-3.5 py-1.5 text-[11px] font-bold text-amber-200/80">
+            <span>{c.exHead[0]}</span>
+            <span className="text-right">{c.exHead[2]}</span>
+          </div>
+          {c.examples.map((e, i) => (
+            <div key={i} className="grid grid-cols-[1fr_5.5rem] items-start gap-x-2 border-t border-amber-300/15 px-3.5 py-2">
+              <span className="min-w-0">
+                <span className="block text-[12.5px] font-semibold text-amber-50">{e.source}</span>
+                <span className="mt-0.5 block font-mono text-[11px] text-amber-200/60">{e.calc}</span>
+              </span>
+              <span className="text-right font-mono text-[12px] font-bold text-white">{e.score}</span>
+            </div>
+          ))}
+          <div className="border-t-2 border-amber-300/40 bg-amber-400/15 px-3.5 py-2.5">
+            <p className="text-[11px] font-bold text-amber-200/80">{c.exTotalLabel}</p>
+            <p className="mt-0.5 text-[13px] font-extrabold text-white">{c.exTotal}</p>
+          </div>
+          <p className="border-t border-amber-300/15 bg-black/25 px-3.5 py-2 text-[11.5px] leading-relaxed text-slate-400">{c.exNote}</p>
+        </section>
+      </div>
+    )
+
+  if (section === 'stamp')
+    return (
+      <div className="space-y-2.5 px-4 pt-4">
+        <div>
+          <h2 className="text-lg font-bold text-white">{c.stampTitle}</h2>
+          <p className="mt-0.5 text-[12px] leading-relaxed text-slate-400">{c.stampIntro}</p>
+        </div>
+        {/* one continuous rail so the 30 minutes read as a single timeline */}
+        <ol className="relative m-0 list-none p-0 pt-1">
+          <span className="absolute bottom-3 left-[6px] top-3 w-px bg-white/10" aria-hidden="true" />
+          {c.stamps.map((s, i) => (
+            <li key={i} className="relative pb-3.5 pl-6">
+              <span
+                className="absolute left-0 top-[5px] h-[13px] w-[13px] rounded-full"
+                style={
+                  s.key
+                    ? { background: ACCENT, boxShadow: `0 0 0 3px #0b1220, 0 0 10px 2px ${ACCENT}80` }
+                    : { background: '#0b1220', boxShadow: '0 0 0 2px rgba(148,163,184,0.45)' }
+                }
+                aria-hidden="true"
+              />
+              <div className={s.key ? 'rounded-xl px-3 py-2' : ''} style={s.key ? { background: `${ACCENT}14` } : undefined}>
+                <div className="flex flex-wrap items-baseline gap-x-2">
+                  <span
+                    className="font-mono text-[12px] font-extrabold"
+                    style={{ color: s.key ? ACCENT : '#94a3b8' }}
+                  >
+                    {s.time}
+                  </span>
+                  <h3 className={`text-[13.5px] font-bold ${s.key ? 'text-white' : 'text-slate-200'}`}>{s.title}</h3>
+                </div>
+                <ul className="mt-1 space-y-0.5">
+                  {s.items.map((it, j) => (
+                    <li key={j} className="flex gap-1.5 text-[12.5px] leading-relaxed text-slate-400">
+                      <span className="shrink-0 text-slate-600">·</span>
+                      <span>{it}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    )
+
   if (section === 'tips')
     return (
       <div className="space-y-3 px-4 pt-4">
@@ -125,6 +286,30 @@ export default function EternityEvent({ section }: { section: string }) {
             </section>
           )
         })}
+
+        {/* what actually costs people points — deliberately red, not the teal of the tips */}
+        <section className="overflow-hidden rounded-2xl border-2 border-red-500/70 bg-red-500/[0.08]">
+          <h3 className="flex items-center gap-1.5 border-b border-red-500/30 px-3.5 py-2.5 text-[14px] font-extrabold text-red-200">
+            <svg viewBox="0 0 24 24" className="h-4.5 w-4.5 shrink-0" fill="currentColor" aria-hidden="true">
+              <path d="M12 2 1 21h22z" />
+              <path d="M12 9v5M12 17v.01" stroke="#7f1d1d" strokeWidth="1.6" strokeLinecap="round" />
+            </svg>
+            {c.failTitle}
+          </h3>
+          <div className="grid grid-cols-[1.15fr_1fr] gap-x-2 bg-red-500/[0.12] px-3.5 py-1.5 text-[11px] font-bold text-red-200/80">
+            <span>{c.failHeadMistake}</span>
+            <span>{c.failHeadProblem}</span>
+          </div>
+          {c.fails.map((f, i) => (
+            <div key={i} className="grid grid-cols-[1.15fr_1fr] items-start gap-x-2 border-t border-red-500/20 px-3.5 py-2">
+              <span className="flex gap-1.5 text-[12.5px] font-semibold leading-relaxed text-red-50">
+                <span className="font-mono text-[11px] text-red-300/70">{i + 1}</span>
+                {f.mistake}
+              </span>
+              <span className="text-[12px] leading-relaxed text-slate-300">{f.problem}</span>
+            </div>
+          ))}
+        </section>
       </div>
     )
 

@@ -20,7 +20,7 @@ export type EventMeta = {
 
 export const EVENTS: EventMeta[] = [
   { id: 'viking', accent: '#4c9be8', ready: true, sections: ['overview', 'key', 'strategy', 'setup'], hot: true },
-  { id: 'eternity', accent: '#2dd4bf', ready: true, sections: ['skill', 'tips'], hot: true },
+  { id: 'eternity', accent: '#2dd4bf', ready: true, sections: ['skill', 'score', 'stamp', 'tips'], hot: true },
   { id: 'brawl', accent: '#fb923c', ready: true, sections: ['overview', 'daily', 'tips'] },
   { id: 'swordland', accent: '#f87171', ready: true, sections: ['overview', 'build', 'timeline', 'tips'] },
   { id: 'championship', accent: '#f5b301', ready: true, sections: ['tips', 'matchup'] },
