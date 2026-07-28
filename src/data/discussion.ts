@@ -1,6 +1,15 @@
 // A standing discussion note for the alliance about how Bear Trap rallies are run.
 // Opened from a floating button on the Bear Trap screen so it doesn't cost a tab.
-import { type Lang } from '../i18n'
+// This document carries its own language switch (ko / en / es) because for many
+// members it's the only long-form text they'll read here.
+
+/** The doc ships in three languages, independent of the app's own en/ko toggle. */
+export type DocLang = 'ko' | 'en' | 'es'
+export const DOC_LANGS: { id: DocLang; label: string }[] = [
+  { id: 'ko', label: '한국어' },
+  { id: 'en', label: 'English' },
+  { id: 'es', label: 'Español' },
+]
 
 export type DiscBlock =
   | { kind: 'p'; text: string }
@@ -10,24 +19,30 @@ export type DiscBlock =
   | { kind: 'flow'; label: string; steps: string[] }
   /** Pulled out visually — the line that matters most in that section. */
   | { kind: 'note'; text: string }
+  /** A newly added agenda item, highlighted apart from the rest. */
+  | { kind: 'add'; label: string; title: string; items: string[] }
 
 export type DiscSection = { n: string; title: string; blocks: DiscBlock[] }
 
 export type DiscussionDoc = {
   fab: string
+  fabBadge: string
   badge: string
   title: string
   lead: string[]
   sections: DiscSection[]
   close: string
+  langLabel: string
 }
 
-export function discussionDoc(lang: Lang): DiscussionDoc {
+export function discussionDoc(lang: DocLang): DiscussionDoc {
   if (lang === 'ko')
     return {
       fab: '논의',
+      fabBadge: '필독',
       badge: '연맹 논의',
       title: '곰 덫 운영의 구조적인 문제와 개선 방향에 대한 논의',
+      langLabel: '언어',
       lead: [
         '안녕하세요. 곰 덫을 계속 운영하면서 언젠가는 한 번 논의해야 할 문제라고 생각했습니다.',
         '지금 당장 보상의 차이가 매우 큰 것은 아니지만, 운영 방식에 대한 불만이 반복적으로 누적되면 인원 이탈이나 연맹 내 갈등으로 이어질 수 있기 때문에 미리 기준을 정할 필요가 있다고 생각합니다.',
@@ -168,6 +183,16 @@ export function discussionDoc(lang: Lang): DiscussionDoc {
                 '룰을 지키는 사람이 손해를 보지 않도록 하는 기준',
               ],
             },
+            {
+              kind: 'add',
+              label: '추가 안건',
+              title: '곰 덫 참여 병력 규모의 제한',
+              items: [
+                '예: 1인당 600k~700k (자기 집결을 제외하고, 참여로 보내는 병력 기준)',
+                '6개의 렐리에 각각 100k 규모 수준으로만 나눠서 참여하는 방식',
+                '한 렐리에 병력이 몰리지 않게 하고, 여러 렐리가 고르게 채워지도록 하는 것이 목적입니다.',
+              ],
+            },
           ],
         },
         {
@@ -194,10 +219,195 @@ export function discussionDoc(lang: Lang): DiscussionDoc {
       close: '닫기',
     }
 
+  if (lang === 'es')
+    return {
+      fab: 'Debate',
+      fabBadge: 'LEER',
+      badge: 'Debate de la alianza',
+      title: 'Bear Trap: el problema estructural de cómo lo organizamos y cómo podríamos mejorarlo',
+      langLabel: 'Idioma',
+      lead: [
+        'Hola a todos. Después de organizar Bear Trap durante un tiempo, creo que este es un tema que tarde o temprano teníamos que hablar.',
+        'Ahora mismo la diferencia de recompensas no es enorme, pero si la frustración con la forma de organizarlo se va acumulando, puede acabar en gente que se va o en conflictos dentro de la alianza. Por eso creo que conviene fijar unos criterios antes de que eso pase.',
+      ],
+      sections: [
+        {
+          n: '1',
+          title: 'El problema principal de Bear Trap hoy',
+          blocks: [
+            { kind: 'p', text: 'Aunque envíes exactamente los mismos héroes y las mismas tropas, tu puntuación cambia muchísimo según en el rally de qué líder participes.' },
+            { kind: 'p', text: 'Con héroes y tropas idénticos pueden salir resultados tan distintos como estos:' },
+            { kind: 'ul', items: ['Participar en un rally fuerte: unos 10M', 'Participar en un rally más débil: unos 2M'] },
+            {
+              kind: 'p',
+              text: 'Como la diferencia es tan grande, casi todo el mundo intenta entrar en los rallies fuertes. Así, los rallies fuertes se llenan enseguida, mientras que los más débiles salen sin haber reunido tropas suficientes.',
+            },
+          ],
+        },
+        {
+          n: '2',
+          title: 'Lo que falló con el sistema de grupos que probamos',
+          blocks: [
+            { kind: 'p', text: 'Antes juntamos a los líderes fuertes en el Grupo 1. El flujo que buscábamos era este:' },
+            { kind: 'flow', label: 'Previsto', steps: ['Ataca el rally del Grupo 1', 'Vuelven las tropas', 'Participar en el Grupo 2', 'Vuelven las tropas', 'Volver al Grupo 1'] },
+            { kind: 'p', text: 'Pero en la práctica ocurrió esto:' },
+            { kind: 'flow', label: 'En la práctica', steps: ['Ataca el rally del Grupo 1', 'Vuelven las tropas', 'Otra vez al Grupo 1', 'Vuelven las tropas', 'Otra vez al Grupo 1'] },
+            {
+              kind: 'p',
+              text: 'En cuanto se volvía a abrir un rally fuerte del Grupo 1, la mayoría entraba de nuevo en el Grupo 1 en lugar de pasar al Grupo 2. Como resultado, los rallies del Grupo 2 atacaban sin llenarse, a veces incluso con menos tiempo restante.',
+            },
+            {
+              kind: 'p',
+              text: 'Pero desde el punto de vista de cada persona, es difícil pedirle que entre a propósito en un rally que puntúa menos cuando hay otro mucho mejor con las mismas tropas. Y quien sí cumplió y entró en el Grupo 2 sale perdiendo, porque mientras tanto el Grupo 1 se llena y pierde la oportunidad de puntuar más.',
+            },
+            { kind: 'note', text: 'Con la estructura actual todos saben cuáles son los buenos rallies, así que se convierte en una carrera por entrar antes en los fuertes.' },
+          ],
+        },
+        {
+          n: '3',
+          title: 'Por qué pensamos en repartir a los líderes fuertes entre los dos grupos',
+          blocks: [
+            { kind: 'p', text: 'Para reducir ese problema pensamos en repartir a los líderes fuertes entre los dos grupos. Por ejemplo:' },
+            { kind: 'ul', items: ['Grupo 1: Zhapa', 'Grupo 2: Morillo'] },
+            { kind: 'p', text: 'La idea es repartir las opciones, para que quien no consiga entrar en el rally fuerte del Grupo 1 pueda entrar después en el del Grupo 2.' },
+            {
+              kind: 'p',
+              text: 'Además, Bear Trap dura unos 30 minutos y tanto los tiempos de ataque como la velocidad de regreso de cada uno son distintos, así que aunque empieces en un rally malo, con el tiempo puede tocarte uno fuerte. Visto solo hasta aquí, no parece haber gran problema.',
+            },
+          ],
+        },
+        {
+          n: '4',
+          title: 'La diferencia estructural entre la línea 1 y las líneas 2 y 3',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'En la práctica, sin embargo, el tiempo de regreso de las tropas da bastante ventaja a quienes están en la línea 1. Para ellos, el momento en que termina el ataque del rally fuerte coincide más o menos con el regreso de sus tropas, así que pueden volver a entrar enseguida en el siguiente rally fuerte.',
+            },
+            {
+              kind: 'p',
+              text: 'En cambio, a los de las líneas 2 y 3 el siguiente rally fuerte se les abre antes de que vuelvan sus tropas. Cuando por fin llegan, los rallies fuertes ya están llenos. Y cuanto más crezca el volumen total de tropas, más se va a notar la falta de huecos.',
+            },
+            {
+              kind: 'p',
+              text: 'Dicho esto, creo que hay que reconocer cierta ventaja a los de la línea 1. Han dedicado más esfuerzo e inversión y son quienes generan el daño alto que sube la puntuación de todos. Si los de la línea 1 dejaran de participar en Bear Trap, la media de la alianza bajaría mucho.',
+            },
+            {
+              kind: 'note',
+              text: 'Por eso, más que eliminar todas las diferencias, creo que necesitamos un criterio que reconozca la aportación de la línea 1 sin que el resto quede demasiado perjudicado.',
+            },
+          ],
+        },
+        {
+          n: '5',
+          title: 'Por qué es difícil organizarlo de forma totalmente equitativa',
+          blocks: [
+            { kind: 'p', text: 'Para dar exactamente las mismas oportunidades a todos habría que hacer algo así:' },
+            {
+              kind: 'flow',
+              label: 'Turno del Grupo 1',
+              steps: [
+                'El Grupo 1 abre todos los rallies posibles y recibe casi todas las tropas',
+                'El Grupo 2 abre sus rallies unos 2 minutos después',
+                'Las tropas que lleguen al Grupo 2 se devuelven hasta que el Grupo 1 ataque',
+                'Los rallies del Grupo 2 se quedan vacíos hasta entonces',
+              ],
+            },
+            {
+              kind: 'flow',
+              label: 'Turno del Grupo 2',
+              steps: ['Termina el ataque del Grupo 1', 'El Grupo 2 recibe todas las tropas', 'Ahora se devuelven las tropas que lleguen al Grupo 1'],
+            },
+            { kind: 'p', text: 'Alternando así qué grupo recibe tropas, la cosa sería bastante equitativa. Pero en la práctica es muy difícil de gestionar.' },
+            {
+              kind: 'p',
+              text: 'Aunque avisemos de «ahora enviad solo al Grupo 1, no al Grupo 2», seguro que alguien envía igualmente al otro grupo. Entonces quien cumple la norma pierde mientras espera, y quien no la cumple entra en el rally que quería y puntúa más.',
+            },
+            { kind: 'note', text: 'No quiero montar una estructura en la que quien cumple las normas sea justamente el que sale perdiendo.' },
+            { kind: 'p', text: 'Además, los líderes de rally tienen que comprobar todo esto en muy poco tiempo:' },
+            { kind: 'ul', items: ['Cuántas tropas han entrado', 'El primer héroe', 'Devolver las tropas que entraron donde no debían', 'La hora de salida del rally', 'Preparar el siguiente rally'] },
+            {
+              kind: 'p',
+              text: 'Ya cuesta comprobar tropas y primer héroe; si encima añadimos controlar las tropas por grupos, la carga para los líderes se vuelve excesiva. Así que, aunque en teoría es lo más equitativo, concluí que no es algo que podamos sostener en el tiempo.',
+            },
+          ],
+        },
+        {
+          n: '6',
+          title: 'Otro problema que vimos en el Bear Trap de hoy',
+          blocks: [
+            { kind: 'p', text: 'Hoy esperábamos mucha participación y abrimos más rallies de lo normal. Al final, varios no llegaron ni a la mitad.' },
+            {
+              kind: 'p',
+              text: 'Cuando pasa eso, pierden tanto el líder que abrió ese rally como quienes entraron en él: esas mismas tropas habrían puntuado más en un rally fuerte, pero al abrir uno propio o entrar en uno poco lleno acaban con una puntuación baja. Si esto se repite, los líderes pueden dejar de querer gastar sus tropas y su tiempo en abrir rallies.',
+            },
+            { kind: 'p', text: 'Así que tenemos dos problemas opuestos a la vez:' },
+            { kind: 'ul', items: ['Si abrimos muy pocos rallies, hay gente que no puede participar.', 'Si abrimos demasiados, las tropas se dispersan y aumentan los rallies vacíos o de poco daño.'] },
+            { kind: 'note', text: 'Por eso es importantísimo fijar el número adecuado de rallies según la participación real y el volumen de tropas disponible.' },
+          ],
+        },
+        {
+          n: '7',
+          title: 'Los criterios que tenemos que acordar',
+          blocks: [
+            { kind: 'p', text: 'Bear Trap se repite cada dos días, así que si acordamos algo razonable una vez, luego se puede organizar sin mucho lío. Estos son los puntos que creo que debemos cerrar:' },
+            {
+              kind: 'ol',
+              items: [
+                'El número adecuado de rallies según la participación real',
+                'Cómo repartir a los líderes fuertes entre los grupos',
+                'Hasta qué punto reconocemos la ventaja por la aportación de la línea 1',
+                'Cómo garantizar a las líneas 2 y 3 un mínimo acceso a los rallies fuertes',
+                'Cuándo lanzar y cuándo cancelar un rally que va corto de tropas',
+                'Una forma de organizarlo que no cargue de control a los líderes de rally',
+                'Un criterio para que quien cumple las normas no salga perdiendo',
+              ],
+            },
+            {
+              kind: 'add',
+              label: 'Punto añadido',
+              title: 'Limitar el volumen de tropas que aporta cada persona',
+              items: [
+                'Por ejemplo, 600k–700k por persona (contando las tropas que envías como participante, sin tu propio rally)',
+                'Repartirlas en unas 100k para cada uno de los 6 rallies',
+                'El objetivo es que las tropas no se acumulen en un solo rally y que varios se llenen de forma pareja.',
+              ],
+            },
+          ],
+        },
+        {
+          n: '8',
+          title: 'Conclusión',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'El problema de Bear Trap no es simplemente que algunos solo quieran entrar en los rallies fuertes. Es estructural: las mismas tropas puntúan de forma muy distinta según lo fuerte que sea el líder, y tu oportunidad de entrar en el siguiente rally depende del tiempo de regreso y de tu posición en el mapa.',
+            },
+            {
+              kind: 'p',
+              text: 'Además, forzar la igualdad estricta o bien penaliza a quien cumple las normas o bien sobrecarga a los líderes de rally. Y dejarlo totalmente libre convierte los rallies fuertes en una carrera, y hace que los rallies débiles —y quienes los abren— pierdan una y otra vez.',
+            },
+            { kind: 'p', text: 'Por eso, más que buscar la igualdad perfecta, creo que lo importante es equilibrar estas tres cosas:' },
+            {
+              kind: 'ul',
+              items: ['Reconocer la aportación de la línea 1, que genera el daño alto', 'Dar al resto una oportunidad razonable de participar', 'Mantener una forma de organizarlo lo bastante simple como para sostenerla'],
+            },
+            {
+              kind: 'note',
+              text: 'Ahora mismo casi todos puntúan bien, así que la diferencia de recompensas quizá no se note mucho. Pero las pequeñas frustraciones, repetidas, acaban siendo un problema de toda la alianza. Me gustaría que nos entendiéramos y acordáramos juntos unos criterios que podamos mantener a largo plazo.',
+            },
+          ],
+        },
+      ],
+      close: 'Cerrar',
+    }
+
   return {
     fab: 'Discussion',
+    fabBadge: 'READ',
     badge: 'Alliance discussion',
     title: 'Bear Trap: the structural problem with how we run it, and how we might fix it',
+    langLabel: 'Language',
     lead: [
       'Hi everyone. Running Bear Trap over time, I think this is something we were always going to have to talk about at some point.',
       'The reward gap isn’t huge right now, but if frustration with how we run it keeps building up it can lead to people leaving or to friction inside the alliance — so I think it’s worth agreeing on some ground rules before that happens.',
@@ -209,7 +419,7 @@ export function discussionDoc(lang: Lang): DiscussionDoc {
         blocks: [
           { kind: 'p', text: 'Even with the exact same heroes and the exact same troops, your score changes enormously depending on whose rally you join.' },
           { kind: 'p', text: 'Sending identical heroes and identical troops can produce results as far apart as this:' },
-          { kind: 'ul', items: ['Joining a strong rally: around 10M', 'Joining a weaker rally: around 2M' ] },
+          { kind: 'ul', items: ['Joining a strong rally: around 10M', 'Joining a weaker rally: around 2M'] },
           {
             kind: 'p',
             text: 'Because the gap is that large, almost everyone naturally tries to join the strong rallies. So strong rallies fill up fast, while weaker ones end up launching without enough troops in them.',
@@ -329,6 +539,16 @@ export function discussionDoc(lang: Lang): DiscussionDoc {
               'When to launch versus cancel a rally that is short on troops',
               'A way of running it that doesn’t pile control work onto rally leaders',
               'A standard that ensures people who follow the rules don’t lose out',
+            ],
+          },
+          {
+            kind: 'add',
+            label: 'Added item',
+            title: 'Capping how many troops each person commits',
+            items: [
+              'e.g. 600k–700k per person (troops you send as a joiner, not counting your own rally)',
+              'Split as roughly 100k into each of 6 rallies',
+              'The point is to stop troops piling into one rally, so several rallies fill evenly instead.',
             ],
           },
         ],
