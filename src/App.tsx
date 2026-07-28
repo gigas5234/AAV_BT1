@@ -16,6 +16,7 @@ import PlacementGrid from './components/PlacementGrid'
 import GuideTab from './components/GuideTab'
 import SlotsTab from './components/SlotsTab'
 import CalcTab from './components/CalcTab'
+import BearDiscussion from './components/BearDiscussion'
 import SimView from './components/SimView'
 
 type PlanView = 'roster' | 'result' | 'placement' | 'sim'
@@ -164,7 +165,7 @@ export default function App() {
   // Bear Trap — the full planner, with its four tools in the bottom bar
   return (
     <LangProvider lang={settings.lang}>
-    <div key="beartrap" className="evententer mx-auto flex h-[100dvh] max-w-[480px] flex-col bg-[#0b1220]">
+    <div key="beartrap" className="evententer relative mx-auto flex h-[100dvh] max-w-[480px] flex-col bg-[#0b1220]">
       <main className="no-scrollbar flex-1 overflow-y-auto">
         {tab === 'plan' && planView === 'placement' && plan ? (
           <PlacementGrid
@@ -216,6 +217,9 @@ export default function App() {
           </div>
         )}
       </main>
+
+      {/* alliance discussion note — a floating button so it doesn't cost a tab */}
+      {!(tab === 'plan' && (planView === 'placement' || planView === 'sim')) && <BearDiscussion />}
 
       <EventBottomBar
         items={BEARTRAP_SECTIONS.map((s) => ({ id: s, labelKey: `tab.${s}` }))}
