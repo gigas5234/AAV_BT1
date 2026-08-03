@@ -109,6 +109,7 @@ const STR: Record<string, Entry> = {
   'events.brawl': { en: 'Alliance Brawl', ko: '연맹 결투' },
   'events.eternity': { en: "Eternity's Reach", ko: '사라진 유적' },
   'events.swordland': { en: 'Swordland Showdown', ko: '성검 쟁탈' },
+  'events.triclash': { en: 'Tri-Alliance Clash', ko: '3대연맹전' },
   // championship scaffold
   'champ.coverTitle': { en: 'Alliance Championship', ko: '연맹 챔피언십' },
   'champ.coverSub': { en: 'Weekly power showdown between alliances', ko: '연맹 간 주간 전력 대결' },

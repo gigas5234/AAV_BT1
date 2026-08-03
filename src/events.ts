@@ -1,7 +1,7 @@
 // Alliance-event registry. Bear Trap is the flagship (its own rich app), the rest
 // are shown in the home hub and each gets its own tailored bottom bar of sections.
 
-export type EventId = 'governor' | 'championship' | 'viking' | 'mystic' | 'brawl' | 'eternity' | 'swordland'
+export type EventId = 'governor' | 'championship' | 'viking' | 'mystic' | 'brawl' | 'eternity' | 'swordland' | 'triclash'
 
 /** What the app is currently showing: the home hub, Bear Trap, or a specific event. */
 export type Screen = 'home' | 'beartrap' | EventId
@@ -19,8 +19,9 @@ export type EventMeta = {
 }
 
 export const EVENTS: EventMeta[] = [
-  { id: 'viking', accent: '#4c9be8', ready: true, sections: ['overview', 'key', 'strategy', 'setup'], hot: true },
-  { id: 'eternity', accent: '#2dd4bf', ready: true, sections: ['skill', 'score', 'stamp', 'tips'], hot: true },
+  { id: 'triclash', accent: '#c084fc', ready: false, sections: ['overview', 'tips'], hot: true },
+  { id: 'viking', accent: '#4c9be8', ready: true, sections: ['overview', 'key', 'strategy', 'setup'] },
+  { id: 'eternity', accent: '#2dd4bf', ready: true, sections: ['skill', 'score', 'stamp', 'tips'] },
   { id: 'brawl', accent: '#fb923c', ready: true, sections: ['overview', 'daily', 'tips'] },
   { id: 'swordland', accent: '#f87171', ready: true, sections: ['overview', 'build', 'timeline', 'tips'] },
   { id: 'championship', accent: '#f5b301', ready: true, sections: ['tips', 'matchup'] },

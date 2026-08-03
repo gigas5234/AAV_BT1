@@ -8,6 +8,7 @@ import swordlandImg from '../assets/events/swordland.webp'
 import eternityImg from '../assets/events/eternity.webp'
 import governorImg from '../assets/events/governor.webp'
 import brawlImg from '../assets/events/brawl.webp'
+import triclashImg from '../assets/events/triclash.webp'
 
 // Event artwork (banners). Events without art fall back to an accent gradient.
 const EVENT_IMG: Partial<Record<EventId, string>> = {
@@ -16,6 +17,7 @@ const EVENT_IMG: Partial<Record<EventId, string>> = {
   viking: vikingImg,
   mystic: mysticImg,
   brawl: brawlImg,
+  triclash: triclashImg,
   eternity: eternityImg,
   swordland: swordlandImg,
 }
@@ -47,6 +49,13 @@ const EVENT_ICON: Record<EventId, JSX.Element> = {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5">
       <path d="M4 15c2-1 3.5-2.5 5-5l2 1.5c1.5-2.5 3-4 5-5l3 3c-1 2-2.5 3.5-5 5L12.5 13c-2.5 1.5-4 3-5 5z" strokeLinejoin="round" />
       <path d="M3 20h18" strokeLinecap="round" />
+    </svg>
+  ),
+  // three banners meeting in the middle — one per alliance
+  triclash: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5">
+      <path d="M12 3.5 4.5 8v8L12 20.5 19.5 16V8z" strokeLinejoin="round" />
+      <path d="M12 3.5v6M12 9.5 6 13M12 9.5l6 3.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
   eternity: (
