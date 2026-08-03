@@ -8,6 +8,7 @@ import GovernorEvent from './GovernorEvent'
 import BrawlEvent from './BrawlEvent'
 import SwordlandEvent from './SwordlandEvent'
 import EternityEvent from './EternityEvent'
+import TriClashEvent from './TriClashEvent'
 
 function Championship({ section }: { section: string }) {
   if (section === 'matchup') return <ChampionshipMatchup />
@@ -54,6 +55,8 @@ export default function EventView({ eventId, section }: { eventId: EventId; sect
         <SwordlandEvent section={section} />
       ) : meta.ready && eventId === 'eternity' ? (
         <EternityEvent section={section} />
+      ) : meta.ready && eventId === 'triclash' ? (
+        <TriClashEvent section={section} />
       ) : (
         <ComingSoon name={t(`events.${eventId}`)} section={section} />
       )}
