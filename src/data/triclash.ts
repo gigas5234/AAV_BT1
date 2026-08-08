@@ -79,6 +79,12 @@ export type TriClashContent = {
   rosterNote: string
   leadTitle: string
   lead: string[]
+
+  // results tab — screenshots only, no transcribed numbers
+  resTitle: string
+  resScoreLabel: string
+  resEnemyLabel: string
+  resNote: string
 }
 
 export function triclashContent(lang: Lang): TriClashContent {
@@ -306,6 +312,10 @@ export function triclashContent(lang: Lang): TriClashContent {
       rosterNote: '공식 고정 편성이 아닙니다. 연맹 전력 분포에 맞춰 조정하세요.',
       leadTitle: 'R4 · R5 1~2명은 전투보다 지휘에 집중',
       lead: ['캡틴 지정', '전체 에너지 확인', '20분 수비대 호출', '37~40분 신전 집결 호출', '붕괴 라인에 대응조 배치'],
+      resTitle: '지난 전투 결과',
+      resScoreLabel: '최종 점수',
+      resEnemyLabel: '상대 연맹 전투력',
+      resNote: '스크린샷 원본입니다. 이미지를 눌러 크게 볼 수 있습니다.',
     }
 
   return {
@@ -523,5 +533,9 @@ export function triclashContent(lang: Lang): TriClashContent {
     rosterNote: 'Not an official formation — adjust it to how your alliance’s power is distributed.',
     leadTitle: 'Keep 1–2 R4/R5 on command instead of fighting',
     lead: ['Appointing captains', 'Watching overall energy', 'Calling the 20-minute garrison push', 'Calling the 37–40 minute temple rally', 'Sending the response team to collapsing lines'],
+    resTitle: 'Last battle',
+    resScoreLabel: 'Final score',
+    resEnemyLabel: 'Enemy alliance power',
+    resNote: 'Raw screenshots — tap an image to view it larger.',
   }
 }

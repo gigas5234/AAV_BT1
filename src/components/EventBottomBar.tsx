@@ -124,6 +124,11 @@ const ICONS: Record<string, JSX.Element> = {
       <path d="M12 6.5v5m0 0-4.6 6m4.6-6 4.6 6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
+  result: (
+    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
+      <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
   score: (
     <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
       <ellipse cx="12" cy="6.5" rx="7" ry="3" />
