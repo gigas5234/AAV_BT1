@@ -52,7 +52,21 @@ export default function MainLanding({ onStart }: { onStart: () => void }) {
 
   return (
     <div className="relative mx-auto h-[100dvh] max-w-[480px] overflow-hidden bg-[#0b1220]">
-      <img src={heroImg} alt="" className="absolute inset-0 h-full w-full object-cover" />
+      {/*
+       * The art is 9:16 but phones run anywhere from 9:19.5 to nearly 3:4, so
+       * `cover` was cutting the crown or the 1974 plaque depending on the
+       * device. `contain` keeps the whole picture at every size; the leftover
+       * margin is filled with a blurred, darkened copy of the same art so it
+       * reads as depth rather than as bars. The clip has the same aspect ratio,
+       * so it lands on exactly the same rectangle as the still.
+       */}
+      <img
+        src={heroImg}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full scale-125 object-cover blur-2xl brightness-[0.62] saturate-125"
+      />
+      <img src={heroImg} alt="" className="absolute inset-0 h-full w-full object-contain" />
 
       {intro && (
         <video
@@ -62,7 +76,7 @@ export default function MainLanding({ onStart }: { onStart: () => void }) {
           muted
           playsInline
           preload="auto"
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${fading ? 'opacity-0' : 'opacity-100'}`}
+          className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-700 ${fading ? 'opacity-0' : 'opacity-100'}`}
         />
       )}
 
