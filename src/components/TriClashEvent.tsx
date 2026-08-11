@@ -2,10 +2,6 @@ import { useState } from 'react'
 import { triclashContent, type TriGroup } from '../data/triclash'
 import { useLang, useT } from '../i18n'
 import mapImg from '../assets/events/triclash-map.webp'
-import resultImg from '../assets/events/triclash-result.webp'
-import roster1Img from '../assets/events/triclash-roster1.webp'
-import roster2Img from '../assets/events/triclash-roster2.webp'
-import roster3Img from '../assets/events/triclash-roster3.webp'
 
 const ACCENT = '#c084fc'
 
@@ -89,36 +85,6 @@ function BattleMap({ title, hint, zoomHint, close }: { title: string; hint: stri
         </div>
       )}
     </figure>
-  )
-}
-
-/** A screenshot that opens full-screen on tap (results are read straight off the image). */
-function Shot({ src, alt, close }: { src: string; alt: string; close: string }) {
-  const [zoom, setZoom] = useState(false)
-  return (
-    <>
-      <button onClick={() => setZoom(true)} className="block w-full overflow-hidden rounded-xl border border-white/10 transition-transform active:scale-[0.99]">
-        <img src={src} alt={alt} className="block w-full" />
-      </button>
-      {zoom && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-black/90" onClick={() => setZoom(false)}>
-          <div className="flex justify-end px-4 py-3">
-            <button
-              onClick={() => setZoom(false)}
-              aria-label={close}
-              className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-slate-300 transition-transform active:scale-90"
-            >
-              <svg viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none" stroke="currentColor" strokeWidth="2.2">
-                <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
-              </svg>
-            </button>
-          </div>
-          <div className="scroll-dark flex flex-1 items-start justify-center overflow-auto px-2 pb-4" onClick={(e) => e.stopPropagation()}>
-            <img src={src} alt={alt} className="block h-auto w-full max-w-[900px]" />
-          </div>
-        </div>
-      )}
-    </>
   )
 }
 
@@ -242,32 +208,6 @@ export default function TriClashEvent({ section }: { section: string }) {
       </div>
     )
   }
-
-  // ── Results (screenshots only) ──
-  if (section === 'result')
-    return (
-      <div className="space-y-3 px-4 pt-4">
-        <h2 className="text-lg font-bold text-white">{c.resTitle}</h2>
-
-        <section className="overflow-hidden rounded-2xl border-2" style={{ borderColor: `${ACCENT}66`, background: `${ACCENT}0f` }}>
-          <h3 className="px-3.5 py-2.5 text-[13.5px] font-bold text-white">{c.resScoreLabel}</h3>
-          <div className="px-3 pb-3">
-            <Shot src={resultImg} alt={c.resScoreLabel} close={c.close} />
-          </div>
-        </section>
-
-        <section className="overflow-hidden rounded-2xl border border-white/10">
-          <h3 className="bg-white/[0.06] px-3.5 py-2.5 text-[13.5px] font-semibold text-white">{c.resEnemyLabel}</h3>
-          <div className="space-y-2 px-3 py-3">
-            {[roster1Img, roster2Img, roster3Img].map((src, i) => (
-              <Shot key={i} src={src} alt={`${c.resEnemyLabel} ${i + 1}`} close={c.close} />
-            ))}
-          </div>
-        </section>
-
-        <p className="rounded-lg bg-black/25 px-3 py-2 text-[12px] leading-relaxed text-slate-500">{c.resNote}</p>
-      </div>
-    )
 
   // ── Timeline ──
   if (section === 'timeline')

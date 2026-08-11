@@ -1,7 +1,6 @@
 import { eventMeta, type EventId } from '../events'
 import { useT } from '../i18n'
 import ChampionshipTips from './ChampionshipTips'
-import ChampionshipMatchup from './ChampionshipMatchup'
 import MysticTrial from './MysticTrial'
 import VikingVengeance from './VikingVengeance'
 import GovernorEvent from './GovernorEvent'
@@ -10,8 +9,9 @@ import SwordlandEvent from './SwordlandEvent'
 import EternityEvent from './EternityEvent'
 import TriClashEvent from './TriClashEvent'
 
-function Championship({ section }: { section: string }) {
-  if (section === 'matchup') return <ChampionshipMatchup />
+// Matchup was removed from the bottom bar; ChampionshipMatchup and its data are
+// still in the repo if we want it back.
+function Championship() {
   return <ChampionshipTips />
 }
 
@@ -44,7 +44,7 @@ export default function EventView({ eventId, section }: { eventId: EventId; sect
       {meta.ready && eventId === 'governor' ? (
         <GovernorEvent section={section} />
       ) : meta.ready && eventId === 'championship' ? (
-        <Championship section={section} />
+        <Championship />
       ) : meta.ready && eventId === 'mystic' ? (
         <MysticTrial />
       ) : meta.ready && eventId === 'viking' ? (

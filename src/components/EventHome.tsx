@@ -1,4 +1,6 @@
-import { EVENTS, type EventId } from '../events'
+import { useEffect, useMemo, useState } from 'react'
+import { EVENTS, type EventId, type EventMeta } from '../events'
+import { SOON_WINDOW_MS, countdownLabel, eventStatus } from '../data/schedule'
 import { useT, type Lang } from '../i18n'
 import beartrapImg from '../assets/events/beartrap.webp'
 import championshipImg from '../assets/events/championship.webp'
@@ -96,6 +98,29 @@ export default function EventHome({
   onOpenEvent: (id: EventId) => void
 }) {
   const t = useT()
+
+  // Re-check every minute so a label flips on its own while the hub is open.
+  const [now, setNow] = useState(() => Date.now())
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 60_000)
+    return () => clearInterval(id)
+  }, [])
+
+  const status = (e: EventMeta) => eventStatus(e.schedule, now)
+
+  // Live events float to the top, then the ones starting soonest; the rest keep their order.
+  const ordered = useMemo(() => {
+    const rank = (e: EventMeta) => {
+      const st = eventStatus(e.schedule, now)
+      if (st?.live) return 0
+      if (st && st.startMs - now <= SOON_WINDOW_MS) return 1
+      if (!st && e.hot) return 0
+      if (!st && e.soon) return 1
+      return 2
+    }
+    return EVENTS.map((e, i) => ({ e, i })).sort((a, b) => rank(a.e) - rank(b.e) || a.i - b.i).map((x) => x.e)
+  }, [now])
+
   return (
     <div className="mx-auto max-w-[480px] px-4 pb-12 pt-6">
       <div className="popin flex items-start justify-between gap-3" style={{ animationDelay: '0ms' }}>
@@ -156,8 +181,13 @@ export default function EventHome({
 
       {/* Other events — vertical list of banners (5:2), about half the hero's height */}
       <div className="space-y-3">
-        {EVENTS.map((e, i) => {
+        {ordered.map((e, i) => {
           const img = EVENT_IMG[e.id]
+          const st = status(e)
+          // a schedule, when present, decides the labels; otherwise the manual flags do
+          const isHot = st ? st.live : !!e.hot
+          const until = st && !st.live ? st.startMs - now : null
+          const isSoon = st ? until !== null && until <= SOON_WINDOW_MS : !!e.soon
           return (
           <button
             key={e.id}
@@ -174,15 +204,16 @@ export default function EventHome({
             ) : (
               <ImgHint />
             )}
-            {e.hot && (
+            {isHot && (
               <span className="absolute left-2.5 top-2.5 z-10 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-extrabold tracking-wide text-white shadow-md ring-1 ring-red-300/50">
                 {t('home.hot')}
               </span>
             )}
             <span className="absolute right-2.5 top-2.5 z-10">
-              {e.soon ? (
-                <span className="rounded-full bg-sky-500 px-2 py-0.5 text-[9px] font-extrabold tracking-wide text-white shadow-md ring-1 ring-sky-300/50">
+              {isSoon ? (
+                <span className="flex items-center gap-1 rounded-full bg-sky-500 px-2 py-0.5 text-[9px] font-extrabold tracking-wide text-white shadow-md ring-1 ring-sky-300/50">
                   {t('home.comingSoon')}
+                  {until !== null && <span className="rounded bg-black/25 px-1">{countdownLabel(until, lang)}</span>}
                 </span>
               ) : e.ready ? (
                 <span className="rounded-full px-2 py-0.5 text-[9px] font-bold shadow" style={{ background: e.accent, color: '#1a1200' }}>{t('home.ready')}</span>

@@ -553,11 +553,22 @@ export function calcGuide(lang: Lang): string[] {
 
 // ---- Championship tips ----
 export type ChampTip = { title: string; body: string }
-export type ChampTipsContent = { highlight: string; rulesTitle: string; rules: ChampTip[]; strategyTitle: string; strategy: ChampTip[] }
+export type ChampTipsContent = {
+  /** The standing order everyone must follow when signing up. */
+  laneOrder: string
+  laneNote: string
+  highlight: string
+  rulesTitle: string
+  rules: ChampTip[]
+  strategyTitle: string
+  strategy: ChampTip[]
+}
 
 export function champTips(lang: Lang): ChampTipsContent {
   if (lang === 'ko')
     return {
+      laneOrder: '모두 가운데 라인으로 등록하세요',
+      laneNote: '예외 없습니다. 좌·우로 흩어지면 어느 쪽도 이기지 못합니다.',
       highlight: '가장 중요 — 등록하는 순간의 스탯이 그대로 고정됩니다. 실시간이 아니에요!',
       rulesTitle: '우리 규칙',
       rules: [
@@ -580,6 +591,8 @@ export function champTips(lang: Lang): ChampTipsContent {
       ],
     }
   return {
+    laneOrder: 'EVERYONE registers on the MIDDLE route',
+    laneNote: 'No exceptions. Split across left and right and we win neither.',
     highlight: 'Most important — your stats lock the moment you register. It is NOT real-time!',
     rulesTitle: 'Our rules',
     rules: [

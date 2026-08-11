@@ -5,6 +5,17 @@ export default function ChampionshipTips() {
   const c = champTips(lang)
   return (
     <div className="space-y-4 px-4 pt-4">
+      {/* the standing sign-up order — loudest thing on the page */}
+      <div className="overflow-hidden rounded-2xl border-2 border-red-400 bg-red-500/[0.14] shadow-lg shadow-red-500/20">
+        <div className="flex items-center gap-2 bg-red-500 px-4 py-3">
+          <svg viewBox="0 0 24 24" className="h-6 w-6 shrink-0 text-white" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true">
+            <path d="M12 3v18M12 3l7 3-7 3" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span className="text-[17px] font-extrabold leading-tight text-white">{c.laneOrder}</span>
+        </div>
+        <p className="px-4 py-2.5 text-[13px] font-semibold leading-relaxed text-red-100">{c.laneNote}</p>
+      </div>
+
       {/* the critical mechanic */}
       <div className="flex items-start gap-2 rounded-2xl border-2 border-amber-300 bg-amber-400 px-4 py-3 text-[14px] font-semibold text-[#3a2600] shadow-lg shadow-amber-500/25">
         <svg viewBox="0 0 24 24" className="mt-0.5 h-5 w-5 shrink-0" fill="currentColor" aria-hidden="true">

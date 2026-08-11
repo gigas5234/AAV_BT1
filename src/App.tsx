@@ -5,7 +5,7 @@ import { DEFAULT_SETTINGS } from './data/settings'
 import { buildPlan } from './logic/buildPlan'
 import { clearState, loadState, saveState } from './storage'
 import { LangProvider } from './i18n'
-import { BEARTRAP_ACCENT, BEARTRAP_SECTIONS, eventMeta, type BearSection, type EventId, type Screen } from './events'
+import { BEARTRAP_ACCENT, BEARTRAP_VISIBLE, SHOW_BEAR_DISCUSSION, eventMeta, type BearSection, type EventId, type Screen } from './events'
 import MainLanding from './components/MainLanding'
 import EventHome from './components/EventHome'
 import EventView from './components/EventView'
@@ -24,7 +24,7 @@ type PlanView = 'roster' | 'result' | 'placement' | 'sim'
 export default function App() {
   const [started, setStarted] = useState(false)
   const [screen, setScreen] = useState<Screen>('home')
-  const [tab, setTab] = useState<BearSection>('plan')
+  const [tab, setTab] = useState<BearSection>(BEARTRAP_VISIBLE[0])
   const [eventSection, setEventSection] = useState<string>('overview')
   const [planView, setPlanView] = useState<PlanView>('roster')
 
@@ -219,10 +219,10 @@ export default function App() {
       </main>
 
       {/* alliance discussion note — a floating button so it doesn't cost a tab */}
-      {!(tab === 'plan' && (planView === 'placement' || planView === 'sim')) && <BearDiscussion />}
+      {SHOW_BEAR_DISCUSSION && !(tab === 'plan' && (planView === 'placement' || planView === 'sim')) && <BearDiscussion />}
 
       <EventBottomBar
-        items={BEARTRAP_SECTIONS.map((s) => ({ id: s, labelKey: `tab.${s}` }))}
+        items={BEARTRAP_VISIBLE.map((s) => ({ id: s, labelKey: `tab.${s}` }))}
         active={tab}
         accent={BEARTRAP_ACCENT}
         onSelect={(id) => setTab(id as BearSection)}
