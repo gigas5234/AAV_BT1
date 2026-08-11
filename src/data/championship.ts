@@ -38,7 +38,7 @@ const ROUTES_0715: ChampRoute[] = [
     id: 'right',
     kind: 'strong',
     members: [
-      { order: 20, name: '[AAV]CCC Zhapa', power: 2024 },
+      { order: 20, name: '[AAV]Zhapa', power: 2024 },
       { order: 19, name: '[AAV]●○●Morillo●○●', power: 1800 },
       { order: 18, name: '[AAV]Rockramy', power: 1519 },
       { order: 17, name: '[AAV]Naga', power: 1416 },

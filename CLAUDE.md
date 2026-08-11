@@ -53,7 +53,7 @@
 6. **UI 텍스트는 영어가 기본(base)**. (내부 주석/설명은 한국어 유지 가능)
 7. **하단 탭 3개** 네비게이션 + 메인(랜딩) 화면. 상세 §6.
 8. **배치도 = 좌표 기반 스냅 격자**. 성 = 2×2 타일, 곰덫 = 4×4 타일(중앙 원점). 격자는 **45° 회전(다이아몬드/게임 도로형)** 으로 표시. 좌표계: 원점=곰덫, x 동+/서−, y 남+/북−.
-9. **메인 히어로**: 랜딩은 **mp4 동영상 루프**(`src/assets/hero.mp4`, 원본 `bg_mov.mp4` → ffmpeg로 오디오 제거+압축 ~303KB). `<video autoPlay loop muted playsInline>` object-cover. 오버레이 텍스트 없음(아트에 포함). 버튼은 **하단 10%**에 배치, 라벨 **`Start` 고정**(언어 무관), 인터랙션(펄스 글로우·프레스·바운스 셰브론). 우하단 **`By. CCC Zhapa` 배지**가 원본 워터마크(Dreamina AI)를 덮음. `prefers-reduced-motion` 시 버튼 애니메이션 정지.
+9. **메인 히어로**: 랜딩은 **mp4 동영상 루프**(`src/assets/hero.mp4`, 원본 `bg_mov.mp4` → ffmpeg로 오디오 제거+압축 ~303KB). `<video autoPlay loop muted playsInline>` object-cover. 오버레이 텍스트 없음(아트에 포함). 버튼은 **하단 10%**에 배치, 라벨 **`Start` 고정**(언어 무관), 인터랙션(펄스 글로우·프레스·바운스 셰브론). 우하단 **`By. Zhapa` 배지**가 원본 워터마크(Dreamina AI)를 덮음. `prefers-reduced-motion` 시 버튼 애니메이션 정지.
 10. **플로우**: 인원 다중선택 → Start → 그룹1/2 계산 → 그룹 선택 → 배치 시뮬레이션(스냅 격자).
 11. **빌드/배포**: `vite base:'./'`(상대경로) → 정적 호스트/서브경로 무관. 랜딩 4프레임 webp(각 ~145KB, 총 ~577KB). 배포법은 `README.md`.
 12. **다국어(i18n)**: `src/i18n.tsx`에 en/ko 사전 + `LangProvider`/`useT`/`groupName`. Settings에서 언어 전환(기본 en), `settings.lang`로 저장. Guide/Slots 콘텐츠도 언어별. 채팅 복사 문구(`Copy for chat` 출력)는 연맹 공유용이라 항상 영어 유지.
@@ -333,7 +333,7 @@ function buildPlan(selected: Member[], s: Settings): PlanResult {
 
 ```
 [Bear Trap Rally Plan]
-Wave 1 (start T+0): Main — CCC Zhapa, KOREA | Support — Sweetie, MiaLamb
+Wave 1 (start T+0): Main — Zhapa, KOREA | Support — Sweetie, MiaLamb
 Wave 2 (start T+60s): Main — CCC Eirene, Rockramy | Support — Andemoti, Keniapll
 Send your best troops to the 30-level main rallies first. If a main rally is full, join a support rally.
 Support rallies are for overflow only. Do not open extra rallies unless R4 asks.

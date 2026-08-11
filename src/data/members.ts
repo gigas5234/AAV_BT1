@@ -6,7 +6,7 @@ import type { Member } from '../types'
  * Coordinates confirmed from the in-game layout via the placement editor.
  */
 export const SEED_MEMBERS: Member[] = [
-  { id: 'ccc-zhapa', name: 'CCC Zhapa', level: 30, rallyCapacityK: 960, mainLeader: true, supportLeader: true, priority: 100, note: '30 main leader · R4 (나의 도시)', coord: { x: -2, y: -1 } },
+  { id: 'ccc-zhapa', name: 'Zhapa', level: 30, rallyCapacityK: 960, mainLeader: true, supportLeader: true, priority: 100, note: '30 main leader · R4 (나의 도시)', coord: { x: -2, y: -1 } },
   { id: 'ccc-eirene', name: 'CCC Eirene', level: 30, rallyCapacityK: 730, mainLeader: true, supportLeader: true, priority: 98, note: '30 main leader', coord: { x: -2, y: 1 } },
   { id: 'korea', name: 'KOREA', level: 30, rallyCapacityK: 870, mainLeader: true, supportLeader: true, priority: 96, note: '30 main leader', coord: { x: 1, y: 2 } },
   { id: 'morillo', name: '○○●Morillo●○○', level: 30, rallyCapacityK: 960, mainLeader: true, supportLeader: true, priority: 95, note: 'top main leader when active', coord: { x: -1, y: 2 } },
