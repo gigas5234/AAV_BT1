@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { calcGuide, useLang, useT } from '../i18n'
+import RallyRatioCalc, { R856_ACCENT, type R856Mode } from './RallyRatioCalc'
 import chenkoImg from '../assets/heroes/chenko.png'
 import yeonwooImg from '../assets/heroes/yeonwoo.png'
 import amaneImg from '../assets/heroes/amane.png'
@@ -138,6 +139,8 @@ export default function CalcTab() {
   const t = useT()
   const lang = useLang()
   const [role, setRole] = useState<Role>('main')
+  // The 8/8/56 tabs are a separate calculator: null = the role calculator below.
+  const [r856, setR856] = useState<R856Mode | null>(null)
   const [owned, setOwned] = useState<Pool>(emptyPool)
   const [slots, setSlots] = useState(4)
   const [capacity, setCapacity] = useState(100000)
@@ -342,11 +345,14 @@ export default function CalcTab() {
       <div>
         <div className="flex gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] p-1">
           {(['main', 'support', 'general'] as Role[]).map((r) => {
-            const on = role === r
+            const on = r856 === null && role === r
             return (
               <button
                 key={r}
-                onClick={() => setRole(r)}
+                onClick={() => {
+                  setRole(r)
+                  setR856(null)
+                }}
                 aria-pressed={on}
                 className={`flex-1 rounded-lg py-2 text-sm transition-colors ${
                   on ? 'bg-amber-400 font-bold text-[#3a2600] shadow-sm shadow-amber-500/30' : 'font-medium text-slate-300 hover:bg-white/5'
@@ -357,229 +363,262 @@ export default function CalcTab() {
             )
           })}
         </div>
-        <div className="mt-1.5 flex items-start gap-1.5 px-1 text-[12px] leading-relaxed text-amber-200/90">
-          <span className="mt-[3px] h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" />
-          <span>{t(`calc.${role}Desc`)}</span>
-        </div>
-      </div>
 
-      {/* owned troops (real numbers, per kind x tier) */}
-      <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-        <div className="mb-2 flex items-center justify-between">
-          <p className="text-[13px] font-medium text-white">{t('calc.owned')}</p>
-          <button onClick={() => setOwned(emptyPool())} className="rounded-md border border-white/15 px-2 py-0.5 text-[11px] text-slate-300">
-            {t('common.reset')}
-          </button>
+        {/* the 8/8/56 rally rule gets its own two tabs — a separate calculator, not a role */}
+        <div className="mt-1.5 grid grid-cols-2 gap-1.5">
+          {(['host', 'join'] as R856Mode[]).map((m) => {
+            const on = r856 === m
+            const c = R856_ACCENT[m]
+            return (
+              <button
+                key={m}
+                onClick={() => setR856((v) => (v === m ? null : m))}
+                aria-pressed={on}
+                className="rounded-xl border py-2 text-[13px] font-semibold transition-colors"
+                style={
+                  on
+                    ? { background: c, borderColor: c, color: '#101828' }
+                    : { background: `${c}12`, borderColor: `${c}55`, color: c }
+                }
+              >
+                {t(`r856.${m}Tab`)}
+              </button>
+            )
+          })}
         </div>
-        <div className="grid grid-cols-[2.6rem_repeat(4,1fr)] items-center gap-1.5 text-[11px]">
-          <span />
-          {TIERS.map((tr) => (
-            <span key={tr} className="text-center text-slate-400">
-              T{tr}
-            </span>
-          ))}
-          {KINDS.map((k) => (
-            <PoolRow key={k} label={kindLabel(k)} color={KIND_COLOR[k]} values={TIERS.map((tr) => owned[k][tr])} onChange={(idx, v) => setOwn(k, TIERS[idx], v)} />
-          ))}
-        </div>
-      </section>
 
-      {/* slot count + party capacity (hero-level dependent) */}
-      <div className="grid grid-cols-2 gap-2">
-        <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm">
-          <span className="text-slate-300">{t('calc.slotCount')}</span>
-          <div className="flex items-center gap-2">
-            <button onClick={() => setSlots((s) => Math.max(1, s - 1))} className="flex h-6 w-6 items-center justify-center rounded-md border border-white/15 text-slate-200">
-              −
-            </button>
-            <span className="w-4 text-center text-white">{slots}</span>
-            <button onClick={() => setSlots((s) => Math.min(6, s + 1))} className="flex h-6 w-6 items-center justify-center rounded-md border border-white/15 text-slate-200">
-              +
-            </button>
+        {r856 === null && (
+          <div className="mt-1.5 flex items-start gap-1.5 px-1 text-[12px] leading-relaxed text-amber-200/90">
+            <span className="mt-[3px] h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" />
+            <span>{t(`calc.${role}Desc`)}</span>
           </div>
-        </div>
-        <label className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm">
-          <span className="text-slate-300">{t('calc.capacity')}</span>
-          <NumField
-            value={capacity}
-            min={STEP}
-            onChange={setCapacity}
-            className="w-20 rounded-md border border-white/10 bg-white/5 px-2 py-1 text-right text-[13px] text-white outline-none focus:border-amber-400/60"
-          />
-        </label>
-      </div>
-      <p className="-mt-1 px-1 text-[11px] text-slate-500">{t('calc.capHint')}</p>
-
-      {/* fill helpers: by-ratio / even split / reset */}
-      <div>
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            onClick={autoFill}
-            disabled={poolTotal === 0}
-            className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition-colors ${
-              poolTotal === 0 ? 'cursor-not-allowed border border-white/10 text-slate-600' : 'bg-amber-400 text-[#3a2600] active:brightness-95'
-            }`}
-          >
-            <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
-              <path d="M13 2 3 14h7l-1 8 10-12h-7z" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            {t('calc.autoFill')}
-          </button>
-          <button
-            onClick={evenFill}
-            disabled={poolTotal === 0}
-            className={`flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-semibold transition-colors ${
-              poolTotal === 0 ? 'cursor-not-allowed border-white/10 text-slate-600' : 'border-sky-400/50 text-sky-200 active:bg-sky-400/10'
-            }`}
-          >
-            <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
-              <path d="M6 4v16M12 4v16M18 4v16" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            {t('calc.evenFill')}
-          </button>
-        </div>
-        <div className="mt-2 flex justify-end">
-          <button
-            onClick={clearSlots}
-            className="flex items-center justify-center gap-1.5 rounded-lg border border-white/15 px-3 py-1.5 text-[12px] font-medium text-slate-300 active:bg-white/10"
-          >
-            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
-              <path d="M3 12a9 9 0 1 0 3-6.7M3 4v4h4" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            {t('calc.clearSlots')}
-          </button>
-        </div>
-        <p className="mt-1.5 px-1 text-[11px] leading-relaxed text-slate-500">{t('calc.autoFillHint')}</p>
+        )}
       </div>
 
-      {/* remaining (below slot count so it's always in view) */}
-      {poolTotal > 0 && (
-        <div className="sticky top-0 z-10 rounded-xl border border-white/10 bg-[#0e1526]/95 px-3 py-2 backdrop-blur">
-          <p className="mb-1 text-[11px] text-slate-400">{t('calc.remainingTitle')}</p>
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-[12px]">
-            {present.map((k) => {
-              const rem = remKind(k)
-              return (
-                <span key={k} className="flex items-center gap-1">
-                  <span className="font-medium" style={{ color: KIND_COLOR[k] }}>
-                    {kindLabel(k)}
-                  </span>
-                  <span className={rem < 0 ? 'text-red-400' : 'text-slate-200'}>{fmt(rem)}</span>
-                  <span className="text-slate-500">/ {fmt(ownedTotal[k])}</span>
-                </span>
-              )
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* slots */}
-      {poolTotal === 0 ? (
-        <p className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-6 text-center text-[13px] text-slate-500">{t('calc.empty')}</p>
+      {r856 !== null ? (
+        <RallyRatioCalc mode={r856} />
       ) : (
-        Array.from({ length: slots }, (_, i) => {
-          const spec = slotSpec(role, i)
-          const total = slotTotal(i)
-          const kt: Record<Kind, number> = { inf: slotKind(i, 'inf'), cav: slotKind(i, 'cav'), arc: slotKind(i, 'arc') }
-          const pct = (k: Kind) => (total > 0 ? Math.round((kt[k] / total) * 100) : 0)
-          const cap = slotCap(i)
-          const over = total > cap
-          return (
-            <section key={i} className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-              <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-amber-400 text-[12px] font-bold text-[#3a2600]">
-                  {i + 1}
-                </span>
-                {spec.auto ? (
-                  <span className="text-[12px] text-slate-400">{t('calc.auto')}</span>
-                ) : (
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[12px] text-slate-400">{t('calc.firstHero')}</span>
-                    <HeroSelect value={assigned[i] ?? ''} options={optionsFor(i)} onChange={(id) => setHeroBySlot((h) => ({ ...h, [i]: id }))} />
-                  </div>
-                )}
-                <span className="ml-auto flex items-center gap-1 font-mono text-[12px]">
-                  <span className={`font-semibold ${over ? 'text-red-300' : 'text-amber-300'}`}>{fmt(total)}</span>
-                  <span className="text-slate-500">/</span>
-                  <NumField
-                    value={cap}
-                    min={STEP}
-                    onChange={(v) => setSlotCap(i, v)}
-                    className="w-[4.5rem] rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 text-right text-white outline-none focus:border-amber-400/60"
-                  />
-                </span>
-              </div>
+        <>
 
-              {/* per-tier troop rows (highest tier first) */}
-              <div className="mt-2.5 space-y-2.5">
-                {ownedTierList.map(({ k, tr }) => {
-                  const v = cell(i, k, tr)
-                  const rowMax = owned[k][tr] - (usedTier(k, tr) - v) // own minus what other slots took
-                  return (
-                    <div key={`${k}-${tr}`}>
-                      <div className="flex items-center justify-between text-[11px]">
-                        <span className="font-medium" style={{ color: KIND_COLOR[k] }}>
-                          T{tr} {kindLabel(k)}
-                        </span>
-                        <span className="font-mono text-slate-400">
-                          <span className="text-slate-200">{fmt(v)}</span> / {fmt(rowMax)}
-                        </span>
-                      </div>
-                      <div className="mt-1 flex items-center gap-2">
-                        <button onClick={() => setCell(i, k, tr, v - STEP)} className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white/10 text-slate-200">
-                          −
-                        </button>
-                        <input
-                          type="range"
-                          min={0}
-                          max={Math.max(rowMax, STEP)}
-                          step={STEP}
-                          value={v}
-                          onChange={(e) => setCell(i, k, tr, Number(e.target.value))}
-                          className="h-1.5 flex-1 cursor-pointer appearance-none rounded-full bg-white/10"
-                          style={{ accentColor: KIND_COLOR[k] }}
-                        />
-                        <button onClick={() => setCell(i, k, tr, v + STEP)} className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white/10 text-slate-200">
-                          +
-                        </button>
-                        <input
-                          type="number"
-                          value={v || ''}
-                          placeholder="0"
-                          onChange={(e) => setCell(i, k, tr, Number(e.target.value) || 0)}
-                          className="w-16 rounded-md border border-white/10 bg-white/5 px-1.5 py-1 text-right text-[12px] text-white outline-none focus:border-amber-400/60"
-                        />
-                        <CopyNum value={v} onCopied={showCopied} />
-                      </div>
+        {/* owned troops (real numbers, per kind x tier) */}
+        <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+          <div className="mb-2 flex items-center justify-between">
+            <p className="text-[13px] font-medium text-white">{t('calc.owned')}</p>
+            <button onClick={() => setOwned(emptyPool())} className="rounded-md border border-white/15 px-2 py-0.5 text-[11px] text-slate-300">
+              {t('common.reset')}
+            </button>
+          </div>
+          <div className="grid grid-cols-[2.6rem_repeat(4,1fr)] items-center gap-1.5 text-[11px]">
+            <span />
+            {TIERS.map((tr) => (
+              <span key={tr} className="text-center text-slate-400">
+                T{tr}
+              </span>
+            ))}
+            {KINDS.map((k) => (
+              <PoolRow key={k} label={kindLabel(k)} color={KIND_COLOR[k]} values={TIERS.map((tr) => owned[k][tr])} onChange={(idx, v) => setOwn(k, TIERS[idx], v)} />
+            ))}
+          </div>
+        </section>
+
+        {/* slot count + party capacity (hero-level dependent) */}
+        <div className="grid grid-cols-2 gap-2">
+          <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm">
+            <span className="text-slate-300">{t('calc.slotCount')}</span>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setSlots((s) => Math.max(1, s - 1))} className="flex h-6 w-6 items-center justify-center rounded-md border border-white/15 text-slate-200">
+                −
+              </button>
+              <span className="w-4 text-center text-white">{slots}</span>
+              <button onClick={() => setSlots((s) => Math.min(6, s + 1))} className="flex h-6 w-6 items-center justify-center rounded-md border border-white/15 text-slate-200">
+                +
+              </button>
+            </div>
+          </div>
+          <label className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm">
+            <span className="text-slate-300">{t('calc.capacity')}</span>
+            <NumField
+              value={capacity}
+              min={STEP}
+              onChange={setCapacity}
+              className="w-20 rounded-md border border-white/10 bg-white/5 px-2 py-1 text-right text-[13px] text-white outline-none focus:border-amber-400/60"
+            />
+          </label>
+        </div>
+        <p className="-mt-1 px-1 text-[11px] text-slate-500">{t('calc.capHint')}</p>
+
+        {/* fill helpers: by-ratio / even split / reset */}
+        <div>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={autoFill}
+              disabled={poolTotal === 0}
+              className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition-colors ${
+                poolTotal === 0 ? 'cursor-not-allowed border border-white/10 text-slate-600' : 'bg-amber-400 text-[#3a2600] active:brightness-95'
+              }`}
+            >
+              <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+                <path d="M13 2 3 14h7l-1 8 10-12h-7z" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              {t('calc.autoFill')}
+            </button>
+            <button
+              onClick={evenFill}
+              disabled={poolTotal === 0}
+              className={`flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-semibold transition-colors ${
+                poolTotal === 0 ? 'cursor-not-allowed border-white/10 text-slate-600' : 'border-sky-400/50 text-sky-200 active:bg-sky-400/10'
+              }`}
+            >
+              <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+                <path d="M6 4v16M12 4v16M18 4v16" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              {t('calc.evenFill')}
+            </button>
+          </div>
+          <div className="mt-2 flex justify-end">
+            <button
+              onClick={clearSlots}
+              className="flex items-center justify-center gap-1.5 rounded-lg border border-white/15 px-3 py-1.5 text-[12px] font-medium text-slate-300 active:bg-white/10"
+            >
+              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+                <path d="M3 12a9 9 0 1 0 3-6.7M3 4v4h4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              {t('calc.clearSlots')}
+            </button>
+          </div>
+          <p className="mt-1.5 px-1 text-[11px] leading-relaxed text-slate-500">{t('calc.autoFillHint')}</p>
+        </div>
+
+        {/* remaining (below slot count so it's always in view) */}
+        {poolTotal > 0 && (
+          <div className="sticky top-0 z-10 rounded-xl border border-white/10 bg-[#0e1526]/95 px-3 py-2 backdrop-blur">
+            <p className="mb-1 text-[11px] text-slate-400">{t('calc.remainingTitle')}</p>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-[12px]">
+              {present.map((k) => {
+                const rem = remKind(k)
+                return (
+                  <span key={k} className="flex items-center gap-1">
+                    <span className="font-medium" style={{ color: KIND_COLOR[k] }}>
+                      {kindLabel(k)}
+                    </span>
+                    <span className={rem < 0 ? 'text-red-400' : 'text-slate-200'}>{fmt(rem)}</span>
+                    <span className="text-slate-500">/ {fmt(ownedTotal[k])}</span>
+                  </span>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* slots */}
+        {poolTotal === 0 ? (
+          <p className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-6 text-center text-[13px] text-slate-500">{t('calc.empty')}</p>
+        ) : (
+          Array.from({ length: slots }, (_, i) => {
+            const spec = slotSpec(role, i)
+            const total = slotTotal(i)
+            const kt: Record<Kind, number> = { inf: slotKind(i, 'inf'), cav: slotKind(i, 'cav'), arc: slotKind(i, 'arc') }
+            const pct = (k: Kind) => (total > 0 ? Math.round((kt[k] / total) * 100) : 0)
+            const cap = slotCap(i)
+            const over = total > cap
+            return (
+              <section key={i} className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-amber-400 text-[12px] font-bold text-[#3a2600]">
+                    {i + 1}
+                  </span>
+                  {spec.auto ? (
+                    <span className="text-[12px] text-slate-400">{t('calc.auto')}</span>
+                  ) : (
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[12px] text-slate-400">{t('calc.firstHero')}</span>
+                      <HeroSelect value={assigned[i] ?? ''} options={optionsFor(i)} onChange={(id) => setHeroBySlot((h) => ({ ...h, [i]: id }))} />
                     </div>
-                  )
-                })}
-              </div>
-
-              {/* troop ratio bar + target */}
-              <div className="mt-3 border-t border-white/5 pt-2">
-                <div className="mb-1 flex items-center gap-2 text-[11px]">
-                  <span className="text-slate-400">{t('calc.ratioTitle')}</span>
-                  <span className="ml-auto flex gap-2 font-mono">
-                    {present.map((k) => (
-                      <span key={k} style={{ color: KIND_COLOR[k] }}>
-                        {pct(k)}%
-                      </span>
-                    ))}
+                  )}
+                  <span className="ml-auto flex items-center gap-1 font-mono text-[12px]">
+                    <span className={`font-semibold ${over ? 'text-red-300' : 'text-amber-300'}`}>{fmt(total)}</span>
+                    <span className="text-slate-500">/</span>
+                    <NumField
+                      value={cap}
+                      min={STEP}
+                      onChange={(v) => setSlotCap(i, v)}
+                      className="w-[4.5rem] rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 text-right text-white outline-none focus:border-amber-400/60"
+                    />
                   </span>
                 </div>
-                <div className="flex h-2 overflow-hidden rounded-full bg-white/10">
-                  {KINDS.map((k) => (
-                    <div key={k} style={{ width: `${pct(k)}%`, background: KIND_COLOR[k] }} />
-                  ))}
+
+                {/* per-tier troop rows (highest tier first) */}
+                <div className="mt-2.5 space-y-2.5">
+                  {ownedTierList.map(({ k, tr }) => {
+                    const v = cell(i, k, tr)
+                    const rowMax = owned[k][tr] - (usedTier(k, tr) - v) // own minus what other slots took
+                    return (
+                      <div key={`${k}-${tr}`}>
+                        <div className="flex items-center justify-between text-[11px]">
+                          <span className="font-medium" style={{ color: KIND_COLOR[k] }}>
+                            T{tr} {kindLabel(k)}
+                          </span>
+                          <span className="font-mono text-slate-400">
+                            <span className="text-slate-200">{fmt(v)}</span> / {fmt(rowMax)}
+                          </span>
+                        </div>
+                        <div className="mt-1 flex items-center gap-2">
+                          <button onClick={() => setCell(i, k, tr, v - STEP)} className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white/10 text-slate-200">
+                            −
+                          </button>
+                          <input
+                            type="range"
+                            min={0}
+                            max={Math.max(rowMax, STEP)}
+                            step={STEP}
+                            value={v}
+                            onChange={(e) => setCell(i, k, tr, Number(e.target.value))}
+                            className="h-1.5 flex-1 cursor-pointer appearance-none rounded-full bg-white/10"
+                            style={{ accentColor: KIND_COLOR[k] }}
+                          />
+                          <button onClick={() => setCell(i, k, tr, v + STEP)} className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white/10 text-slate-200">
+                            +
+                          </button>
+                          <input
+                            type="number"
+                            value={v || ''}
+                            placeholder="0"
+                            onChange={(e) => setCell(i, k, tr, Number(e.target.value) || 0)}
+                            className="w-16 rounded-md border border-white/10 bg-white/5 px-1.5 py-1 text-right text-[12px] text-white outline-none focus:border-amber-400/60"
+                          />
+                          <CopyNum value={v} onCopied={showCopied} />
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
-                <p className="mt-1 text-[10px] text-slate-500">
-                  {t('calc.target')} {spec.ratio[0]}/{spec.ratio[1]}/{spec.ratio[2]} ({t('calc.inf')}/{t('calc.cav')}/{t('calc.arc')})
-                </p>
-              </div>
-            </section>
-          )
-        })
+
+                {/* troop ratio bar + target */}
+                <div className="mt-3 border-t border-white/5 pt-2">
+                  <div className="mb-1 flex items-center gap-2 text-[11px]">
+                    <span className="text-slate-400">{t('calc.ratioTitle')}</span>
+                    <span className="ml-auto flex gap-2 font-mono">
+                      {present.map((k) => (
+                        <span key={k} style={{ color: KIND_COLOR[k] }}>
+                          {pct(k)}%
+                        </span>
+                      ))}
+                    </span>
+                  </div>
+                  <div className="flex h-2 overflow-hidden rounded-full bg-white/10">
+                    {KINDS.map((k) => (
+                      <div key={k} style={{ width: `${pct(k)}%`, background: KIND_COLOR[k] }} />
+                    ))}
+                  </div>
+                  <p className="mt-1 text-[10px] text-slate-500">
+                    {t('calc.target')} {spec.ratio[0]}/{spec.ratio[1]}/{spec.ratio[2]} ({t('calc.inf')}/{t('calc.cav')}/{t('calc.arc')})
+                  </p>
+                </div>
+              </section>
+            )
+          })
+        )}
+        </>
       )}
 
       {/* copy toast */}
