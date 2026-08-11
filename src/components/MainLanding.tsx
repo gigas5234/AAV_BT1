@@ -34,6 +34,16 @@ export default function MainLanding({ onStart }: { onStart: () => void }) {
         </div>
       </div>
 
+      {/* Which kingdom this app is written for — same line as the credit, pinned left. */}
+      <div className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-full bg-[#0b1220] px-3 py-[7px] shadow-lg shadow-black/40 ring-1 ring-amber-400/25">
+        <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-amber-300" fill="currentColor" aria-hidden="true">
+          <path d="M3 7.5l4.2 3.2L12 4l4.8 6.7L21 7.5 19.3 18H4.7z" />
+        </svg>
+        <span className="text-[11px] font-medium tracking-wide text-white/55">
+          Kingdom <span className="text-amber-200/90">1974</span>
+        </span>
+      </div>
+
       {/* Covers the source watermark (bottom-right) and doubles as the credit. */}
       <div className="absolute bottom-2 right-2 flex items-center gap-1.5 rounded-full bg-[#0b1220] px-3 py-[7px] shadow-lg shadow-black/40 ring-1 ring-amber-400/25">
         <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-amber-300" fill="currentColor" aria-hidden="true">
