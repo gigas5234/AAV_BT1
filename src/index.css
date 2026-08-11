@@ -58,13 +58,75 @@ body {
   }
 }
 
-@keyframes floatY {
+/*
+ * Landing Start button. The hero art is bright and busy, so a flat amber fill
+ * disappears into it — this is a struck gold plate instead: vertical gradient,
+ * dark rim, engraved top highlight, and a glow that separates it from the art.
+ */
+.cta-gold {
+  background: linear-gradient(180deg, #ffe9a3 0%, #fcc63e 34%, #f0a71c 64%, #cf8404 100%);
+  border: 1px solid rgba(94, 56, 0, 0.6);
+  animation: ctaGlow 2.6s ease-in-out infinite;
+}
+@keyframes ctaGlow {
   0%,
   100% {
-    transform: translateY(0);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 0 0 rgba(255, 200, 70, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.65), inset 0 -2px 6px rgba(120, 66, 0, 0.45);
   }
   50% {
-    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 32px 9px rgba(255, 200, 70, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.65), inset 0 -2px 6px rgba(120, 66, 0, 0.45);
+  }
+}
+
+/*
+ * Gold dust drifting down over the hero art once the intro clip is done — a
+ * light touch, not snow. Each mote gets its own lane, speed and drift inline.
+ */
+.gold-fall i {
+  position: absolute;
+  top: 0;
+  display: block;
+  border-radius: 999px;
+  background: radial-gradient(circle, #fffdf2 0%, #ffdc74 38%, rgba(255, 186, 40, 0.45) 68%, rgba(255, 186, 40, 0) 78%);
+  box-shadow: 0 0 9px 2px rgba(255, 206, 90, 0.75);
+  animation: goldFall linear infinite;
+}
+@keyframes goldFall {
+  0% {
+    transform: translate3d(0, -8vh, 0) scale(0.7);
+    opacity: 0;
+  }
+  14% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(var(--dx), 104vh, 0) scale(1);
+    opacity: 0;
+  }
+}
+
+/* A band of light that sweeps across the plate, then rests before the next pass. */
+.cta-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 42%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  animation: ctaShine 3.2s cubic-bezier(0.4, 0, 0.3, 1) infinite;
+  pointer-events: none;
+}
+@keyframes ctaShine {
+  0% {
+    transform: translateX(-160%) skewX(-18deg);
+  }
+  55%,
+  100% {
+    transform: translateX(340%) skewX(-18deg);
   }
 }
 
@@ -154,8 +216,10 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   [style*='ctaPulse'],
-  [style*='floatY'],
   [style*='neonGlow'],
+  .cta-gold,
+  .cta-shine::after,
+  .gold-fall i,
   .rise,
   .tabfade,
   .accopen,
