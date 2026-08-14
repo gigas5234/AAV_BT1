@@ -32,7 +32,7 @@ export const EVENTS: EventMeta[] = [
   { id: 'swordland', accent: '#f87171', ready: true, sections: ['overview', 'build', 'timeline', 'tips'] },
   { id: 'championship', accent: '#f5b301', ready: true, sections: ['tips'], hot: true },
   { id: 'mystic', accent: '#a78bfa', ready: true, sections: [] },
-  { id: 'governor', accent: '#e2a13a', ready: true, sections: ['overview', 'daily', 'items', 'castle'], hot: true },
+  { id: 'governor', accent: '#e2a13a', ready: true, sections: ['overview', 'daily', 'items', 'castle', 'enemy'], hot: true },
 ]
 
 export const eventMeta = (id: EventId) => EVENTS.find((e) => e.id === id)!

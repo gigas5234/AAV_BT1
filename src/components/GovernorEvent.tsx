@@ -2,11 +2,44 @@ import { useState } from 'react'
 import { governorContent, useLang, useT, type GovStatus } from '../i18n'
 import vsImg from '../assets/events/governor-vs.webp'
 import castleMapImg from '../assets/events/castle-map.webp'
+import enemyTopImg from '../assets/events/governor-enemy-1.webp'
+import enemyHeroesAImg from '../assets/events/governor-enemy-2.webp'
+import enemyHeroesBImg from '../assets/events/governor-enemy-3.webp'
 import CastleAttackSetup from './CastleAttackSetup'
 import CastleDefenseSetup from './CastleDefenseSetup'
 import CastleHealing from './CastleHealing'
 
 const DAY_ACCENT = '#e2a13a'
+
+/** A screenshot that opens full-screen on tap — scouting is read off the image. */
+function Shot({ src, alt, close }: { src: string; alt: string; close: string }) {
+  const [zoom, setZoom] = useState(false)
+  return (
+    <>
+      <button onClick={() => setZoom(true)} className="block w-full overflow-hidden rounded-xl border border-white/10 transition-transform active:scale-[0.99]">
+        <img src={src} alt={alt} className="block w-full" />
+      </button>
+      {zoom && (
+        <div className="fixed inset-0 z-50 flex flex-col bg-black/90" onClick={() => setZoom(false)}>
+          <div className="flex justify-end px-4 py-3">
+            <button
+              onClick={() => setZoom(false)}
+              aria-label={close}
+              className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-slate-300 transition-transform active:scale-90"
+            >
+              <svg viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none" stroke="currentColor" strokeWidth="2.2">
+                <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
+          <div className="scroll-dark flex flex-1 items-start justify-center overflow-auto px-2 pb-4" onClick={(e) => e.stopPropagation()}>
+            <img src={src} alt={alt} className="block h-auto w-full max-w-[900px]" />
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
 
 /**
  * Collapsible group for the castle attack/defense setups. Collapsed it still shows the
@@ -221,6 +254,33 @@ export default function GovernorEvent({ section }: { section: string }) {
       </div>
     )
   }
+
+  // Raw scouting shots of the kingdom we are matched against — read straight
+  // off the image, so no transcription to fall out of date.
+  if (section === 'enemy')
+    return (
+      <div className="space-y-3 px-4 pt-4">
+        <div>
+          <h2 className="text-lg font-bold text-white">{t('gov.enemyTitle')}</h2>
+          <p className="mt-0.5 text-[12.5px] leading-relaxed text-slate-400">{t('gov.enemyNote')}</p>
+        </div>
+
+        <section className="overflow-hidden rounded-2xl border-2" style={{ borderColor: `${DAY_ACCENT}66`, background: `${DAY_ACCENT}0f` }}>
+          <h3 className="px-3.5 py-2.5 text-[13.5px] font-bold text-white">{t('gov.enemyTop')}</h3>
+          <div className="px-3 pb-3">
+            <Shot src={enemyTopImg} alt={t('gov.enemyTop')} close={t('gov.enemyClose')} />
+          </div>
+        </section>
+
+        <section className="overflow-hidden rounded-2xl border border-white/10">
+          <h3 className="bg-white/[0.06] px-3.5 py-2.5 text-[13.5px] font-semibold text-white">{t('gov.enemyHeroes')}</h3>
+          <div className="space-y-2 px-3 py-3">
+            <Shot src={enemyHeroesAImg} alt={`${t('gov.enemyHeroes')} 1`} close={t('gov.enemyClose')} />
+            <Shot src={enemyHeroesBImg} alt={`${t('gov.enemyHeroes')} 2`} close={t('gov.enemyClose')} />
+          </div>
+        </section>
+      </div>
+    )
 
   if (section === 'castle') {
     const cb = c.castle

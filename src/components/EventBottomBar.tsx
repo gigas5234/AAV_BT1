@@ -110,6 +110,13 @@ const ICONS: Record<string, JSX.Element> = {
       <path d="M10 21v-4a2 2 0 0 1 4 0v4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
+  enemy: (
+    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
+      <circle cx="12" cy="12" r="8.5" />
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4" strokeLinecap="round" />
+    </svg>
+  ),
   build: (
     <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
       <path d="M3 21h18M6 21V8h5v13M13 21V4h5v17" strokeLinecap="round" strokeLinejoin="round" />
