@@ -2,9 +2,25 @@ import { useState } from 'react'
 import { governorContent, useLang, useT, type GovStatus } from '../i18n'
 import vsImg from '../assets/events/governor-vs.webp'
 import castleMapImg from '../assets/events/castle-map.webp'
-import enemyTopImg from '../assets/events/governor-enemy-1.webp'
-import enemyHeroesAImg from '../assets/events/governor-enemy-2.webp'
-import enemyHeroesBImg from '../assets/events/governor-enemy-3.webp'
+import enemy1Img from '../assets/events/governor-enemy-1.webp'
+import enemy2Img from '../assets/events/governor-enemy-2.webp'
+import enemy3Img from '../assets/events/governor-enemy-3.webp'
+import enemy4Img from '../assets/events/governor-enemy-4.webp'
+import enemy5Img from '../assets/events/governor-enemy-5.webp'
+import enemy6Img from '../assets/events/governor-enemy-6.webp'
+import rank1Img from '../assets/events/governor-rank-1.webp'
+import rank2Img from '../assets/events/governor-rank-2.webp'
+import rank3Img from '../assets/events/governor-rank-3.webp'
+import rank4Img from '../assets/events/governor-rank-4.webp'
+import rank5Img from '../assets/events/governor-rank-5.webp'
+
+/** Scouted players: the ranking banner, then that player's hero shots. */
+const SCOUTS = [
+  { banner: enemy1Img, heroes: [enemy2Img, enemy3Img] },
+  { banner: enemy4Img, heroes: [enemy5Img, enemy6Img] },
+]
+/** Ranking rows, top of the board downwards. */
+const RANKS = [rank1Img, rank2Img, rank3Img, rank4Img, rank5Img]
 import CastleAttackSetup from './CastleAttackSetup'
 import CastleDefenseSetup from './CastleDefenseSetup'
 import CastleHealing from './CastleHealing'
@@ -265,18 +281,28 @@ export default function GovernorEvent({ section }: { section: string }) {
           <p className="mt-0.5 text-[12.5px] leading-relaxed text-slate-400">{t('gov.enemyNote')}</p>
         </div>
 
-        <section className="overflow-hidden rounded-2xl border-2" style={{ borderColor: `${DAY_ACCENT}66`, background: `${DAY_ACCENT}0f` }}>
-          <h3 className="px-3.5 py-2.5 text-[13.5px] font-bold text-white">{t('gov.enemyTop')}</h3>
-          <div className="px-3 pb-3">
-            <Shot src={enemyTopImg} alt={t('gov.enemyTop')} close={t('gov.enemyClose')} />
-          </div>
-        </section>
+        {/* one card per scouted player: who they are, then what they field */}
+        {SCOUTS.map((s, i) => (
+          <section key={i} className="overflow-hidden rounded-2xl border-2" style={{ borderColor: `${DAY_ACCENT}66`, background: `${DAY_ACCENT}0f` }}>
+            <div className="px-3 pt-3">
+              <Shot src={s.banner} alt={t('gov.enemyPlayers')} close={t('gov.enemyClose')} />
+            </div>
+            <h3 className="px-3.5 pb-1.5 pt-2.5 text-[12px] font-semibold text-slate-300">{t('gov.enemyHeroes')}</h3>
+            <div className="space-y-2 px-3 pb-3">
+              {s.heroes.map((h, j) => (
+                <Shot key={j} src={h} alt={`${t('gov.enemyHeroes')} ${j + 1}`} close={t('gov.enemyClose')} />
+              ))}
+            </div>
+          </section>
+        ))}
 
+        {/* the rest of the board, in rank order */}
         <section className="overflow-hidden rounded-2xl border border-white/10">
-          <h3 className="bg-white/[0.06] px-3.5 py-2.5 text-[13.5px] font-semibold text-white">{t('gov.enemyHeroes')}</h3>
+          <h3 className="bg-white/[0.06] px-3.5 py-2.5 text-[13.5px] font-semibold text-white">{t('gov.enemyRanking')}</h3>
           <div className="space-y-2 px-3 py-3">
-            <Shot src={enemyHeroesAImg} alt={`${t('gov.enemyHeroes')} 1`} close={t('gov.enemyClose')} />
-            <Shot src={enemyHeroesBImg} alt={`${t('gov.enemyHeroes')} 2`} close={t('gov.enemyClose')} />
+            {RANKS.map((r, i) => (
+              <Shot key={i} src={r} alt={`${t('gov.enemyRanking')} ${i + 1}`} close={t('gov.enemyClose')} />
+            ))}
           </div>
         </section>
       </div>
