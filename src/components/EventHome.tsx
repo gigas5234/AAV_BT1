@@ -185,6 +185,9 @@ export default function EventHome({
         style={{ animationDelay: '105ms', aspectRatio: '5 / 2', background: '#0d1320' }}
       >
         <img src={deploySimImg} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]" />
+        <span className="absolute left-2.5 top-2.5 z-10 rounded-full bg-amber-400 px-2.5 py-0.5 text-[10px] font-extrabold tracking-wide text-[#3a2600] shadow-md ring-1 ring-amber-200/50">
+          {t('home.deployBadge')}
+        </span>
         <div className="relative z-10 flex w-full items-center gap-2.5 bg-gradient-to-t from-black/90 via-black/45 to-transparent p-3.5 pt-7">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-black/55 text-amber-400 ring-1 ring-white/15">
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.9">

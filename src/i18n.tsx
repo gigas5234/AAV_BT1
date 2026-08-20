@@ -22,7 +22,8 @@ const STR: Record<string, Entry> = {
   'tab.slots': { en: 'Quick Slots', ko: '퀵슬롯' },
   'tab.calc': { en: 'Calc', ko: '계산기' },
   'tab.deploy': { en: 'Deploy', ko: '병력 시뮬' },
-  'home.deploy': { en: 'Simulator', ko: '시뮬레이터' },
+  'home.deploy': { en: 'Quick Slot Setup', ko: '퀵슬롯 병력 설정' },
+  'home.deployBadge': { en: 'SIMULATOR', ko: '시뮬레이터' },
 
   // ── deployment simulator (mirrors the in-game march form) ──
   'deploy.inf': { en: 'Infantry', ko: '보병' },

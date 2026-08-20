@@ -272,12 +272,12 @@ export default function DeployTab() {
       </div>
 
       {/* live ratio of what is loaded */}
-      <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] px-3 py-2">
-        <span className="shrink-0 text-[12px] text-slate-400">{t('deploy.ratio')}</span>
+      <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] px-3 py-2.5">
+        <span className="shrink-0 text-[12.5px] text-slate-400">{t('deploy.ratio')}</span>
         {CLASSES.map((c) => (
-          <span key={c} className="flex items-center gap-1" style={{ color: CLASS_COLOR[c] }}>
-            <ClassIcon cls={c} className="h-3.5 w-3.5" />
-            <span className="font-mono text-[12.5px] font-semibold">{pct(c)}%</span>
+          <span key={c} className="flex items-center gap-1.5" style={{ color: CLASS_COLOR[c] }}>
+            <ClassIcon cls={c} className="h-[18px] w-[18px]" />
+            <span className="font-mono text-[17px] font-bold leading-none">{pct(c)}%</span>
           </span>
         ))}
       </div>
