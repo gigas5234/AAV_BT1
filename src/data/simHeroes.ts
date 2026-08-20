@@ -74,7 +74,7 @@ const BT_TROOPS: [number, number, number] = [20_000, 30_000, 50_000]
 
 export const PRESETS: Preset[] = [
   { key: 'bt1', label: 'BT1', heroes: ['chenko', 'diana', 'howard'], troops: BT_TROOPS, accent: '#a78bfa' },
-  { key: 'bt2', label: 'BT2', heroes: ['yeonwoo', 'fahd', 'forrest'], troops: BT_TROOPS, accent: '#818cf8' },
+  { key: 'bt2', label: 'BT2', heroes: ['yeonwoo', 'fahd', 'seth'], troops: BT_TROOPS, accent: '#818cf8' },
   { key: 'bt3', label: 'BT3', heroes: ['amane', 'gordon', 'edwin'], troops: BT_TROOPS, accent: '#60a5fa' },
   { key: 'bt4', label: 'BT4', heroes: [], troops: BT_TROOPS, accent: '#38bdf8' },
   { key: 'attack', label: 'A', heroes: ['chenko', 'howard', 'quinn'], ratio: [50, 20, 30], accent: '#f87171' },
