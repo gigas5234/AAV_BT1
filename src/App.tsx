@@ -16,6 +16,7 @@ import PlacementGrid from './components/PlacementGrid'
 import GuideTab from './components/GuideTab'
 import SlotsTab from './components/SlotsTab'
 import CalcTab from './components/CalcTab'
+import DeployTab from './components/DeployTab'
 import BearDiscussion from './components/BearDiscussion'
 import SimView from './components/SimView'
 
@@ -132,6 +133,7 @@ export default function App() {
             lang={settings.lang}
             onSetLang={(l) => setSettings({ ...settings, lang: l })}
             onBearTrap={() => setScreen('beartrap')}
+            onDeploy={() => setScreen('deploy')}
             onOpenEvent={openEvent}
           />
         </div>
@@ -139,6 +141,20 @@ export default function App() {
     )
 
   const goHome = () => setScreen('home')
+
+  // Deployment simulator — its own screen, opened from the home list
+  if (screen === 'deploy') {
+    return (
+      <LangProvider lang={settings.lang}>
+        <div key="deploy" className="evententer relative mx-auto flex h-[100dvh] max-w-[480px] flex-col bg-[#0b1220]">
+          <main className="no-scrollbar flex-1 overflow-y-auto">
+            <DeployTab />
+          </main>
+          <EventBottomBar items={[]} active="" accent={BEARTRAP_ACCENT} onSelect={() => {}} onHome={goHome} />
+        </div>
+      </LangProvider>
+    )
+  }
 
   // an event (not Bear Trap): its own bottom bar of sections
   if (screen !== 'beartrap') {

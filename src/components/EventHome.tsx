@@ -3,6 +3,7 @@ import { EVENTS, type EventId, type EventMeta } from '../events'
 import { SOON_WINDOW_MS, countdownLabel, eventStatus } from '../data/schedule'
 import { useT, type Lang } from '../i18n'
 import beartrapImg from '../assets/events/beartrap.webp'
+import deploySimImg from '../assets/events/deploy-sim.webp'
 import championshipImg from '../assets/events/championship.webp'
 import vikingImg from '../assets/events/viking.webp'
 import mysticImg from '../assets/events/mystic.webp'
@@ -90,11 +91,13 @@ export default function EventHome({
   lang,
   onSetLang,
   onBearTrap,
+  onDeploy,
   onOpenEvent,
 }: {
   lang: Lang
   onSetLang: (l: Lang) => void
   onBearTrap: () => void
+  onDeploy: () => void
   onOpenEvent: (id: EventId) => void
 }) {
   const t = useT()
@@ -172,6 +175,27 @@ export default function EventHome({
               </span>
             ))}
           </div>
+        </div>
+      </button>
+
+      {/* Deployment simulator — sits with Bear Trap, not inside it */}
+      <button
+        onClick={onDeploy}
+        className="popin group relative mt-3 flex w-full cursor-pointer items-end overflow-hidden rounded-2xl border border-white/10 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-400/50 hover:shadow-lg hover:shadow-black/30 active:scale-[0.98]"
+        style={{ animationDelay: '105ms', aspectRatio: '5 / 2', background: '#0d1320' }}
+      >
+        <img src={deploySimImg} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]" />
+        <div className="relative z-10 flex w-full items-center gap-2.5 bg-gradient-to-t from-black/90 via-black/45 to-transparent p-3.5 pt-7">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-black/55 text-amber-400 ring-1 ring-white/15">
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.9">
+              <path d="M4 20V5M4 5l9 2.5L4 10" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M14 20v-9M14 11l6 1.6-6 1.9" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+          <h3 className="text-[17px] font-bold text-white drop-shadow">{t('home.deploy')}</h3>
+          <span className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-black/40 text-white ring-1 ring-white/20 transition-all group-hover:translate-x-0.5 group-hover:bg-white/25">
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </span>
         </div>
       </button>
 

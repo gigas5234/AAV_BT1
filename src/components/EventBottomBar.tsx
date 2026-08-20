@@ -117,6 +117,12 @@ const ICONS: Record<string, JSX.Element> = {
       <path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4" strokeLinecap="round" />
     </svg>
   ),
+  deploy: (
+    <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
+      <path d="M4 20V5M4 5l9 2.5L4 10" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M14 20v-9M14 11l6 1.6-6 1.9" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
   build: (
     <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.8">
       <path d="M3 21h18M6 21V8h5v13M13 21V4h5v17" strokeLinecap="round" strokeLinejoin="round" />
