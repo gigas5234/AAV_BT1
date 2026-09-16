@@ -1,5 +1,6 @@
 import { Fragment, useState } from 'react'
 import { guideSections, slotsContent, useLang, useT } from '../i18n'
+import { BT_JOIN_DAMAGE_POOL_K, BT_JOIN_INFANTRY_CAP_K, BT_JOIN_LIMIT_K } from '../data/beartrapRules'
 import { ConditionalHeroes } from './SlotsTab'
 import FirstHeroShots from './FirstHeroShots'
 import chenkoSkill from '../assets/guide/chenko-skill.webp'
@@ -32,10 +33,39 @@ function BanIcon({ className }: { className?: string }) {
   )
 }
 
+function currentJoinRule(lang: 'en' | 'ko') {
+  if (lang === 'ko') {
+    return {
+      title: `렐리 참여 병력 제한 — 현재 ${BT_JOIN_LIMIT_K}K`,
+      accent: '#2dd4bf',
+      highlight: `참여 행군 1개 = 최대 ${BT_JOIN_LIMIT_K}K · 보병 최대 ${BT_JOIN_INFANTRY_CAP_K}K`,
+      body: [
+        '이제 렐리 참여 병력은 20/40/40, 10/10/80 같은 고정 비율로 맞추지 않습니다.',
+        `다른 사람의 렐리에 참여할 때 한 행군의 총 병력은 최대 ${BT_JOIN_LIMIT_K}K이며, 그중 보병은 최대 ${BT_JOIN_INFANTRY_CAP_K}K까지만 사용합니다.`,
+        `남은 최대 ${BT_JOIN_DAMAGE_POOL_K}K는 보유 병력에 맞춰 기병과 궁병으로 구성합니다. 기병과 궁병 사이에는 고정 비율이 없습니다.`,
+      ],
+      callout: '이 제한은 다른 렐리에 참여하는 행군에 적용됩니다. 자기 집결(호스트)의 병력 구성과는 별도입니다.',
+    }
+  }
+  return {
+    title: `Rally join troop cap — current ${BT_JOIN_LIMIT_K}K`,
+    accent: '#2dd4bf',
+    highlight: `One join march = max ${BT_JOIN_LIMIT_K}K · Infantry max ${BT_JOIN_INFANTRY_CAP_K}K`,
+    body: [
+      'Rally join marches no longer use a fixed 20/40/40, 10/10/80, or similar ratio.',
+      `When joining another player's rally, one march may contain at most ${BT_JOIN_LIMIT_K}K troops, with at most ${BT_JOIN_INFANTRY_CAP_K}K Infantry.`,
+      `Use the remaining ${BT_JOIN_DAMAGE_POOL_K}K for Cavalry and Archers based on what you have available. There is no fixed Cavalry/Archer ratio.`,
+    ],
+    callout: "This cap applies when joining another player's rally. It does not define the host's own rally formation.",
+  }
+}
+
 export default function GuideTab() {
   const t = useT()
   const lang = useLang()
-  const sections = guideSections(lang)
+  // guideSections still contains the legacy ratio section at index 4. Replace it at render time
+  // so the visible guide always follows the current alliance join-limit rule.
+  const sections = guideSections(lang).map((section, i) => (i === 4 ? currentJoinRule(lang) : section))
   const slots = slotsContent(lang)
   // everything is open by default; users can collapse any section they want
   const [open, setOpen] = useState<Set<number | string>>(() => new Set<number | string>([...sections.map((_, i) => i), 'ban']))
