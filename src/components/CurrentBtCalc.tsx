@@ -1,31 +1,33 @@
 import { useMemo, useState } from 'react'
 import { useLang } from '../i18n'
-import { BT_JOIN_INFANTRY_CAP_K, BT_JOIN_LIMIT_K } from '../data/beartrapRules'
+import { BT_JOIN_INFANTRY_CAP_K, BT_JOIN_INFANTRY_MIN_K, BT_JOIN_LIMIT_K } from '../data/beartrapRules'
 
 const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, Math.round(n || 0)))
 
 export default function CurrentBtCalc() {
   const lang = useLang()
   const ko = lang === 'ko'
-  const [infK, setInfK] = useState(BT_JOIN_INFANTRY_CAP_K)
+  const [infK, setInfK] = useState(BT_JOIN_INFANTRY_MIN_K)
   const [cavK, setCavK] = useState(40)
-  const [arcK, setArcK] = useState(BT_JOIN_LIMIT_K - BT_JOIN_INFANTRY_CAP_K - 40)
+  const [arcK, setArcK] = useState(BT_JOIN_LIMIT_K - BT_JOIN_INFANTRY_MIN_K - 40)
 
   const total = infK + cavK + arcK
   const remain = BT_JOIN_LIMIT_K - total
+  const infantryLow = infK < BT_JOIN_INFANTRY_MIN_K
   const infantryOver = infK > BT_JOIN_INFANTRY_CAP_K
   const totalOver = total > BT_JOIN_LIMIT_K
 
   const status = useMemo(() => {
-    if (infantryOver) return ko ? `보병이 ${BT_JOIN_INFANTRY_CAP_K}K를 초과했습니다.` : `Infantry exceeds ${BT_JOIN_INFANTRY_CAP_K}K.`
+    if (infantryLow) return ko ? `보병은 최소 ${BT_JOIN_INFANTRY_MIN_K}K가 필요합니다.` : `Use at least ${BT_JOIN_INFANTRY_MIN_K}K Infantry.`
+    if (infantryOver) return ko ? `보병은 최대 ${BT_JOIN_INFANTRY_CAP_K}K입니다.` : `Infantry max is ${BT_JOIN_INFANTRY_CAP_K}K.`
     if (totalOver) return ko ? `총 병력이 ${BT_JOIN_LIMIT_K}K를 초과했습니다.` : `Total troops exceed ${BT_JOIN_LIMIT_K}K.`
     if (remain === 0) return ko ? '현재 참여 제한에 정확히 맞습니다.' : 'Matches the current join cap exactly.'
     return ko ? `${remain}K를 더 넣을 수 있습니다.` : `${remain}K more can be added.`
-  }, [infantryOver, totalOver, remain, ko])
+  }, [infantryLow, infantryOver, totalOver, remain, ko])
 
   const setKind = (kind: 'inf' | 'cav' | 'arc', raw: number) => {
     const n = Math.max(0, Math.round(raw || 0))
-    if (kind === 'inf') setInfK(clamp(n, 0, BT_JOIN_INFANTRY_CAP_K))
+    if (kind === 'inf') setInfK(clamp(n, BT_JOIN_INFANTRY_MIN_K, BT_JOIN_INFANTRY_CAP_K))
     if (kind === 'cav') setCavK(n)
     if (kind === 'arc') setArcK(n)
   }
@@ -41,7 +43,12 @@ export default function CurrentBtCalc() {
   }
 
   const fields = [
-    { id: 'inf' as const, label: ko ? '보병' : 'Infantry', value: infK, cap: `${BT_JOIN_INFANTRY_CAP_K}K max` },
+    {
+      id: 'inf' as const,
+      label: ko ? '보병' : 'Infantry',
+      value: infK,
+      cap: ko ? `${BT_JOIN_INFANTRY_MIN_K}K~${BT_JOIN_INFANTRY_CAP_K}K` : `${BT_JOIN_INFANTRY_MIN_K}K–${BT_JOIN_INFANTRY_CAP_K}K`,
+    },
     { id: 'cav' as const, label: ko ? '기병' : 'Cavalry', value: cavK, cap: ko ? '고정 비율 없음' : 'No fixed ratio' },
     { id: 'arc' as const, label: ko ? '궁병' : 'Archers', value: arcK, cap: ko ? '고정 비율 없음' : 'No fixed ratio' },
   ]
@@ -51,7 +58,7 @@ export default function CurrentBtCalc() {
       <div>
         <h2 className="text-lg font-semibold text-white">{ko ? 'BT 참여 병력 계산기' : 'BT Join Troop Calculator'}</h2>
         <p className="mt-0.5 text-sm text-slate-400">
-          {ko ? `렐리 참여 1행군을 최대 ${BT_JOIN_LIMIT_K}K로 맞춥니다.` : `Build one rally-join march up to ${BT_JOIN_LIMIT_K}K.`}
+          {ko ? `한 행군을 최대 ${BT_JOIN_LIMIT_K}K 안에서 맞춥니다.` : `Build one join march within the ${BT_JOIN_LIMIT_K}K cap.`}
         </p>
       </div>
 
@@ -61,7 +68,9 @@ export default function CurrentBtCalc() {
           <span className="font-mono text-[20px] font-bold text-white">{BT_JOIN_LIMIT_K}K</span>
         </div>
         <p className="mt-1 text-[12px] text-slate-300">
-          {ko ? `보병은 최대 ${BT_JOIN_INFANTRY_CAP_K}K. 나머지는 기병/궁병 자유 배분.` : `Infantry max ${BT_JOIN_INFANTRY_CAP_K}K. Split the rest freely between Cavalry and Archers.`}
+          {ko
+            ? `보병 ${BT_JOIN_INFANTRY_MIN_K}K~${BT_JOIN_INFANTRY_CAP_K}K · 나머지는 기병/궁병 자유 배분.`
+            : `Infantry ${BT_JOIN_INFANTRY_MIN_K}K–${BT_JOIN_INFANTRY_CAP_K}K · split the rest freely between Cavalry and Archers.`}
         </p>
       </section>
 
@@ -76,7 +85,7 @@ export default function CurrentBtCalc() {
               <input
                 type="number"
                 inputMode="numeric"
-                min={0}
+                min={f.id === 'inf' ? BT_JOIN_INFANTRY_MIN_K : 0}
                 max={f.id === 'inf' ? BT_JOIN_INFANTRY_CAP_K : BT_JOIN_LIMIT_K}
                 value={f.value}
                 onChange={(e) => setKind(f.id, Number(e.target.value))}
@@ -97,7 +106,7 @@ export default function CurrentBtCalc() {
         </button>
       </div>
 
-      <section className={`rounded-2xl border p-4 ${totalOver || infantryOver ? 'border-red-400/40 bg-red-400/[0.08]' : 'border-emerald-400/30 bg-emerald-400/[0.06]'}`}>
+      <section className={`rounded-2xl border p-4 ${totalOver || infantryLow || infantryOver ? 'border-red-400/40 bg-red-400/[0.08]' : 'border-emerald-400/30 bg-emerald-400/[0.06]'}`}>
         <div className="flex items-end justify-between gap-2">
           <div>
             <p className="text-[11px] text-slate-400">{ko ? '현재 참여 병력' : 'Current join march'}</p>
@@ -112,8 +121,8 @@ export default function CurrentBtCalc() {
 
       <p className="px-1 text-[11px] leading-relaxed text-slate-500">
         {ko
-          ? '이 계산기는 다른 사람의 BT 렐리에 참여하는 행군 기준입니다. 자기 집결(호스트) 병력은 별도로 설정하세요.'
-          : "This calculator is for joining another player's BT rally. Configure the host's own rally separately."}
+          ? `기준은 세 가지뿐입니다: 총 ${BT_JOIN_LIMIT_K}K 이하 · 보병 ${BT_JOIN_INFANTRY_MIN_K}K 이상 · 보병 ${BT_JOIN_INFANTRY_CAP_K}K 이하.`
+          : `Only three rules: total ≤ ${BT_JOIN_LIMIT_K}K · Infantry ≥ ${BT_JOIN_INFANTRY_MIN_K}K · Infantry ≤ ${BT_JOIN_INFANTRY_CAP_K}K.`}
       </p>
     </div>
   )
