@@ -14,8 +14,8 @@ import RosterTab from './components/RosterTab'
 import PlanResult from './components/PlanResult'
 import PlacementGrid from './components/PlacementGrid'
 import GuideTab from './components/GuideTab'
-import SlotsTab from './components/SlotsTab'
-import CalcTab from './components/CalcTab'
+import CurrentBtSlots from './components/CurrentBtSlots'
+import CurrentBtCalc from './components/CurrentBtCalc'
 import DeployTab from './components/DeployTab'
 import BearDiscussion from './components/BearDiscussion'
 import SimView from './components/SimView'
@@ -178,7 +178,7 @@ export default function App() {
     )
   }
 
-  // Bear Trap — the full planner, with its four tools in the bottom bar
+  // Bear Trap — current guide/tools. The legacy planner/simulator remains hidden in events.ts.
   return (
     <LangProvider lang={settings.lang}>
     <div key="beartrap" className="evententer relative mx-auto flex h-[100dvh] max-w-[480px] flex-col bg-[#0b1220]">
@@ -228,8 +228,8 @@ export default function App() {
               />
             )}
             {tab === 'guide' && <GuideTab />}
-            {tab === 'slots' && <SlotsTab />}
-            {tab === 'calc' && <CalcTab />}
+            {tab === 'slots' && <CurrentBtSlots />}
+            {tab === 'calc' && <CurrentBtCalc />}
           </div>
         )}
       </main>
