@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { EVENTS, type EventId, type EventMeta } from '../events'
+import { BEARTRAP_VISIBLE, EVENTS, type EventId, type EventMeta } from '../events'
 import { SOON_WINDOW_MS, countdownLabel, eventStatus } from '../data/schedule'
 import { useT, type Lang } from '../i18n'
 import beartrapImg from '../assets/events/beartrap.webp'
-import deploySimImg from '../assets/events/deploy-sim.webp'
 import championshipImg from '../assets/events/championship.webp'
 import vikingImg from '../assets/events/viking.webp'
 import mysticImg from '../assets/events/mystic.webp'
@@ -13,7 +12,6 @@ import governorImg from '../assets/events/governor.webp'
 import brawlImg from '../assets/events/brawl.webp'
 import triclashImg from '../assets/events/triclash.webp'
 
-// Event artwork (banners). Events without art fall back to an accent gradient.
 const EVENT_IMG: Partial<Record<EventId, string>> = {
   governor: governorImg,
   championship: championshipImg,
@@ -54,7 +52,6 @@ const EVENT_ICON: Record<EventId, JSX.Element> = {
       <path d="M3 20h18" strokeLinecap="round" />
     </svg>
   ),
-  // three banners meeting in the middle — one per alliance
   triclash: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5">
       <path d="M12 3.5 4.5 8v8L12 20.5 19.5 16V8z" strokeLinejoin="round" />
@@ -74,7 +71,6 @@ const EVENT_ICON: Record<EventId, JSX.Element> = {
   ),
 }
 
-// Subtle marker for the spot the real event image will occupy.
 function ImgHint() {
   return (
     <span className="absolute right-2.5 top-2.5 text-white/25">
@@ -91,7 +87,7 @@ export default function EventHome({
   lang,
   onSetLang,
   onBearTrap,
-  onDeploy,
+  onDeploy: _onDeploy,
   onOpenEvent,
 }: {
   lang: Lang
@@ -101,9 +97,8 @@ export default function EventHome({
   onOpenEvent: (id: EventId) => void
 }) {
   const t = useT()
-
-  // Re-check every minute so a label flips on its own while the hub is open.
   const [now, setNow] = useState(() => Date.now())
+
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 60_000)
     return () => clearInterval(id)
@@ -111,7 +106,6 @@ export default function EventHome({
 
   const status = (e: EventMeta) => eventStatus(e.schedule, now)
 
-  // Live events float to the top, then the ones starting soonest; the rest keep their order.
   const ordered = useMemo(() => {
     const rank = (e: EventMeta) => {
       const st = eventStatus(e.schedule, now)
@@ -139,15 +133,12 @@ export default function EventHome({
           </h1>
           <p className="mt-0.5 text-sm text-slate-400">{t('home.sub')}</p>
         </div>
-        {/* language toggle */}
         <div className="flex shrink-0 overflow-hidden rounded-lg border border-white/15">
           {(['en', 'ko'] as Lang[]).map((l) => (
             <button
               key={l}
               onClick={() => onSetLang(l)}
-              className={`px-2.5 py-1 text-[12px] font-medium transition-colors ${
-                lang === l ? 'bg-amber-400 text-[#3a2600]' : 'text-slate-300 active:bg-white/10'
-              }`}
+              className={`px-2.5 py-1 text-[12px] font-medium transition-colors ${lang === l ? 'bg-amber-400 text-[#3a2600]' : 'text-slate-300 active:bg-white/10'}`}
             >
               {l === 'en' ? 'EN' : '한글'}
             </button>
@@ -155,21 +146,20 @@ export default function EventHome({
         </div>
       </div>
 
-      {/* Bear Trap — big hero banner (16:9). Image goes in the background layer. */}
       <button
         onClick={onBearTrap}
         className="popin group relative mt-4 block aspect-video w-full cursor-pointer overflow-hidden rounded-3xl border border-amber-400/25 text-left ring-0 ring-amber-400/0 transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-400/60 hover:shadow-xl hover:shadow-amber-500/15 hover:ring-2 hover:ring-amber-400/30 active:scale-[0.98]"
         style={{ animationDelay: '70ms' }}
       >
         <img src={beartrapImg} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
-        <span className="absolute left-3.5 top-3.5 rounded-full bg-amber-400 px-2.5 py-0.5 text-[11px] font-bold text-[#3a2600] shadow">MAIN</span>
+        <span className="absolute left-3.5 top-3.5 rounded-full bg-amber-400 px-2.5 py-0.5 text-[11px] font-bold text-[#3a2600] shadow">GUIDE</span>
         <span className="absolute bottom-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-white/25 backdrop-blur-sm transition-all group-hover:translate-x-0.5 group-hover:bg-amber-400 group-hover:text-[#3a2600] group-active:scale-90">
           <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </span>
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0b1220] via-[#0b1220]/25 to-transparent p-4">
           <h2 className="text-2xl font-bold text-white drop-shadow">{t('home.beartrap')}</h2>
           <div className="mt-2 flex flex-wrap gap-1.5">
-            {['plan', 'guide', 'slots', 'calc'].map((s) => (
+            {BEARTRAP_VISIBLE.map((s) => (
               <span key={s} className="rounded-md bg-white/15 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm">
                 {t(`tab.${s}`)}
               </span>
@@ -178,88 +168,62 @@ export default function EventHome({
         </div>
       </button>
 
-      {/* Deployment simulator — sits with Bear Trap, not inside it */}
-      <button
-        onClick={onDeploy}
-        className="popin group relative mt-3 flex w-full cursor-pointer items-end overflow-hidden rounded-2xl border border-white/10 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-400/50 hover:shadow-lg hover:shadow-black/30 active:scale-[0.98]"
-        style={{ animationDelay: '105ms', aspectRatio: '5 / 2', background: '#0d1320' }}
-      >
-        <img src={deploySimImg} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]" />
-        <span className="absolute left-2.5 top-2.5 z-10 rounded-full bg-amber-400 px-2.5 py-0.5 text-[10px] font-extrabold tracking-wide text-[#3a2600] shadow-md ring-1 ring-amber-200/50">
-          {t('home.deployBadge')}
-        </span>
-        <div className="relative z-10 flex w-full items-center gap-2.5 bg-gradient-to-t from-black/90 via-black/45 to-transparent p-3.5 pt-7">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-black/55 text-amber-400 ring-1 ring-white/15">
-            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.9">
-              <path d="M4 20V5M4 5l9 2.5L4 10" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M14 20v-9M14 11l6 1.6-6 1.9" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </span>
-          <h3 className="text-[17px] font-bold text-white drop-shadow">{t('home.deploy')}</h3>
-          <span className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-black/40 text-white ring-1 ring-white/20 transition-all group-hover:translate-x-0.5 group-hover:bg-white/25">
-            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-          </span>
-        </div>
-      </button>
-
       <p className="popin mb-2.5 mt-6 px-1 text-[12px] font-medium text-slate-400" style={{ animationDelay: '140ms' }}>
         {t('home.otherEvents')}
       </p>
 
-      {/* Other events — vertical list of banners (5:2), about half the hero's height */}
       <div className="space-y-3">
         {ordered.map((e, i) => {
           const img = EVENT_IMG[e.id]
           const st = status(e)
-          // a schedule, when present, decides the labels; otherwise the manual flags do
           const isHot = st ? st.live : !!e.hot
           const until = st && !st.live ? st.startMs - now : null
           const isSoon = st ? until !== null && until <= SOON_WINDOW_MS : !!e.soon
           return (
-          <button
-            key={e.id}
-            onClick={() => onOpenEvent(e.id)}
-            className="popin group relative flex w-full cursor-pointer items-end overflow-hidden rounded-2xl border border-white/10 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-white/25 hover:shadow-lg hover:shadow-black/30 active:scale-[0.98]"
-            style={{
-              animationDelay: `${190 + i * 60}ms`,
-              aspectRatio: '5 / 2',
-              background: img ? '#0d1320' : `radial-gradient(110% 130% at 84% 0%, ${e.accent}42, rgba(11,18,32,0) 60%), linear-gradient(160deg, #1a2232, #0d1320)`,
-            }}
-          >
-            {img ? (
-              <img src={img} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]" />
-            ) : (
-              <ImgHint />
-            )}
-            {isHot && (
-              <span className="absolute left-2.5 top-2.5 z-10 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-extrabold tracking-wide text-white shadow-md ring-1 ring-red-300/50">
-                {t('home.hot')}
-              </span>
-            )}
-            <span className="absolute right-2.5 top-2.5 z-10">
-              {isSoon ? (
-                <span className="flex items-center gap-1 rounded-full bg-sky-500 px-2 py-0.5 text-[9px] font-extrabold tracking-wide text-white shadow-md ring-1 ring-sky-300/50">
-                  {t('home.comingSoon')}
-                  {until !== null && <span className="rounded bg-black/25 px-1">{countdownLabel(until, lang)}</span>}
-                </span>
-              ) : e.ready ? (
-                <span className="rounded-full px-2 py-0.5 text-[9px] font-bold shadow" style={{ background: e.accent, color: '#1a1200' }}>{t('home.ready')}</span>
+            <button
+              key={e.id}
+              onClick={() => onOpenEvent(e.id)}
+              className="popin group relative flex w-full cursor-pointer items-end overflow-hidden rounded-2xl border border-white/10 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-white/25 hover:shadow-lg hover:shadow-black/30 active:scale-[0.98]"
+              style={{
+                animationDelay: `${190 + i * 60}ms`,
+                aspectRatio: '5 / 2',
+                background: img ? '#0d1320' : `radial-gradient(110% 130% at 84% 0%, ${e.accent}42, rgba(11,18,32,0) 60%), linear-gradient(160deg, #1a2232, #0d1320)`,
+              }}
+            >
+              {img ? (
+                <img src={img} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]" />
               ) : (
-                <span className="rounded-full bg-black/50 px-2 py-0.5 text-[9px] font-semibold text-amber-100 ring-1 ring-white/10">{t('events.soon')}</span>
+                <ImgHint />
               )}
-            </span>
-            <div className="relative z-10 flex w-full items-center gap-2.5 bg-gradient-to-t from-black/90 via-black/45 to-transparent p-3.5 pt-7">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-black/55 ring-1 ring-white/15" style={{ color: e.accent }}>
-                {EVENT_ICON[e.id]}
+              {isHot && (
+                <span className="absolute left-2.5 top-2.5 z-10 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-extrabold tracking-wide text-white shadow-md ring-1 ring-red-300/50">
+                  {t('home.hot')}
+                </span>
+              )}
+              <span className="absolute right-2.5 top-2.5 z-10">
+                {isSoon ? (
+                  <span className="flex items-center gap-1 rounded-full bg-sky-500 px-2 py-0.5 text-[9px] font-extrabold tracking-wide text-white shadow-md ring-1 ring-sky-300/50">
+                    {t('home.comingSoon')}
+                    {until !== null && <span className="rounded bg-black/25 px-1">{countdownLabel(until, lang)}</span>}
+                  </span>
+                ) : e.ready ? (
+                  <span className="rounded-full px-2 py-0.5 text-[9px] font-bold shadow" style={{ background: e.accent, color: '#1a1200' }}>{t('home.ready')}</span>
+                ) : (
+                  <span className="rounded-full bg-black/50 px-2 py-0.5 text-[9px] font-semibold text-amber-100 ring-1 ring-white/10">{t('events.soon')}</span>
+                )}
               </span>
-              <span className="text-[15px] font-bold text-white" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
-                {t(`events.${e.id}`)}
-              </span>
-              <span className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-black/40 text-white ring-1 ring-white/20 transition-all group-hover:translate-x-0.5 group-hover:bg-white/25">
-                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </span>
-            </div>
-          </button>
+              <div className="relative z-10 flex w-full items-center gap-2.5 bg-gradient-to-t from-black/90 via-black/45 to-transparent p-3.5 pt-7">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-black/55 ring-1 ring-white/15" style={{ color: e.accent }}>
+                  {EVENT_ICON[e.id]}
+                </span>
+                <span className="text-[15px] font-bold text-white" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
+                  {t(`events.${e.id}`)}
+                </span>
+                <span className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-black/40 text-white ring-1 ring-white/20 transition-all group-hover:translate-x-0.5 group-hover:bg-white/25">
+                  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </span>
+              </div>
+            </button>
           )
         })}
       </div>
