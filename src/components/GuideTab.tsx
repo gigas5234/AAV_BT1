@@ -1,116 +1,139 @@
-import { useState } from 'react'
-import { useLang } from '../i18n'
-import { BT_JOIN_INFANTRY_CAP_K, BT_JOIN_INFANTRY_MIN_K, BT_JOIN_LIMIT_K } from '../data/beartrapRules'
+import { Fragment, useState } from 'react'
+import { guideSections, slotsContent, useLang, useT } from '../i18n'
+import { ConditionalHeroes } from './SlotsTab'
 import FirstHeroShots from './FirstHeroShots'
 import chenkoSkill from '../assets/guide/chenko-skill.webp'
 import yeonwooSkill from '../assets/guide/yeonwoo-skill.webp'
 import amaneSkill from '../assets/guide/amane-skill.webp'
 
-const SKILLS = [
-  { id: 'chenko', ko: '첸코', en: 'Chenko', skill: 'Stand of Arms', effectKo: '전 부대 치명 +25%', effectEn: 'All Squads Lethality +25%', img: chenkoSkill },
-  { id: 'yeonwoo', ko: '연우', en: 'Yeonwoo', skill: 'On Guard', effectKo: '전 부대 치명 +25%', effectEn: 'All Squads Lethality +25%', img: yeonwooSkill },
-  { id: 'amane', ko: '아마네', en: 'Amane', skill: 'Tri-Phalanx', effectKo: '전 부대 공격 +25%', effectEn: 'All Squads Attack +25%', img: amaneSkill },
-] as const
+const SKILL_IMG: Record<string, string> = { chenko: chenkoSkill, yeonwoo: yeonwooSkill, amane: amaneSkill }
 
 function Chevron({ open }: { open: boolean }) {
   return (
-    <svg viewBox="0 0 24 24" className={`h-4 w-4 shrink-0 text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      className={`h-4 w-4 shrink-0 text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      aria-hidden="true"
+    >
       <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
 
-type Section = 'event' | 'troops' | 'hero'
+function BanIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className ?? 'h-5 w-5 shrink-0'} fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M5.6 5.6l12.8 12.8" strokeLinecap="round" />
+    </svg>
+  )
+}
 
 export default function GuideTab() {
+  const t = useT()
   const lang = useLang()
-  const ko = lang === 'ko'
-  const [open, setOpen] = useState<Set<Section>>(() => new Set<Section>(['event', 'troops', 'hero']))
-  const toggle = (id: Section) =>
+  const sections = guideSections(lang)
+  const slots = slotsContent(lang)
+  // everything is open by default; users can collapse any section they want
+  const [open, setOpen] = useState<Set<number | string>>(() => new Set<number | string>([...sections.map((_, i) => i), 'ban']))
+  const toggle = (k: number | string) =>
     setOpen((prev) => {
       const next = new Set(prev)
-      next.has(id) ? next.delete(id) : next.add(id)
+      next.has(k) ? next.delete(k) : next.add(k)
       return next
     })
 
   return (
     <div className="space-y-3.5 px-4 pb-24 pt-5">
       <div className="mb-1">
-        <h2 className="text-lg font-semibold text-white">{ko ? '곰덫 가이드' : 'Bear Trap Guide'}</h2>
-        <p className="mt-0.5 text-sm text-slate-400">
-          {ko ? '현재 AAV에서 사용하는 규칙만 정리했습니다.' : 'Only the rules currently used by AAV are shown here.'}
-        </p>
+        <h2 className="text-lg font-semibold text-white">{t('guide.header')}</h2>
+        <p className="mt-0.5 text-sm text-slate-400">{t('guide.sub')}</p>
       </div>
 
-      <section className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
-        <button onClick={() => toggle('event')} className="flex w-full items-center gap-2.5 px-3.5 py-3 text-left">
-          <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-slate-400" />
-          <h3 className="flex-1 text-[15px] font-semibold text-white">{ko ? '이벤트 기본' : 'Event basics'}</h3>
-          <Chevron open={open.has('event')} />
-        </button>
-        {open.has('event') && (
-          <div className="accopen space-y-2 px-4 pb-4 text-[13px] leading-relaxed text-slate-300">
-            <p>{ko ? '곰덫(Pitfall)은 30분 동안 진행되며 연맹원이 함께 곰에게 데미지를 넣는 이벤트입니다.' : 'Bear Trap (Pitfall) runs for 30 minutes and alliance members deal damage to the bear together.'}</p>
-            <p>{ko ? '개인 보상은 자신의 데미지를 기준으로 지급되므로 가능한 많은 렐리에 꾸준히 참여하는 것이 중요합니다.' : 'Personal rewards are based on your own damage, so joining rallies consistently is important.'}</p>
-          </div>
-        )}
-      </section>
-
-      <section className="overflow-hidden rounded-2xl border-2 border-amber-400/50 bg-amber-400/[0.06]">
-        <button onClick={() => toggle('troops')} className="flex w-full items-center gap-2.5 px-3.5 py-3 text-left">
-          <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-amber-400" />
-          <h3 className="flex-1 text-[15px] font-semibold text-white">{ko ? '현재 참여 병력 규칙' : 'Current join troop rule'}</h3>
-          <Chevron open={open.has('troops')} />
-        </button>
-        {open.has('troops') && (
-          <div className="accopen px-4 pb-4">
-            <div className="rounded-xl border border-amber-300/40 bg-amber-400/15 px-3.5 py-3">
-              <p className="text-[18px] font-bold text-amber-100">
-                {ko
-                  ? `총 ${BT_JOIN_LIMIT_K}K 이하 · 보병 ${BT_JOIN_INFANTRY_MIN_K}K~${BT_JOIN_INFANTRY_CAP_K}K`
-                  : `Total ≤ ${BT_JOIN_LIMIT_K}K · Infantry ${BT_JOIN_INFANTRY_MIN_K}K–${BT_JOIN_INFANTRY_CAP_K}K`}
-              </p>
-            </div>
-            <ul className="mt-3 list-disc space-y-1.5 pl-4 text-[13px] leading-relaxed text-slate-300">
-              <li>{ko ? `렐리 참여 행군의 총 병력은 최대 ${BT_JOIN_LIMIT_K}K입니다.` : `A rally join march may contain up to ${BT_JOIN_LIMIT_K}K troops.`}</li>
-              <li>{ko ? `보병은 최소 ${BT_JOIN_INFANTRY_MIN_K}K, 최대 ${BT_JOIN_INFANTRY_CAP_K}K를 사용합니다.` : `Use at least ${BT_JOIN_INFANTRY_MIN_K}K and at most ${BT_JOIN_INFANTRY_CAP_K}K Infantry.`}</li>
-              <li>{ko ? '나머지 병력은 기병과 궁병으로 자유롭게 구성합니다.' : 'Use Cavalry and Archers freely for the remaining troops.'}</li>
-              <li>{ko ? '고정 병종 비율은 사용하지 않습니다.' : 'There is no fixed troop ratio.'}</li>
-            </ul>
-          </div>
-        )}
-      </section>
-
-      <section className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
-        <button onClick={() => toggle('hero')} className="flex w-full items-center gap-2.5 px-3.5 py-3 text-left">
-          <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-emerald-400" />
-          <h3 className="flex-1 text-[15px] font-semibold text-white">{ko ? '렐리 참여 1번 영웅' : 'First hero when joining'}</h3>
-          <Chevron open={open.has('hero')} />
-        </button>
-        {open.has('hero') && (
-          <div className="accopen space-y-2.5 px-4 pb-4">
-            <p className="text-[13px] leading-relaxed text-slate-300">
-              {ko
-                ? '렐리에 참여할 때는 맨 왼쪽 1번 영웅의 원정 스킬이 중요합니다. 아래 영웅 중 하나를 사용하세요.'
-                : 'When joining a rally, the expedition skill of the left-most first hero matters. Use one of the heroes below.'}
-            </p>
-            <div className="space-y-1.5">
-              {SKILLS.map((hero) => (
-                <div key={hero.id} className="flex items-center gap-2.5 rounded-lg border border-white/10 bg-white/[0.03] p-2.5">
-                  <img src={hero.img} alt={hero.skill} className="h-11 w-11 shrink-0 rounded-lg object-contain" />
-                  <div className="min-w-0">
-                    <p className="text-[13px] text-white">
-                      <span className="font-medium">{ko ? hero.ko : hero.en}</span> · <span className="text-slate-400">{hero.skill}</span>
-                    </p>
-                    <p className="text-[12px] text-emerald-300">{ko ? hero.effectKo : hero.effectEn}</p>
+      {sections.map((s, i) => {
+        const isOpen = open.has(i)
+        return (
+          <Fragment key={i}>
+            <section className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
+              <button onClick={() => toggle(i)} className="flex w-full items-center gap-2.5 px-3.5 py-3 text-left">
+                <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: s.accent ?? '#64748b' }} />
+                <h3 className="flex-1 text-[15px] font-semibold text-white">{s.title}</h3>
+                <Chevron open={isOpen} />
+              </button>
+              {isOpen && (
+                <div className="accopen px-4 pb-4">
+                  {s.highlight && (
+                    <div className="mb-2.5 flex items-start gap-2 rounded-xl border-2 border-amber-300 bg-amber-400 px-3.5 py-3 text-[14px] font-semibold text-[#3a2600] shadow-lg shadow-amber-500/25">
+                      <svg viewBox="0 0 24 24" className="mt-0.5 h-5 w-5 shrink-0" fill="currentColor" aria-hidden="true">
+                        <path d="M13 2 3 14h7l-1 8 10-12h-7z" />
+                      </svg>
+                      <span>{s.highlight}</span>
+                    </div>
+                  )}
+                  <div className="space-y-2 text-[13px] leading-relaxed text-slate-300">
+                    {s.body.map((p, j) => (
+                      <p key={j}>{p}</p>
+                    ))}
+                    {s.skills && (
+                      <div className="space-y-1.5">
+                        {s.skills.map((sk, j) => (
+                          <div key={j} className="flex items-center gap-2.5 rounded-lg border border-white/10 bg-white/[0.03] p-2.5">
+                            <img src={SKILL_IMG[sk.id]} alt={sk.skill} className="h-11 w-11 shrink-0 rounded-lg object-contain" />
+                            <div className="min-w-0">
+                              <p className="text-[13px] text-white">
+                                <span className="text-slate-400">{sk.hero}</span> · <span className="font-medium">{sk.skill}</span>
+                              </p>
+                              <p className="text-[12px] text-emerald-300">{sk.effect}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {s.skills && <FirstHeroShots />}
+                    {s.callout && (
+                      <p className="rounded-lg border border-amber-400/25 bg-amber-400/10 px-3 py-2 text-amber-200">{s.callout}</p>
+                    )}
+                    {s.list && (
+                      <ul className="list-disc space-y-1 pl-4">
+                        {s.list.map((li, k) => (
+                          <li key={k}>{li}</li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 </div>
-              ))}
-            </div>
-            <FirstHeroShots />
-          </div>
-        )}
-      </section>
+              )}
+            </section>
+
+            {/* forbidden heroes — inserted right after the hero section (very important) */}
+            {i === 1 && (
+              <section className="overflow-hidden rounded-2xl border-2 border-red-500/70 bg-red-500/[0.07]">
+                <button onClick={() => toggle('ban')} className="flex w-full items-center gap-2.5 px-3.5 py-3 text-left text-red-300">
+                  <BanIcon className="h-5 w-5 shrink-0" />
+                  <h3 className="flex-1 text-[15px] font-bold">{slots.forbiddenTitle}</h3>
+                  <Chevron open={open.has('ban')} />
+                </button>
+                {open.has('ban') && (
+                  <div className="accopen space-y-3 px-4 pb-4">
+                    <div>
+                      <p className="text-[16px] font-semibold leading-relaxed text-red-200">{slots.forbidden.join(' · ')}</p>
+                      <p className="mt-1.5 text-[12px] leading-relaxed text-red-200/70">{slots.forbiddenNote}</p>
+                    </div>
+                    <p className="flex items-center gap-2 border-t border-red-500/30 pt-2.5 text-[15px] font-bold text-red-300">
+                      <BanIcon className="h-5 w-5 shrink-0" />
+                      {slots.troopBan}
+                    </p>
+                    <ConditionalHeroes heroes={slots.conditional} note={slots.conditionalNote} />
+                  </div>
+                )}
+              </section>
+            )}
+          </Fragment>
+        )
+      })}
     </div>
   )
 }
