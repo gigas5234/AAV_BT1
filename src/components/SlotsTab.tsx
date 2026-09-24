@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { slotsContent, useLang, useT, type Slot } from '../i18n'
+import { slotsContent, useLang, useT } from '../i18n'
 import tierImg from '../assets/guide/beartrap-hero-tier.webp'
 import LeadHeroChecker from './LeadHeroChecker'
 
@@ -27,79 +27,6 @@ export function ConditionalHeroes({ heroes, note }: { heroes: string[]; note: st
       </p>
       <p className="mt-1.5 text-[12px] leading-relaxed text-amber-100/75">{note}</p>
     </div>
-  )
-}
-
-function TroopBar({ infK, cavK, arcK }: { infK: number; cavK: number; arcK: number }) {
-  const t = useT()
-  const total = infK + cavK + arcK
-  if (total === 0) return null
-  const seg = (v: number, c: string) =>
-    v > 0 ? <span style={{ width: `${(v / total) * 100}%`, background: c }} className="h-full" /> : null
-  const cell = (label: string, v: number, c: string, strong = false) => (
-    <span className="flex items-center gap-1">
-      <span className="h-2 w-2 shrink-0 rounded-sm" style={{ background: c }} />
-      <span className={strong ? 'font-bold' : ''} style={{ color: c }}>
-        {label} {v}K
-      </span>
-    </span>
-  )
-  return (
-    <div className="mt-2">
-      <div className="flex h-2.5 overflow-hidden rounded">
-        {seg(infK, INF)}
-        {seg(cavK, CAV)}
-        {seg(arcK, ARC)}
-      </div>
-      <div className="mt-1.5 flex items-center justify-between text-[12px]">
-        {cell(t('calc.inf'), infK, INF)}
-        {cell(t('calc.cav'), cavK, CAV)}
-        {cell(t('calc.arc'), arcK, ARC, true)}
-      </div>
-    </div>
-  )
-}
-
-function SlotCard({ title, tag, rawK, slots }: { title: string; tag: string; rawK?: number; slots: Slot[] }) {
-  const grand = slots.reduce((n, s) => n + s.infK + s.cavK + s.arcK, 0)
-  return (
-    <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-      <div className="flex items-center justify-between gap-2">
-        <div className="min-w-0">
-          <h3 className="font-semibold text-white">{title}</h3>
-          <p className="text-[11px] text-slate-400">{tag}</p>
-        </div>
-        <span className="shrink-0 rounded-lg bg-amber-400/15 px-2.5 py-1 font-mono text-[13px] text-slate-300">
-          {rawK ? (
-            <>
-              {rawK} − {rawK - grand} = <span className="text-[15px] font-bold text-amber-300">{grand}K</span>
-            </>
-          ) : (
-            <span className="text-[15px] font-bold text-amber-300">{grand}K</span>
-          )}
-        </span>
-      </div>
-      <div className="mt-3 space-y-2.5">
-        {slots.map((s) => {
-          const total = s.infK + s.cavK + s.arcK
-          const empty = total === 0
-          return (
-            <div key={s.n} className={`rounded-xl border p-3 ${empty ? 'border-white/[0.06] bg-white/[0.015]' : 'border-white/10 bg-white/[0.03]'}`}>
-              <div className="flex items-center gap-2">
-                <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[11px] font-bold ${empty ? 'bg-white/10 text-slate-400' : 'bg-amber-400 text-[#3a2600]'}`}>
-                  {s.n}
-                </span>
-                <p className={`flex-1 truncate text-[13px] font-semibold ${empty ? 'text-slate-400' : 'text-white'}`}>{s.title}</p>
-                <span className={`shrink-0 text-[15px] font-bold ${empty ? 'text-slate-500' : 'text-amber-300'}`}>{total}K</span>
-              </div>
-              <p className="mt-0.5 text-[12px] text-slate-400">{s.purpose}</p>
-              <TroopBar infK={s.infK} cavK={s.cavK} arcK={s.arcK} />
-              {s.note && <p className="mt-1.5 text-[11px] text-slate-500">{s.note}</p>}
-            </div>
-          )
-        })}
-      </div>
-    </section>
   )
 }
 
@@ -248,19 +175,6 @@ export default function SlotsTab() {
           <ConditionalHeroes heroes={content.conditional} note={content.conditionalNote} />
         </div>
       )}
-
-      <div className="mt-1 rounded-2xl border-2 border-amber-400/50 bg-amber-400/[0.1] p-4">
-        <div className="flex items-center gap-2">
-          <span className="rounded-md bg-amber-400 px-2 py-0.5 text-[11px] font-bold text-[#3a2600]">{content.examplesTag}</span>
-          <h3 className="text-[15px] font-semibold text-amber-100">{content.examplesTitle}</h3>
-        </div>
-        <p className="mt-2 text-[13px] font-semibold leading-relaxed text-amber-100">{content.examplesLead}</p>
-        <p className="mt-1.5 text-[12px] leading-relaxed text-amber-100/75">{content.examplesNote}</p>
-      </div>
-
-      {content.cards.map((c) => (
-        <SlotCard key={c.title} title={c.title} tag={c.tag} rawK={c.rawK} slots={c.slots} />
-      ))}
 
       <section className="rounded-2xl border border-emerald-400/25 bg-emerald-400/[0.06] p-4">
         <h3 className="flex items-center gap-2 font-semibold text-white">

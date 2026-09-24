@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useLang, useT } from '../i18n'
+import { useLang, useT, type Lang } from '../i18n'
 import { GRADE_RANK, LEAD_RANK, SIM_HEROES, cardImg, heroById, leadVerdict, type LeadVerdict } from '../data/simHeroes'
 
 /**
@@ -16,10 +16,10 @@ const TONE: Record<LeadVerdict, { color: string; mark: string }> = {
 }
 
 /** The expedition skill each allowed lead brings to a rally. */
-const LEAD_SKILL: Record<string, { skill: string; ko: string; en: string }> = {
-  chenko: { skill: 'Stand of Arms', ko: '전 부대 치명 +25%', en: 'All squads Lethality +25%' },
-  yeonwoo: { skill: 'On Guard', ko: '전 부대 치명 +25%', en: 'All squads Lethality +25%' },
-  amane: { skill: 'Tri-Phalanx', ko: '전 부대 공격 +25%', en: 'All squads Attack +25%' },
+const LEAD_SKILL: Record<string, { skill: string } & Record<Lang, string>> = {
+  chenko: { skill: 'Stand of Arms', ko: '전 부대 치명 +25%', en: 'All squads Lethality +25%', es: 'Letalidad +25% para todas las tropas' },
+  yeonwoo: { skill: 'On Guard', ko: '전 부대 치명 +25%', en: 'All squads Lethality +25%', es: 'Letalidad +25% para todas las tropas' },
+  amane: { skill: 'Tri-Phalanx', ko: '전 부대 공격 +25%', en: 'All squads Attack +25%', es: 'Ataque +25% para todas las tropas' },
 }
 
 // allowed first, then conditional, then banned; strongest grades first within each
@@ -43,7 +43,7 @@ export default function LeadHeroChecker() {
     if (!hero || !verdict) return ''
     if (verdict === 'allowed') {
       const s = LEAD_SKILL[hero.id]
-      return t('lead.whyAllowed', { skill: s.skill, effect: lang === 'ko' ? s.ko : s.en })
+      return t('lead.whyAllowed', { skill: s.skill, effect: s[lang] })
     }
     if (verdict === 'conditional') return t('lead.whyConditional')
     return hero.grade === 'rare' ? t('lead.whyBannedRare') : t('lead.whyBanned')

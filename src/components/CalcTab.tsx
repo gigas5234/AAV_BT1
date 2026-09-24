@@ -6,7 +6,7 @@ import chenkoImg from '../assets/heroes/chenko.png'
 import yeonwooImg from '../assets/heroes/yeonwoo.png'
 import amaneImg from '../assets/heroes/amane.png'
 
-type Role = 'main' | 'support' | 'general'
+type Role = 'host' | 'participant'
 type Kind = 'inf' | 'cav' | 'arc'
 
 const KINDS: Kind[] = ['inf', 'cav', 'arc']
@@ -29,10 +29,10 @@ const emptyPool = (): Pool => ({ inf: emptyTier(), cav: emptyTier(), arc: emptyT
  * the standard join march — infantry pinned at the floor, archers at their
  * share, cavalry the rest — and a host's own-rally slot keeps the same
  * infantry floor with archers pushed higher. Role only decides whether slot 1
- * is that own rally.
+ * is that own rally (a host) or a join like the rest (a participant).
  */
 function slotSpec(role: Role, i: number): { auto: boolean } {
-  return { auto: i === 0 && role !== 'general' } // slot 1 is the auto host for main/support
+  return { auto: i === 0 && role === 'host' } // a host's slot 1 is their own rally
 }
 
 /** What a slot of `cap` troops should hold, in troops. */
@@ -132,7 +132,7 @@ function NumField({ value, min = 0, onChange, className }: { value: number; min?
 export default function CalcTab() {
   const t = useT()
   const lang = useLang()
-  const [role, setRole] = useState<Role>('main')
+  const [role, setRole] = useState<Role>('host')
   // The join-cap tabs are a separate calculator: null = the role calculator below.
   const [r856, setR856] = useState<R856Mode | null>(null)
   const [owned, setOwned] = useState<Pool>(emptyPool)
@@ -330,7 +330,7 @@ export default function CalcTab() {
       {/* role — segmented toggle + one-line description of the selected role */}
       <div>
         <div className="flex gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] p-1">
-          {(['main', 'support', 'general'] as Role[]).map((r) => {
+          {(['host', 'participant'] as Role[]).map((r) => {
             const on = r856 === null && role === r
             return (
               <button

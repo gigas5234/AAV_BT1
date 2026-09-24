@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { EVENTS, type EventId, type EventMeta, BEARTRAP_SECTIONS } from '../events'
 import { SOON_WINDOW_MS, countdownLabel, eventStatus } from '../data/schedule'
-import { useT, type Lang } from '../i18n'
+import { LANGS, useT, type Lang } from '../i18n'
 import beartrapImg from '../assets/events/beartrap.webp'
 import deploySimImg from '../assets/events/deploy-sim.webp'
 import championshipImg from '../assets/events/championship.webp'
@@ -139,17 +139,27 @@ export default function EventHome({
           </h1>
           <p className="mt-0.5 text-sm text-slate-400">{t('home.sub')}</p>
         </div>
-        {/* language toggle */}
-        <div className="flex shrink-0 overflow-hidden rounded-lg border border-white/15">
-          {(['en', 'ko'] as Lang[]).map((l) => (
+      </div>
+
+      {/* language — its own full-width row so nobody has to hunt for it */}
+      <div className="popin mt-3 flex items-center gap-2 rounded-2xl border border-white/15 bg-white/[0.05] p-1.5" style={{ animationDelay: '30ms' }}>
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-slate-200" aria-hidden="true">
+          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z" strokeLinejoin="round" />
+          </svg>
+        </span>
+        <div className="grid flex-1 grid-cols-3 gap-1" role="group" aria-label="Language">
+          {LANGS.map(({ id, label }) => (
             <button
-              key={l}
-              onClick={() => onSetLang(l)}
-              className={`px-2.5 py-1 text-[12px] font-medium transition-colors ${
-                lang === l ? 'bg-amber-400 text-[#3a2600]' : 'text-slate-300 active:bg-white/10'
+              key={id}
+              onClick={() => onSetLang(id)}
+              aria-pressed={lang === id}
+              className={`rounded-xl py-2 text-[13.5px] font-semibold transition-colors ${
+                lang === id ? 'bg-amber-400 text-[#3a2600] shadow-md shadow-amber-500/25' : 'text-slate-200 active:bg-white/10'
               }`}
             >
-              {l === 'en' ? 'EN' : '한글'}
+              {label}
             </button>
           ))}
         </div>

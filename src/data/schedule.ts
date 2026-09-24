@@ -93,7 +93,7 @@ export function eventStatus(schedule: EventSchedule | undefined, nowMs: number):
 export const SOON_WINDOW_MS = 2 * DAY
 
 /** Short countdown for the card badge — "D-2", "3h", "20m". */
-export function countdownLabel(msUntil: number, lang: 'ko' | 'en'): string {
+export function countdownLabel(msUntil: number, lang: 'ko' | 'en' | 'es'): string {
   if (msUntil >= DAY) {
     const d = Math.ceil(msUntil / DAY)
     return lang === 'ko' ? `D-${d}` : `${d}d`

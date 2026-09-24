@@ -137,9 +137,9 @@ export default function BrawlEvent({ section }: { section: string }) {
         {/* score table */}
         <section className="overflow-hidden rounded-2xl border border-white/10">
           <div className="grid grid-cols-[1fr_4.5rem_4rem] bg-white/[0.06] px-3 py-2 text-[11px] font-semibold text-slate-400">
-            <span>{lang === 'ko' ? '행동' : 'Action'}</span>
-            <span className="text-center">{lang === 'ko' ? '기준' : 'Per'}</span>
-            <span className="text-right">{lang === 'ko' ? '점수' : 'Points'}</span>
+            <span>{t('brawl.colAction')}</span>
+            <span className="text-center">{t('brawl.colPer')}</span>
+            <span className="text-right">{t('brawl.colPoints')}</span>
           </div>
           {d.scores.map((s, i) => (
             <div
