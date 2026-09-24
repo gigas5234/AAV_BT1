@@ -1276,6 +1276,167 @@ export function vikingContent(lang: Lang): VikingContent {
         },
       ],
     }
+  if (lang === 'es')
+    return {
+      overview: [
+        {
+          title: 'Reglas básicas',
+          items: [
+            'Atacan 20 oleadas de vikingos controlados por la IA.',
+            'Cada oleada se defiende matando el 50 % o más de la fuerza atacante.',
+            'Los objetivos rotan: todos los miembros / solo conectados / rondas solo contra el Cuartel General (HQ).',
+            'Tras 2 derrotas tu ciudad puede dejar de recibir ataques extra, pero sigues sumando puntos con el apoyo.',
+          ],
+        },
+        {
+          title: 'Idea clave',
+          items: [
+            'Tu puntuación depende de los vikingos que mueren en tu propio castillo.',
+            'Pero las puntuaciones más altas las deciden los puntos de APOYO: las bajas que ayudas a causar en otras ciudades.',
+            'Así que vaciar tu castillo + apoyar primero a los miembros conectados es la jugada más fuerte.',
+          ],
+        },
+        {
+          title: 'Cómo apoyar a un aliado',
+          items: [
+            'Toca la ciudad del aliado en el mapa.',
+            'Pulsa “Enviar tropas”.',
+            'Pulsa “Confirmar” para enviar tus refuerzos.',
+          ],
+          images: ['send', 'confirm'],
+          note: 'Las bajas que causen tus refuerzos en esa ciudad pasan a ser tu puntuación de apoyo.',
+        },
+        {
+          title: 'Rondas de ataque · objetivos',
+          table: {
+            head: ['Rondas', 'Objetivo'],
+            rows: [
+              ['1~6', 'Todos los miembros'],
+              ['7 / 14 / 17', 'Solo miembros conectados'],
+              ['8~9 / 11~13 / 15~16 / 18~19', 'Todos los miembros'],
+              ['10 / 20', 'Solo el Cuartel General de la alianza'],
+              ['Desconectados', 'No reciben ataques en 7 · 14 · 17'],
+              ['HQ', 'Mejor un HQ de Llanura (límite de tropas **70k** = Inf 49k · Cab 21k · Arq 0k)'],
+            ],
+          },
+          note: 'Como algunas rondas solo atacan a los conectados, lo más eficiente es enviar apoyo primero a los jugadores conectados.',
+        },
+        {
+          title: 'Defensa del HQ (rondas 10 / 20)',
+          items: [
+            'En las rondas 10 · 20 el Rey Vikingo solo ataca el HQ.',
+            'Retira tropas solo cuando la 9 · 19 haya terminado del todo (demasiado pronto = pierdes puntos de apoyo).',
+            'Envía una marcha fuerte a defender el HQ: Inf **49k** / Cab **21k** / Arq **0k** (límite del HQ de Llanura **70k**)',
+            'Cuando termine la defensa del HQ, vuelve con el aliado al que estabas apoyando.',
+          ],
+        },
+      ],
+      keyTips: [
+        {
+          text: 'Asigna siempre 3 héroes de defensa al puesto de guardia. Esos héroes + el apoyo que recibes son los que pelean contra los vikingos. Si envías a todos tus héroes fuera, peleas SIN héroe y puedes perder. Durante el evento vikingo, activa la casilla “Los héroes de defensa no pueden desplegarse” para que tus héroes principales se queden en casa. (Si el equipo exclusivo de tu héroe tiene una descripción de tropas de guarnición, también se aplica en defensa: revísalo.)',
+          level: 'critical',
+          image: 'guard',
+        },
+        { text: 'Limita el apoyo a unas 250K por persona. Si un jugador recibe demasiado apoyo, los que apoyan se reparten la puntuación y el total baja. Si un miembro ya tiene muchos apoyos, mueve el tuyo a alguien al que le falte.', level: 'important' },
+        { text: 'Si la infantería o la caballería se quedan en tu castillo, les roban las bajas a tus refuerzos y bajan la puntuación de tus aliados. Vacía tu castillo todo lo posible.' },
+        { text: 'El apoyo es la clave: las bajas que causan tus refuerzos se convierten en tus propios puntos de apoyo. Nunca le quita puntos al otro.' },
+        { text: 'Los jugadores desconectados probablemente siguen teniendo tropas en casa, así que coordínate primero con los conectados.' },
+        { text: 'Deja asignada de antemano una marcha fuerte para defender el HQ (Inf **49k** / Cab **21k** / Arq **0k**) y vuelve al apoyo en cuanto termine. (Límite del HQ de Llanura **70k**)' },
+        { text: 'NO cures durante el evento. Las tropas curadas que vuelven pueden robarles la puntuación a tus refuerzos.' },
+        { text: 'Si no tienes colas de marcha para sacarlo todo, deja solo arqueros en casa y envía infantería y caballería como apoyo.' },
+      ],
+      compare: {
+        title: 'Por qué tienes que sacar las tropas: un ejemplo real',
+        intro: 'Misma batalla · misma victoria · mismos puntos de defensa (31.980), y aun así la puntuación de apoyo cambia.',
+        defenseLabel: 'Puntos de defensa',
+        defenseValue: '31.980',
+        good: { label: '✅ Bien', note: 'El defensor no mató a nadie: los refuerzos mataron a toda la fuerza (339.002)', support: 'Apoyo total 15.993' },
+        bad: { label: '❌ Mal', note: 'El defensor mató vikingos y les robó bajas a los refuerzos (solo consiguieron 268.236)', support: 'Apoyo total 12.654' },
+        calc: 'Aunque el defensor mate vikingos, los puntos de defensa del castillo siguen en 31.980: nunca suben. Matar no te da nada; solo recorta el apoyo: 15.993 → 12.654 (−3.339).',
+        scaled: 'Apoyas a unos 4~6 miembros por ronda: si esos 4~6 hacen esto, se pierden unos 13.000 ~ 20.000 puntos. Sumado a lo largo de las rondas, es una gran pérdida para toda la alianza.',
+        conclusion: 'Por eso tienes que sacar la infantería y la caballería de tu castillo.',
+      },
+      strategy: [
+        {
+          title: 'Cómo se puntúa',
+          items: [
+            'Tu castillo: cuantos más vikingos mueran en tu castillo, más puntuación. Limpieza al 100 % → casi el 100 % de la puntuación.',
+            'Apoyo (clave): las bajas que causan tus refuerzos se convierten en tus propios puntos de apoyo; nunca le quitan puntos al otro.',
+            'Con un buen reparto de roles, ambos lados suben mucho su puntuación.',
+          ],
+        },
+        {
+          title: 'Plan para una puntuación alta',
+          steps: [
+            {
+              n: '1',
+              title: 'Apoyo desde el principio (mantener 0~19)',
+              items: [
+                'Envía apoyo a unos 6 miembros conectados de la alianza.',
+                'Las tropas de apoyo van sobre todo con infantería + caballería; para jugadores o servidores nuevos, 100 % infantería también es eficiente.',
+                'La infantería y la caballería que se quedan en tu castillo roban puntos de apoyo: sácalas primero.',
+              ],
+            },
+            {
+              n: '2',
+              title: 'Defensa del HQ (10 / 20)',
+              items: ['Rondas 10 · 20: el Rey Vikingo solo ataca el HQ.', 'Cuando terminen la 9 · 19, envía una marcha fuerte al HQ: Inf **49k** / Cab **21k** / Arq **0k** (límite del HQ de Llanura **70k**)'],
+            },
+            {
+              n: '3',
+              title: 'Coordinación de la alianza',
+              copy: 'Mantendré el apoyo hasta la ronda 19. Envíen su infantería y caballería (no los arqueros) a apoyar a otros y vacíen sus castillos.',
+              items: ['Los jugadores desconectados probablemente siguen teniendo tropas en su castillo, así que coordínate primero con los conectados.'],
+            },
+            {
+              n: '4',
+              title: 'Defiende tu castillo (concentrar puntuación)',
+              items: [
+                'Defender con 100 % arqueros está bien. Aunque en oleadas altas llegue al turno 3, normalmente afecta poco a la puntuación.',
+                'También puedes pedir a amigos cercanos que te envíen apoyo de infantería para concentrar puntuación en tu castillo.',
+                'Si tus refuerzos son débiles, se llega al turno de los arqueros y ellos se llevan las bajas: eso significa que falta fuerza de apoyo.',
+              ],
+            },
+          ],
+        },
+      ],
+      setup: [
+        {
+          title: 'Por qué vaciar tu castillo',
+          items: [
+            'Las tropas que se quedan en tu castillo pelean contra los vikingos y se llevan las bajas.',
+            'Esas bajas te ayudan menos de lo que recortan la puntuación de quienes te apoyan.',
+            'Así que saca la infantería y la caballería, y deja solo arqueros si hace falta.',
+          ],
+        },
+        {
+          title: 'Eficiencia de las tropas',
+          items: [
+            'Infantería, caballería y arqueros hacen daño con normalidad.',
+            '100 % infantería es muy eficiente en servidores nuevos o dificultad baja, y la infantería sigue siendo fuerte incluso en dificultad alta.',
+            'Aunque se llegue tarde al turno de los arqueros, normalmente afecta menos a la puntuación de lo que crees.',
+          ],
+        },
+        {
+          title: 'Héroes',
+          items: [
+            'Apoyo (primero los ofensivos): el objetivo son las bajas → héroes que aportan ataque como Chenko, Amadeus, Yeonwoo, Amane.',
+            'Los héroes defensivos valen poco en este evento.',
+            'Héroes en casa: deja solo tus 3 defensores más fuertes. Por ejemplo, Gen1 F2P Jabel/Howard/Quinn; P2W Amadeus (o Helga)/Jabel/Saul.',
+          ],
+        },
+        {
+          title: 'Lista final',
+          items: [
+            'Antes de empezar: elige un horario con muchos miembros conectados.',
+            '0~19: envía apoyo de infantería/caballería a los conectados y vacía tu propia infantería/caballería.',
+            '7/14/17: ataques solo a conectados → sigue apoyando primero a los conectados.',
+            '10/20: cuando la 9/19 haya terminado del todo, envía una marcha fuerte al HQ: Inf **49k** / Cab **21k** / Arq **0k** (límite del HQ de Llanura **70k**)',
+            'Durante el evento: retrasa las curaciones todo lo posible; vuelve al apoyo cuando termine la defensa del HQ.',
+          ],
+        },
+      ],
+    }
   return {
     overview: [
       {
@@ -1846,6 +2007,326 @@ export function governorContent(lang: Lang): GovernorContent {
               {
                 label: '지휘부 체크',
                 items: ['적 메인 집결자 위치.', '적 포탑 점령 상태.', '우리 캐슬 병력 밀도.', '누적 점령시간 우세 여부.'],
+              },
+            ],
+          },
+        ],
+      },
+    }
+  if (lang === 'es')
+    return {
+      intro: 'La preparación dura 5 días; cada día se compiten puntos de reino con un tipo de crecimiento distinto. Toca un día arriba para ver solo lo que puntúa ese día.',
+      discrepancy: '※ Los puntos del fragmento legendario (3.040) y de recolección del día 2 se reconstruyeron a partir de una captura cortada. Los aceleradores (30/min) son iguales cada día, pero las filas de Edificios/Investigación/Tropas de abajo siguen la tabla del juego (acciones reales).',
+      days: [
+        {
+          n: '1', title: 'Construcción de la ciudad', means: 'Misiones de inteligencia · Adamantina · Aceleradores · Gemas del gobernador',
+          priority: 'Inteligencia 6.000 → Adamantina 2.000 → Gemas del gobernador → Aceleradores',
+          items: [
+            { name: 'Completar una misión de inteligencia', basis: '1', pts: '6.000' },
+            { name: 'Subir un edificio con Adamantina', basis: '1 Adamantina', pts: '2.000' },
+            { name: 'Mejor valoración de gemas del gobernador +', basis: '1 pt', pts: '70' },
+            { name: 'Aceleradores de construcción / investigación / entrenamiento', basis: '1 min', pts: '30' },
+          ],
+          note: 'Los aceleradores de construcción/investigación/entrenamiento no incluyen los aceleradores de diamantes (según el aviso del juego).',
+        },
+        {
+          n: '2', title: 'Estadísticas base', means: 'Ruleta de héroes · Fragmentos de héroe · Adamantina · Aceleradores · Recolección',
+          priority: 'Ruleta 8.000 → Fragmento legendario 3.040 → Adamantina 2.000 → Fragmento épico 1.220',
+          items: [
+            { name: 'Tirada en la ruleta de héroes', basis: '1', pts: '8.000' },
+            { name: 'Subir estrella con fragmento legendario', basis: '1', pts: '3.040' },
+            { name: 'Subir un edificio con Adamantina', basis: '1 Adamantina', pts: '2.000' },
+            { name: 'Subir estrella con fragmento épico', basis: '1', pts: '1.220' },
+            { name: 'Subir estrella con fragmento raro', basis: '1', pts: '350' },
+            { name: 'Aceleradores de construcción / investigación / entrenamiento', basis: '1 min', pts: '30' },
+            { name: 'Recolectar (comida·madera 1.000 / piedra 200 / hierro 50)', basis: 'por unidad', pts: '2' },
+          ],
+        },
+        {
+          n: '3', title: 'Entrenamiento de mascotas', means: 'Entrenamiento avanzado de mascotas · Ruleta · Inteligencia · Fragmentos de héroe',
+          priority: 'Manual avanzado 15.000 → Ruleta 8.000 → Inteligencia 6.000 → Fragmento legendario 3.040',
+          items: [
+            { name: 'Entrenar mascota con manual avanzado', basis: '1', pts: '15.000' },
+            { name: 'Tirada en la ruleta de héroes', basis: '1', pts: '8.000' },
+            { name: 'Completar una misión de inteligencia', basis: '1', pts: '6.000' },
+            { name: 'Subir estrella con fragmento legendario', basis: '1', pts: '3.040' },
+            { name: 'Subir estrella con fragmento épico', basis: '1', pts: '1.220' },
+            { name: 'Entrenar mascota con manual básico', basis: '1', pts: '1.150' },
+            { name: 'Subir estrella con fragmento raro', basis: '1', pts: '350' },
+            { name: 'Mejor valoración de gemas del gobernador +', basis: '1 pt', pts: '70' },
+            { name: 'Valoración de avance de mascota +', basis: '1 pt', pts: '50' },
+          ],
+        },
+        {
+          n: '4', title: 'Crecimiento de héroes', means: 'Mithril · Piezas de equipo de héroe · Martillos de forja · Entrenamiento de tropas',
+          priority: 'Mithril 40.000 → Piezas de equipo 8.000 → Martillos 4.000 → Entrenamiento de tropas T10',
+          items: [
+            { name: 'Gastar Mithril', basis: '1', pts: '40.000' },
+            { name: 'Gastar pieza de equipo de héroe', basis: '1', pts: '8.000' },
+            { name: 'Gastar martillo de forja', basis: '1', pts: '4.000' },
+            { name: 'Mejor valoración de gemas del gobernador +', basis: '1 pt', pts: '70' },
+            { name: 'Entrenamiento / ascenso de tropas', basis: 'según nivel', pts: '3~60' },
+            { name: 'Recolección', basis: 'por unidad', pts: '2' },
+          ],
+          note: 'Niveles de tropa: T1 3 · T5 12 · T8 35 · T10 60. Entrenar desde cero da los puntos completos; ascender solo da la diferencia de nivel (p. ej. T9→T10 = 60−45 = 15).',
+        },
+        {
+          n: '5', title: 'Aumento de poder', means: 'Mithril · Entrenamiento de mascotas · Mejora de equipo · Adamantina · Aceleradores · Recolección',
+          priority: 'Mithril 40.000 → Manual avanzado 15.000 → Piezas de equipo 8.000 → Inteligencia 6.000 → Martillos 4.000',
+          items: [
+            { name: 'Gastar Mithril', basis: '1', pts: '40.000' },
+            { name: 'Entrenar mascota con manual avanzado', basis: '1', pts: '15.000' },
+            { name: 'Gastar pieza de equipo de héroe', basis: '1', pts: '8.000' },
+            { name: 'Completar una misión de inteligencia', basis: '1', pts: '6.000' },
+            { name: 'Gastar martillo de forja', basis: '1', pts: '4.000' },
+            { name: 'Subir un edificio con Adamantina', basis: '1 Adamantina', pts: '2.000' },
+            { name: 'Entrenar mascota con manual básico', basis: '1', pts: '1.150' },
+            { name: 'Valoración de avance de mascota +', basis: '1 pt', pts: '50' },
+            { name: 'Mejor valoración del equipo del gobernador +', basis: '1 pt', pts: '36' },
+            { name: 'Aceleradores · Recolección', basis: '1 min / por unidad', pts: '30 / 2' },
+          ],
+        },
+      ],
+      intelTip: {
+        title: 'Cuándo hacer la inteligencia (acumular las entregas)',
+        lead: 'Cada misión de inteligencia vale 6.000 pts y se puede completar durante unas 16 h. La clave es guardarlas para justo después del reinicio (UTC 00:00).',
+        day1: {
+          steps: [
+            'Completa la misión de UTC 08:00 pero NO reclames la recompensa.',
+            'NO completes la misión de UTC 16:00: solo espera.',
+            'Justo después del reinicio (UTC 00:00): reclama la recompensa de las 08:00 y completa las misiones de las 16:00 y las 00:00.',
+          ],
+          result: '8 + 8 + 8 = hasta 24 (~144.000 pts).',
+        },
+        day35: {
+          steps: [
+            'La ventana de las 08:00 no cuenta: este día empieza desde las 16:00.',
+            'NO completes la misión de UTC 16:00: solo espera.',
+            'Justo después del reinicio (UTC 00:00): completa las misiones de las 16:00 y las 00:00.',
+          ],
+          result: '8 + 8 = 16 (~96.000 pts).',
+        },
+      },
+      matrixTitle: 'Qué día usar cada objeto',
+      matrixNote: '✅ Mejor · 🆗 Bien · 🚫 Pocos puntos / ninguno',
+      matrix: [
+        { item: 'Adamantina', days: ['best', 'best', 'no', 'no', 'ok'] },
+        { item: 'Fragmentos de héroe', days: ['no', 'best', 'best', 'no', 'no'] },
+        { item: 'Edificios', days: ['ok', 'best', 'no', 'no', 'ok'] },
+        { item: 'Tropas', days: ['no', 'no', 'no', 'best', 'ok'] },
+        { item: 'Investigación', days: ['no', 'ok', 'no', 'no', 'best'] },
+        { item: 'Ruleta', days: ['no', 'best', 'best', 'no', 'no'] },
+        { item: 'Recolección', days: ['no', 'best', 'no', 'best', 'best'] },
+        { item: 'Misiones de inteligencia', days: ['best', 'no', 'best', 'no', 'best'] },
+        { item: 'Mejoras de mascota', days: ['no', 'no', 'best', 'no', 'best'] },
+        { item: 'Amuletos', days: ['best', 'no', 'best', 'best', 'no'] },
+        { item: 'Equipo del gobernador', days: ['no', 'no', 'no', 'no', 'best'] },
+        { item: 'Widgets', days: ['no', 'no', 'no', 'best', 'best'] },
+        { item: 'Mithril', days: ['no', 'no', 'no', 'best', 'best'] },
+        { item: 'Martillos', days: ['no', 'no', 'no', 'best', 'best'] },
+      ],
+      castle: {
+        notice: {
+          title: 'Batalla del castillo · nada de acciones en solitario',
+          lines: [
+            'Por favor, no actúes por tu cuenta durante la Batalla del castillo.',
+            'Solo no puedes ganar: únicamente le regalas puntos al enemigo.',
+            'Por favor, muévete con el grupo y sigue las órdenes.',
+          ],
+        },
+        title: 'Batalla del castillo · reglas para atacar ciudades',
+        intro: 'Alrededor de la Batalla del castillo, cuándo puedes atacar ciudades y casillas en cualquiera de los dos reinos depende de la franja horaria. Todas las horas están en UTC.',
+        mapCaption: 'Nuestro lado (1974) con el castillo y las torretas. La zona amarilla es la nuestra.',
+        phases: [
+          {
+            key: 'before',
+            title: 'Antes de la Batalla del castillo',
+            time: 'UTC 10:00 – 12:00',
+            rules: [
+              { ok: true, text: '10:00–11:30 · Ataque libre a ciudades y casillas en ambos reinos.' },
+              { ok: false, text: '11:30–12:00 · Las zonas roja y gris del castillo pasan a ser zonas seguras: no se puede explorar ni atacar ciudades dentro de ellas.' },
+            ],
+          },
+          {
+            key: 'during',
+            title: 'Durante la Batalla del castillo',
+            time: 'UTC 12:00 – 18:00 (lo normal, puede ser más corta)',
+            rules: [{ ok: false, text: 'NO se puede explorar ni atacar ciudades en ninguna parte de ambos reinos.' }],
+          },
+          {
+            key: 'after',
+            title: 'Cuando termina la Batalla del castillo',
+            time: '30 min después del final – UTC 22:00',
+            rules: [{ ok: true, text: 'Ataque libre a ciudades y casillas en ambos reinos.' }],
+          },
+        ],
+        warn: 'Recibes un aviso 5 minutos antes si una ciudad está en el lado equivocado.',
+        grpOpen: 'Abrir',
+        grpClose: 'Cerrar',
+        grpHint: 'Toca para revisar tu configuración',
+        atkTitle: 'Ataque en rally',
+        atkChips: ['1.º = Chenko', '50 / 20 / 30'],
+        atkLead: 'Copia estas dos cosas exactamente cuando te unas a un rally al castillo. Si fallas en una, tus tropas rinden menos.',
+        atkHero: {
+          caption: 'Héroes: el primer puesto TIENE que ser Chenko',
+          badge: '1.º = Chenko',
+          note: 'Al unirte a un rally solo cuentan tus tropas y la primera habilidad de expedición de tu primer héroe. Sin Chenko en el puesto de la izquierda pierdes todo el +25 % de crítico. (¿No tienes Chenko? Usa Yeonwoo y, si no, Amane.)',
+        },
+        atkRatio: {
+          caption: 'Proporción de tropas: mantén 50 / 20 / 30',
+          badge: '50 / 20 / 30',
+          note: 'Infantería 50 · Caballería 20 · Arqueros 30. En un ataque al castillo la infantería tiene que aguantar al frente para que entre el daño de detrás. No subas los arqueros por tu cuenta.',
+        },
+        defTitle: 'Defensa de torretas',
+        defChips: ['1.º = Howard / Gordon', '60/40/0 · 60/20/20'],
+        defLead: 'En defensa valen las dos configuraciones, tanto de proporción como de héroes. Cualquiera sirve: usa la que sea más fuerte para tus tropas y tus héroes.',
+        defPick: 'Las dos valen · elige la más fuerte',
+        defRatioTitle: 'Proporción de tropas en defensa',
+        defRatioOpts: [
+          { label: 'Opción A', value: 'Infantería 60 · Caballería 40 · Arqueros 0' },
+          { label: 'Opción B', value: 'Infantería 60 · Caballería 20 · Arqueros 20' },
+        ],
+        defRatioNote: 'Las dos mantienen la infantería en 60. La única diferencia es si el otro 40 va todo a caballería (A) o se reparte por igual entre caballería y arqueros (B). Elige el lado en el que tus tropas sean más fuertes.',
+        defHeroTitle: 'Héroes de defensa: lo que importa es el primer puesto',
+        defHeroOpts: [
+          { label: 'Opción A', badge: '1.º = Howard' },
+          { label: 'Opción B', badge: '1.º = Gordon' },
+        ],
+        defHeroNote: 'En defensa lo único que importa es tener a Howard o a Gordon en el primer puesto. Los dos valen: pon primero el que sea más fuerte para ti. Los puestos 2 y 3 pueden ser cualquier héroe.',
+        heroFree: 'Puestos 2–3: cualquiera',
+        heal: {
+          title: 'Curación con la alianza',
+          label: 'IMPORTANTE',
+          chips: ['Tandas de 15–20 min', 'Pedir ayuda'],
+          lead: 'Cómo curar muchos heridos sin gastar aceleradores de curación, solo con la ayuda de la alianza. La ayuda de los miembros conectados acelera la curación, así que ponemos cada curación en unos 15–20 minutos.',
+          stepsTitle: 'Pasos para curar',
+          steps: [
+            'Abre la enfermería.',
+            'NO selecciones todas tus tropas.',
+            'Reduce la cantidad de tropas hasta que el tiempo de curación sea de unos 15–20 minutos.',
+            'Empieza la curación y pide ayuda a la alianza.',
+            'Los miembros de la alianza van pulsando el botón de ayuda.',
+            'Cuando termine, pon la siguiente tanda otra vez en 15–20 minutos.',
+            'Repite hasta que no queden heridos.',
+          ],
+          loopTitle: 'El ciclo durante la batalla',
+          loop: ['Unirse al rally del castillo', 'Recibir heridos', 'Curar una tanda de 15–20 min', 'Pedir ayuda a la alianza', 'Curación completada', 'Unirse al siguiente rally'],
+          rulesTitle: 'Reglas clave',
+          rules: [
+            { ok: false, text: 'Nunca cures a todos tus heridos de una vez.' },
+            { ok: false, text: 'No gastes aceleradores de curación de entrada.' },
+            { ok: true, text: 'Cura primero la infantería.' },
+            { ok: true, text: 'Pide siempre ayuda a la alianza.' },
+            { ok: true, text: 'Pulsa a menudo el botón de ayuda durante la batalla.' },
+            { ok: true, text: 'Empieza la siguiente tanda en cuanto termine una.' },
+            { ok: true, text: 'Ve vaciando la enfermería antes de que se llene.' },
+          ],
+          shotCaption: 'Solo importan estas dos cosas: la cantidad de tropas y el tiempo de curación',
+          shotBadgeQty: 'Cantidad de tropas',
+          shotBadgeTime: 'Tiempo de curación',
+          shotNote: 'Ajusta la cantidad de tropas a lo que tengas, luego empieza la curación y pide ayuda a la alianza a la vez: se cura enseguida.',
+          whyTitle: 'Por qué 15–20 minutos',
+          why: [
+            'Un temporizador corto termina solo con la ayuda de la alianza, así puedes ir vaciando heridos entre rallies.',
+            'Si lo pones demasiado largo, aun con toda la ayuda de la alianza queda tiempo en el reloj y retrasas tu siguiente rally.',
+          ],
+          varyTitle: 'Por qué la velocidad cambia según el jugador',
+          varyIntro: 'Cuánto puedes curar al instante depende de estas tres cosas.',
+          varyFactors: ['Velocidad de curación investigada', 'Nivel de la embajada (tiempo de ayuda de la alianza)', 'Cuántos miembros están conectados'],
+          varyNote: 'Así que 15–20 minutos es solo una referencia. Con muchos miembros conectados, hasta 20–30 minutos se pueden vaciar de una vez. Busca tu cantidad ideal: la tanda más grande que termina sin usar aceleradores.',
+          caution: 'La curación por tandas con la alianza solo sirve para los heridos que ya están en la enfermería.',
+        },
+        timelineTitle: 'Cronología durante la batalla',
+        timelineNote: 'Desde el inicio a las 12:00 hasta la guerra de desgaste. Toca un bloque para desplegarlo.',
+        timeline: [
+          {
+            time: '12:00',
+            title: 'Empieza la Batalla del castillo',
+            groups: [
+              {
+                label: 'Hazlo de inmediato',
+                items: [
+                  'El líder del rally principal abre el rally al castillo.',
+                  'Todos llenan primero el rally principal.',
+                  'El equipo de torretas ataca solo su torreta asignada.',
+                  'Nada de ataques sueltos por libre.',
+                  'Cuando el rally principal está lleno, el resto espera al rally de refuerzo.',
+                ],
+              },
+              {
+                label: 'Puntos clave',
+                items: ['Que el primer rally sea el más fuerte.', 'Nunca dividas tus tropas.', 'No dejes que se abran varios rallies a la vez.'],
+              },
+            ],
+          },
+          {
+            time: '12:05–12:30',
+            title: 'Primer choque · ¿lo tomamos?',
+            groups: [
+              {
+                label: 'A. Si capturamos el castillo',
+                items: [
+                  'Cambia a la formación de defensa de inmediato.',
+                  'Refuerza con una mezcla defensiva 60/20/20.',
+                  'Pon tus héroes de defensa.',
+                  'Anota la hora de inicio de la captura.',
+                  'Revisa el temporizador del contraataque enemigo.',
+                  'Empieza a curar unas pocas tropas cada vez.',
+                ],
+              },
+              {
+                label: 'B. Si el primer ataque falló',
+                items: [
+                  'Lee el informe de batalla.',
+                  'Revisa la proporción de tropas / los héroes / el primer participante.',
+                  'Ajusta el momento del rally de refuerzo.',
+                  'Revisa la situación de las torretas.',
+                  'No sigas atacando sin más: reagrúpate cuando se ordene.',
+                ],
+              },
+            ],
+          },
+          {
+            time: '12:30–13:30',
+            title: 'Estabilización inicial',
+            groups: [
+              {
+                label: 'Si tenemos el castillo',
+                items: [
+                  'Reforzar el castillo es la máxima prioridad.',
+                  'Nada de ataques individuales.',
+                  'Revisa el estado de las torretas.',
+                  'Sigue curando en tandas pequeñas.',
+                  'Comparte la hora de llegada del rally enemigo.',
+                  'Si contraatacan, completa las tropas con antelación.',
+                ],
+              },
+              {
+                label: 'Si ellos tienen el castillo',
+                items: [
+                  'Cuadra las horas de llegada del rally principal y del de refuerzo.',
+                  'El equipo de torretas les dificulta mantenerlo.',
+                  'Los participantes no deben separarse.',
+                  'Los jugadores fuertes siempre llenan primero el rally principal.',
+                ],
+              },
+            ],
+          },
+          {
+            time: '13:30–14:30',
+            title: 'Ciclo de rallies · guerra de desgaste',
+            groups: [
+              {
+                label: 'Lo que importa ahora',
+                items: ['La rotación de tropas.', 'La velocidad de curación.', 'Los huecos entre llegadas de rallies.', 'Si las torretas aguantan.'],
+              },
+              {
+                label: 'Rutina individual',
+                items: ['Unirse al rally → termina el combate → curar → unirse al siguiente rally (repetir).', 'Nada de ataques en solitario.'],
+              },
+              {
+                label: 'Comprobaciones del mando',
+                items: ['Dónde está el líder del rally principal enemigo.', 'Estado de captura de las torretas enemigas.', 'Nuestra densidad de tropas en el castillo.', 'Si vamos por delante en tiempo total de ocupación.'],
               },
             ],
           },
