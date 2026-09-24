@@ -321,7 +321,7 @@ export function discussionDoc(lang: DocLang): DiscussionDoc {
             { kind: 'p', text: 'Alternando así qué grupo recibe tropas, la cosa sería bastante equitativa. Pero en la práctica es muy difícil de gestionar.' },
             {
               kind: 'p',
-              text: 'Aunque avisemos de «ahora enviad solo al Grupo 1, no al Grupo 2», seguro que alguien envía igualmente al otro grupo. Entonces quien cumple la norma pierde mientras espera, y quien no la cumple entra en el rally que quería y puntúa más.',
+              text: 'Aunque avisemos de «ahora envíen solo al Grupo 1, no al Grupo 2», seguro que alguien envía igualmente al otro grupo. Entonces quien cumple la norma pierde mientras espera, y quien no la cumple entra en el rally que quería y puntúa más.',
             },
             { kind: 'note', text: 'No quiero montar una estructura en la que quien cumple las normas sea justamente el que sale perdiendo.' },
             { kind: 'p', text: 'Además, los líderes de rally tienen que comprobar todo esto en muy poco tiempo:' },

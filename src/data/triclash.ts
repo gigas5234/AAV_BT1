@@ -318,6 +318,227 @@ export function triclashContent(lang: Lang): TriClashContent {
       resNote: '스크린샷 원본입니다. 이미지를 눌러 크게 볼 수 있습니다.',
     }
 
+  if (lang === 'es')
+    return {
+      intro: 'El Choque de Tres Alianzas es una guerra mensual en la que tres alianzas distintas pelean por edificios y rutas en un mismo mapa y suman puntos mientras los mantienen.',
+      natureNote:
+        'No es un evento para matar al mayor número de enemigos con las tropas más fuertes. Ve a por edificios y rutas, no a por bajas: la partida se decide con la guarnición de los 20 minutos, el Templo de la Marea de los 40 minutos y la ruta de relevos que lleva hasta él.',
+      basicTitle: 'Cómo funciona',
+      basics: [
+        { label: 'Frecuencia', value: 'Mensual · más o menos cada 4 semanas' },
+        { label: 'Día de batalla', value: 'Sábado' },
+        { label: 'Duración', value: '60 minutos' },
+        { label: 'Plantilla', value: '30 combatientes + 10 reservas por legión' },
+        { label: 'Legiones', value: 'Hasta 2 (emparejadas y premiadas por separado)' },
+        { label: 'Por jugador', value: 'Hasta 3 escuadras' },
+        { label: 'Victoria', value: 'La puntuación de alianza más alta al acabar el tiempo' },
+      ],
+      scheduleTitle: 'Calendario de la semana',
+      schedule: ['Lun–Mar votación', 'Mié–Jue inscripción', 'Viernes emparejamiento', 'Sábado batalla'],
+      entryTitle: 'Requisitos para entrar',
+      entry: ['Las 20 alianzas con más poder de combate', 'Al menos 15 inscritos en total (combatientes + reservas)', 'La legión 1 y la legión 2 se emparejan en campos de batalla distintos'],
+      mapTitle: 'Mapa del campo de batalla',
+      mapHint: 'Toca el mapa para ampliarlo',
+      zoomHint: 'Arrastra para moverte · toca otra vez para cerrar',
+      close: 'Cerrar',
+      sidesTitle: 'Los tres bandos',
+      sides: [
+        { label: 'A · Guardia de la Marea', value: 'Zona morada, abajo' },
+        { label: 'B · Guardia de la Tierra', value: 'Zona amarilla, arriba a la izquierda' },
+        { label: 'C · Guardia de la Tormenta', value: 'Zona roja, arriba a la derecha' },
+      ],
+      coordTitle: 'Coordenadas clave',
+      coords: [
+        { code: 'A1 / B1 / C1', role: 'El Cuartel General (HQ) y punto de reaparición de cada bando' },
+        { code: 'A24 / B24 / C24', role: 'Cuartel de guarnición: se desbloquea a los 20 min', key: true },
+        { code: 'A29 / B29 / C29', role: 'La puerta que protege el acceso al templo', key: true },
+        { code: 'A30·A31 / B30·B31 / C30·C31', role: 'Puntos de relevo camino del Templo de la Marea', key: true },
+        { code: 'Centro', role: 'Templo de la Marea (se desbloquea a los 40 min)', key: true },
+      ],
+      coordNote:
+        'El nodo 29 es la puerta a los dos puntos de relevo. Si lo pierdes, los relevos caen con él y ya no puedes reforzar a nadie que esté dentro del templo. Mantener la ruta de relevos importa tanto como el propio templo.',
+      matchTitle: 'Cómo funciona el emparejamiento',
+      match: [
+        'El emparejamiento usa el poder de escuadra combinado de tus 20 inscritos más fuertes, contando juntos combatientes y reservas.',
+        'El número de inscritos, por sí solo, no afecta al emparejamiento.',
+        'Un jugador fuerte que se inscribe y nunca se conecta es devastador: el enemigo se empareja contra ese poder igualmente.',
+        'Añadir miembros más débiles fuera de los 20 primeros te cuesta relativamente poco en el emparejamiento.',
+      ],
+      legionTitle: 'Legión 1 vs Legión 2',
+      legion: [
+        'La recompensa de ranking para toda la alianza solo se paga según el puesto de la legión 1.',
+        'Legión 1: tus miembros más fuertes que seguro se van a presentar (esto asegura la recompensa de la alianza)',
+        'Legión 2: todos los demás que estén activos (experiencia y recompensas personales)',
+      ],
+      buffTitle: 'Qué bonificaciones se aplican',
+      buffOn: ['Títulos', 'Mascotas', 'Territorio', 'Bonificaciones de ciudad de combate', 'Bonificaciones de puesto avanzado'],
+      buffOff: ['Tamaño de despliegue', 'Velocidad de marcha', 'Bonificaciones de rally'],
+      buffNote: 'No acumules objetos de velocidad de marcha o de tamaño de rally para este evento: lleva bonificaciones de ataque, defensa, vida y crítico.',
+
+      scoreTitle: 'Puntos por edificio',
+      scoreHead: ['Edificio', 'Por minuto'],
+      scores: [
+        { building: 'Templo de la Marea', pts: '+1.800/min', tier: 'top' },
+        { building: 'HQ', pts: '+1.800/min', tier: 'top' },
+        { building: 'Cuartel de guarnición', pts: '+1.800/min', tier: 'top' },
+        { building: 'Grupo de ruinas', pts: '+600/min', tier: 'mid' },
+        { building: 'Ruina', pts: '+180/min', tier: 'mid' },
+        { building: 'Punto de relevo', pts: '+60/min', tier: 'low' },
+        { building: 'Pilar marino', pts: '+60/min', tier: 'low' },
+      ],
+      calcTitle: 'Lo que suma en la práctica',
+      calcs: [
+        { label: 'Guarnición mantenida 20 min (20 → 40)', formula: '1.800 × 20 min', total: '36.000' },
+        { label: 'Templo de la Marea mantenido 20 min (40 → final)', formula: '1.800 × 20 min', total: '36.000' },
+        { label: 'Grupo de ruinas mantenido desde pronto (3 → final)', formula: '600 × 57 min', total: '34.200' },
+      ],
+      scoreNote:
+        'Mantener un grupo de ruinas de +600 desde el inicio vale casi lo mismo que mantener una guarnición 20 minutos. Los puntos de relevo solo dan +60/min, pero abren el camino al templo, así que su valor estratégico supera con mucho su puntuación. Los grupos de ruinas producen puntos; los puntos de relevo producen la victoria.',
+      tempTitle: 'Templo de la Marea: 50.000 al pitido final',
+      tempPoints: [
+        'Según el tutorial del juego, tener el Templo de la Marea cuando termina la batalla da 50.000 puntos.',
+        'Mantener una guarnición los 20 minutos completos son 36.000. Solo el templo ya supera eso.',
+        'Así que aunque vayas por detrás hasta el final, tener el templo al sonar el final puede darle la vuelta a todo el resultado.',
+      ],
+      tempAdvice:
+        'Pelea la primera captura a los 40 minutos, pero la partida la decide quién lo tiene cuando se acaba el tiempo. Si vas por detrás, vuélcalo todo en el templo y su acceso y juega al último minuto; si vas por delante, no lo sueltes en ningún momento.',
+
+      timeTitle: 'Los 60 minutos, fase a fase',
+      phases: [
+        {
+          time: '0:00–3:00',
+          title: 'Fase de preparación',
+          items: ['Líderes de las 6 líneas principales', 'Apoyo para cada línea', 'Líder de la guarnición', 'Equipo de asalto al templo', 'Encargado de energía / capitanes', 'Equipo de respuesta de emergencia'],
+          note: 'El mapa está bloqueado; es solo tiempo para confirmar. Con solo 3 minutos, no inventes un plan: confirma las rutas y los roles que acordaron antes.',
+        },
+        {
+          time: '3:00–20:00',
+          title: 'Capturar y expandirse',
+          items: [
+            'Asegura tus propios grupos de ruinas y los principales pasos estrechos',
+            'Conecta el edificio avanzado de cada línea con su edificio de apoyo de retaguardia',
+            'Asegura las rutas alrededor de los puntos de relevo',
+            'Quita al enemigo los edificios de poca puntuación que deje sin defender',
+            'Guarda energía para la pelea de la guarnición de los 20 minutos',
+          ],
+          note: 'No gastes toda la energía pronto: guarda más o menos un 30–40 % para después de los 20 minutos. (Es una recomendación práctica, no una cifra oficial.)',
+        },
+        {
+          time: '20:00–40:00',
+          title: 'Fase del cuartel de guarnición',
+          key: true,
+          items: [
+            '1.ª prioridad: asegurar tu propia guarnición (A24/B24/C24)',
+            '2.ª prioridad: atacar las guarniciones enemigas',
+            '3.ª prioridad: preparar el acceso al templo de los 40 minutos',
+            'Envía varias escuadras a la vez en lugar de una por una',
+            'Desde los 35 min, despeja la ruta puerta 29 → relevos 30·31 → centro',
+          ],
+          note: 'Una guarnición son 1.800 puntos por minuto. Si pierdes la tuya y no tomas la suya, la diferencia se abre rápido.',
+        },
+        {
+          time: '40:00–60:00',
+          title: 'Fase del Templo de la Marea',
+          key: true,
+          items: [
+            'Bando A: A29 → A30·A31 → Templo de la Marea',
+            'Bando B: B29 → B30·B31 → Templo de la Marea',
+            'Bando C: C29 → C30·C31 → Templo de la Marea',
+            'Mantén separados el equipo de asalto al templo y el equipo que defiende la ruta',
+            'Mantén el templo y su acceso hasta el último segundo',
+          ],
+          note: 'Si tomas el templo pero pierdes los relevos, no puedes enviar refuerzos, tus escuadras de dentro quedan aisladas, volver después de curarse es difícil y no aguantarás una presión continua.',
+        },
+      ],
+      finalTitle: 'En resumen',
+      final: [
+        'Ve a por edificios y rutas, no a por bajas',
+        'Da los puestos de capitán con energía primero a tus atacantes fuertes',
+        'Pon las escuadras débiles a mantener edificios propios y a defender la retaguardia',
+        'No quemes toda la energía: guárdala para los giros de los 20 y los 40 minutos',
+        'El Choque de Tres Alianzas no se gana tomando el templo; se gana sosteniendo hasta el final la puntuación de la guarnición + las rutas de relevos + la rotación de energía.',
+      ],
+
+      opsIntro: 'De la energía a la plantilla: las reglas que se aplican durante toda la partida. Toca un grupo para abrirlo.',
+      groups: [
+        {
+          header: 'La energía, la moneda de verdad',
+          blocks: [
+            { text: 'La energía se gasta en:', items: ['Moverse', 'Atacar otro edificio', 'Avanzar', 'Retirarse', 'Reclutar', 'Reaparecer al instante'] },
+            { text: 'La energía se regenera cada minuto, y ser nombrado capitán de un edificio da regeneración extra. Atacar edificios en territorio enemigo cuesta energía adicional.' },
+            { note: 'Si gastas de más en peleas por edificios de poca puntuación, no podrás entrar en los giros de los 20 y los 40 minutos.' },
+          ],
+        },
+        {
+          header: 'Gestionar a los capitanes',
+          blocks: [
+            {
+              items: [
+                'R4 o superior, o un comandante de legión, puede nombrar capitanes',
+                'Tu propia escuadra tiene que estar en ese edificio',
+                'Una persona solo puede ser capitán de un edificio',
+                'Si pierdes el edificio, pierdes también la bonificación de regeneración de energía',
+                'Si sales del campo de batalla, pierdes la capitanía y la bonificación',
+              ],
+            },
+            { note: 'Da los edificios de mucha regeneración a tus atacantes fuertes que tienen que moverse y pelear sin parar, no a quien simplemente vaya corto de energía.' },
+          ],
+        },
+        {
+          header: 'Avanzar / retirarse y la regla de las 5 escuadras',
+          blocks: [
+            { text: 'Cuando un edificio tiene más de 5 escuadras en su cola de ataque o defensa, las que esperan pueden avanzar a un edificio adyacente o retirarse a uno propio. Para retirarse hace falta un edificio propio adyacente.' },
+            { text: 'Por eso, un equipo de ruptura de 6 jugadores con 3 escuadras cada uno —18 escuadras— puede saltar entre edificios y desorganizar la retaguardia enemiga.' },
+            { note: 'Es juego avanzado y no oficial. Si es la primera vez de tu alianza, mantén tus líneas antes de meterte a fondo.' },
+          ],
+        },
+        {
+          header: 'Curación, reclutamiento y retirada',
+          blocks: [
+            { text: 'Una escuadra mermada puede reclutar con energía mientras está en un edificio que no esté en combate en ese momento.' },
+            { title: 'El ciclo de recuperación eficiente', flow: ['La escuadra de delante se debilita', 'Se retira a un edificio propio de retaguardia', 'Una escuadra de apoyo cubre el frente', 'Recluta en un sitio seguro', 'Vuelve al frente'] },
+            { text: 'Si te quedas aislado dentro de un edificio enemigo sin retirada ni tropas, disolver la escuadra hace que la pierdas pero te permite reaparecer en el HQ.' },
+            { note: 'Las tropas que se usan aquí son copias de las tuyas, así que tu ejército real no sufre daño permanente.' },
+          ],
+        },
+        {
+          header: 'Lecciones que se repiten',
+          blocks: [
+            {
+              title: 'Nunca pongas una escuadra fuerte detrás de las débiles en la cola',
+              text: 'El combate en los edificios se resuelve por orden de cola. Si al atacar un edificio enemigo se acumulan escuadras débiles delante de tu ballena, la ballena entra en la pelea demasiado tarde.',
+              doList: [
+                { ok: true, text: 'Las escuadras fuertes atacan edificios enemigos solas o junto a otras fuertes' },
+                { ok: true, text: 'Las escuadras débiles mantienen edificios propios y cubren la retaguardia' },
+              ],
+            },
+            {
+              title: 'No confíes en los defensores NPC',
+              text: 'Un edificio capturado que se queda solo con tropas NPC y sin escuadra de jugador solo retrasa al enemigo. Deja al menos una escuadra real en cada edificio fronterizo importante.',
+            },
+            {
+              title: 'Vigila los pasos estrechos, no el centro',
+              text: 'Cuando empieza la pelea del templo todo el mundo mira al centro, pero se decide en los puntos de relevo y en el nodo 29. Tener números en el centro no sirve de nada si te cortan la ruta de suministro.',
+            },
+          ],
+        },
+      ],
+      rosterTitle: 'Una plantilla de 30 jugadores que funciona',
+      rosterHead: ['Rol', 'Número', 'Tarea'],
+      roster: [
+        { role: 'Núcleo de línea', count: '6', job: 'Mantener el edificio clave de cada uno de los 6 frentes principales' },
+        { role: 'Apoyo de línea', count: '12', job: '2 por línea: rotar la defensa y cubrir la recuperación' },
+        { role: 'Ruptura', count: '6', job: 'Golpear las líneas débiles y los edificios de retaguardia del enemigo' },
+        { role: 'Respuesta', count: '6', job: 'Tomar edificios vacíos y rescatar líneas que se hunden' },
+      ],
+      rosterNote: 'No es una formación oficial: ajústala a cómo esté repartido el poder de tu alianza.',
+      leadTitle: 'Deja a 1–2 R4/R5 dirigiendo en vez de peleando',
+      lead: ['Nombrar capitanes', 'Vigilar la energía total', 'Dar la orden del ataque a la guarnición de los 20 minutos', 'Dar la orden del rally al templo de los 37–40 minutos', 'Enviar el equipo de respuesta a las líneas que se hunden'],
+      resTitle: 'Última batalla',
+      resScoreLabel: 'Puntuación final',
+      resEnemyLabel: 'Poder de la alianza enemiga',
+      resNote: 'Capturas sin editar: toca una imagen para verla más grande.',
+    }
   return {
     intro: 'Tri-Alliance Clash is a monthly alliance war where three different alliances fight over buildings and routes on one map, scoring points as they hold them.',
     natureNote:
