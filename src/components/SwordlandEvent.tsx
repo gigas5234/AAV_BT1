@@ -196,7 +196,7 @@ export default function SwordlandEvent({ section }: { section: string }) {
         <div className="mt-2.5 space-y-1.5">
           {c.freeItems.map((f, i) => (
             <div key={i} className="flex items-center gap-2 rounded-lg bg-emerald-400/10 px-3 py-2">
-              <span className="flex h-5 shrink-0 items-center rounded-md bg-emerald-400 px-1.5 text-[11px] font-extrabold text-[#052e14]">FREE</span>
+              <span className="flex h-5 shrink-0 items-center rounded-md bg-emerald-400 px-1.5 text-[11px] font-extrabold text-[#052e14]">{t('sl.free')}</span>
               <span className="text-[13px] font-bold text-white">{f.name}</span>
               <span className="ml-auto text-right text-[12px] text-emerald-100/90">{f.detail}</span>
             </div>

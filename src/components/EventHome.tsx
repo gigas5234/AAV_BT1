@@ -172,7 +172,7 @@ export default function EventHome({
         style={{ animationDelay: '70ms' }}
       >
         <img src={beartrapImg} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
-        <span className="absolute left-3.5 top-3.5 rounded-full bg-amber-400 px-2.5 py-0.5 text-[11px] font-bold text-[#3a2600] shadow">MAIN</span>
+        <span className="absolute left-3.5 top-3.5 rounded-full bg-amber-400 px-2.5 py-0.5 text-[11px] font-bold text-[#3a2600] shadow">{t('home.main')}</span>
         <span className="absolute bottom-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-white/25 backdrop-blur-sm transition-all group-hover:translate-x-0.5 group-hover:bg-amber-400 group-hover:text-[#3a2600] group-active:scale-90">
           <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </span>

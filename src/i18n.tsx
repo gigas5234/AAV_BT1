@@ -90,6 +90,8 @@ const STR: Record<string, Entry> = {
   // home hub
   'home.title': { en: 'AAV Events', ko: 'AAV 이벤트', es: 'Eventos AAV' },
   'home.sub': { en: 'Pick an event for its plan, guide and tips.', ko: '이벤트를 골라 계획·가이드·팁을 확인하세요.', es: 'Elige un evento para ver su plan, guía y consejos.' },
+  'home.main': { en: 'MAIN', ko: 'MAIN', es: 'PRINCIPAL' },
+  'sl.free': { en: 'FREE', ko: '무료', es: 'GRATIS' },
   'home.beartrap': { en: 'Bear Trap', ko: '곰덫', es: 'Cacería del Oso' },
   'home.otherEvents': { en: 'Other events', ko: '다른 이벤트', es: 'Otros eventos' },
   'home.ready': { en: 'Ready', ko: '준비됨', es: 'Listo' },
@@ -495,6 +497,83 @@ export function guideSections(lang: Lang): GuideSection[] {
         ],
       },
     ]
+  if (lang === 'es')
+    return [
+      { title: 'El evento', accent: '#94a3b8', body: ['La trampa dura 30 minutos, cada dos días, en la Trampa del Oso. Toda la alianza acumula daño sobre el oso.', 'Las recompensas se pagan solo por tu daño personal. Cuanto más participes y golpees, mejor.'] },
+      {
+        title: 'Rallies y héroes: el líder lo es todo',
+        accent: '#f5b301',
+        body: [
+          'Las tres habilidades de héroe del líder y todas sus estadísticas —equipo del gobernador, gemas, mascota, academia y el equipo, nivel y habilidades de cada héroe— se aplican a todo el rally.',
+          'Quien se une solo aporta sus tropas y la PRIMERA habilidad de expedición de su primer héroe. El equipo, los amuletos y la investigación no cuentan.',
+          'Así que pon como primer héroe a uno de estos tres y sube primero esa habilidad de expedición.',
+        ],
+        skills: [
+          { id: 'chenko', hero: 'N.º 1 · Chenko', skill: 'Stand of Arms', effect: 'Letalidad +25 % para todas las tropas' },
+          { id: 'yeonwoo', hero: 'N.º 2 · Yeonwoo', skill: 'On Guard', effect: 'Letalidad +25 % para todas las tropas' },
+          { id: 'amane', hero: 'N.º 3 · Amane', skill: 'Tri-Phalanx', effect: 'Ataque +25 % para todas las tropas' },
+        ],
+        highlight: 'Sube primero tu primera habilidad de expedición: Nv. 5 = 25 %. 5 → 10 → 15 → 20 → 25 %',
+        callout: 'Por eso tus mejores tropas van al rally del líder más fuerte: sus estadísticas multiplican a todos los que están dentro.',
+      },
+      {
+        title: 'Dos roles · Líder / Participante',
+        accent: '#a78bfa',
+        body: ['Las plazas de un rally son limitadas (15 marchas por rally). Los jugadores fuertes abren rallies; los demás meten sus tropas en uno bueno.'],
+        list: [
+          `Líder: abre su propio rally. Sus estadísticas se aplican a todo el rally, así que lo abren los jugadores fuertes. Fija el límite por marcha en ${CAP}.`,
+          `Participante: no abre rally; envía marchas de ${CAP} a buenos rallies para sumar puntos.`,
+        ],
+        callout: 'La regla de las marchas y la revisión del primer héroe están en la pestaña Formaciones.',
+      },
+      {
+        title: `${WAVES} oleadas · cada ${GAP_MIN} min · distancia de marcha`,
+        accent: '#4c9be8',
+        body: [
+          `Nos dividimos en ${WAVES} grupos que salen con ${GAP_MIN} minuto${GAP_MIN === 1 ? '' : 's'} de diferencia: ` +
+            Array.from({ length: WAVES - 1 }, (_, i) => `el grupo ${i + 2} abre ${(i + 1) * GAP_MIN} min después del grupo 1`).join(', ') +
+            '.',
+          `La reunión dura 5 minutos. Cuando el temporizador del grupo anterior pasa de 5:00 a ${waveTriggerClock()} (${GAP_MIN} min), el siguiente grupo abre su rally: así el oso recibe golpes los 30 minutos seguidos. Cuando vuelvas, sal de nuevo enseguida.`,
+          'Un líder cerca de la trampa hace más ciclos. Marcha corta = más salidas = más daño. Da prioridad a las ciudades cercanas como líderes.',
+        ],
+        callout: `Señal: cuando al rally del grupo anterior le queden ${waveTriggerClock()}, sale el siguiente grupo.`,
+      },
+      {
+        title: `Marchas a rallies — máximo ${CAP} · infantería por debajo de ${INF_MAX}`,
+        accent: '#2dd4bf',
+        highlight: `Una marcha a un rally = ${CAP} como máximo. Infantería siempre por debajo de ${INF_MAX}; el resto, caballería y arqueros.`,
+        body: [
+          `Los líderes limitan cada marcha a ${CAP}. Lo que pase de ahí no entra, así que llena cada marcha hasta ${CAP} y repártelas entre rallies.`,
+          `Marcha estándar: ${STD_ES} = ${CAP}. ¿Te faltan arqueros? Quita arqueros y completa con caballería; nunca añadas infantería.`,
+          `La infantería no es un porcentaje de lo que tienes: se fija por debajo de ${INF_MAX} en cada marcha.`,
+        ],
+      },
+      {
+        title: 'Lista del líder del rally (lectura obligatoria)',
+        accent: '#f87171',
+        body: ['Si abres un rally, revisa los ejércitos que se unen y devuelve cualquier formación con el héroe equivocado.'],
+        list: [
+          'Revisa el primer héroe de cada ejército que se une.',
+          'Si el primer héroe no es Chenko / Yeonwoo / Amane, devuélvelo (expúlsalo).',
+          'La habilidad de expedición de un héroe equivocado puede activarse y ocupar uno de los espacios, y entonces la bonificación de Chenko nunca llega.',
+          'Resultado: todo el rally pelea sin el +25 % de letalidad de Chenko (habilidad de expedición Nv. 5) sobre cada tropa.',
+          'La trampa solo activa la primera habilidad de expedición de hasta 4 participantes, así que importa que haya al menos 4 primeros héroes correctos (Chenko / Yeonwoo / Amane) entre ellos.',
+        ],
+        highlight: 'Un solo héroe equivocado que ocupe uno de los 4 espacios puede dejar a todo el rally sin su +25 %.',
+      },
+      {
+        title: 'Reglas del día',
+        accent: '#34d399',
+        body: [],
+        list: [
+          'Envía tus mejores tropas primero al rally del líder más fuerte.',
+          'Si un rally está lleno, únete a otro.',
+          'No abras rallies extra salvo que un R4 lo pida.',
+          `Las marchas a rallies son de ${CAP} como máximo, con infantería por debajo de ${INF_MAX}.`,
+          'Los líderes guardan primero las tropas de su propio rally y reparten el resto en marchas a otros rallies.',
+        ],
+      },
+    ]
   return [
     { title: 'The event', accent: '#94a3b8', body: ['The trap runs for 30 minutes, every two days, at the Pitfall. The whole alliance stacks damage on the bear.', 'Rewards are paid out on your personal damage only. The more you show up and hit, the better.'] },
     {
@@ -582,6 +661,14 @@ export function calcGuide(lang: Lang): string[] {
       `참여 행군은 슬롯당 최대 ${CAP}, 보병은 ${INF_MAX} 미만 — 기본 ${STD_KO}.`,
       '보유 병종을 입력하고 각 슬롯에 병력을 수기로 배분하세요. 상단 "남은 병종"을 넘지 않게 하면 됩니다.',
       '집결 참여 시 1번 영웅은 첸코·연우·아마네만 사용하세요.',
+    ]
+  if (lang === 'es')
+    return [
+      'La ranura 1 del líder es su propio rally; un participante envía una marcha desde cada ranura.',
+      'Hay al menos 4 ranuras; añade más si las necesitas.',
+      `Las marchas a rallies son de ${CAP} como máximo por ranura, con infantería por debajo de ${INF_MAX}: estándar ${STD_ES}.`,
+      'Introduce tus tropas y repártelas a mano entre las ranuras, sin pasar de "Tropas restantes" arriba.',
+      'Héroe para unirse (ranura 1): usa solo Chenko / Yeonwoo / Amane.',
     ]
   return [
     'A host’s slot 1 is their own rally; a participant sends a join from every slot.',
@@ -2153,6 +2240,48 @@ export function slotsContent(lang: Lang): SlotsContent {
         '1 → 2 → 3 → 4 순서로 자원에 보내서, 슬롯끼리 병력이 겹치지 않는지(총량을 넘지 않는지) 확인합니다.',
       ],
       checkExample: `예) 첸코 + 다이애나 + 하워드 · ${STD_KO} → 자원 타일로 발송`,
+    }
+  if (lang === 'es')
+    return {
+      whyTitle: `Regla de las marchas — máximo ${CAP} por marcha`,
+      whyIntro: `En la Cacería del Oso cada marcha que se une a un rally tiene un límite de ${CAP}. Lo que pase de ahí no entra, así que llena cada marcha hasta ${CAP} y repártelas entre rallies.`,
+      whyHighlight: `¡Infantería siempre por debajo de ${INF_MAX} por marcha! El resto, caballería y arqueros.`,
+      whyRatio: [`Marcha estándar: ${STD_ES} = ${CAP}.`, 'La infantería hace poco daño, así que se fija al mínimo: la misma cantidad en cada marcha, no un porcentaje de lo que tienes.'],
+      whyPoints: [
+        `Llena primero los arqueros; si te faltan, quita arqueros y completa los ${CAP} con caballería. Nunca añadas infantería.`,
+        `Marchas que puedes enviar = tus tropas ÷ ${CAP}. Cuanto más grande sea tu ejército, más marchas de ${CAP} tendrás.`,
+        'Únete primero al rally más fuerte; si está lleno, únete a otro.',
+      ],
+      whyKey: `En resumen: cada marcha a un rally = ${CAP} como máximo, infantería por debajo de ${INF_MAX}. Guárdalas en formaciones rápidas y únete en cuanto se abra un rally.`,
+      howTitle: '¿Qué es una formación rápida?',
+      howBody: 'Una formación rápida es una formación de tropas guardada. En vez de elegir tropas cada vez en la Cacería del Oso, sacas al instante una formación guardada.',
+      howSteps: [
+        'Toca tu perfil (foto) arriba a la izquierda',
+        "Elige 'Tropas' en los cuatro menús de abajo",
+        "Toca 'Formación'",
+        'Al principio se llaman 1·2·3·4·5·6. Esas son tus formaciones rápidas: puedes cambiarles el nombre.',
+      ],
+      howNote: 'Guarda en esas ranuras las formaciones de abajo y sácalas en la Cacería del Oso.',
+      notesTitle: 'Notas',
+      notes: [
+        'Si la habilidad de expedición de un héroe es baja o no tienes héroe que enviar, envía solo tropas, sin héroe.',
+        `¿Te faltan arqueros? Quita arqueros y completa los ${CAP} con caballería; nunca añadas infantería.`,
+        `La infantería se fija por debajo de ${INF_MAX} por marcha.`,
+        `Si una ranura no llega a ${CAP}, no la fuerces: envía lo que te quede o déjala vacía.`,
+        'Héroes para unirse a rallies: Chenko, Yeonwoo, Amane.',
+      ],
+      forbiddenTitle: 'Nunca en el primer puesto',
+      forbidden: ['Jabel', 'Helga', 'Saul', 'Fahd', 'Gordon', 'Diana', 'Howard', 'Quinn', 'Zoe', 'Marlin', 'todos los héroes azules (raros)'],
+      forbiddenNote: 'Al unirte a un rally, en el primer puesto solo se permiten Chenko / Yeonwoo / Amane; cualquier otro héroe está prohibido ahí (en los demás puestos está bien). Los héroes azules (raros) también son un error habitual y están todos prohibidos. Solo cuenta la habilidad de expedición del primer héroe.',
+      conditional: ['Amadeus', 'Hilde'],
+      conditionalNote: 'Valen como primer héroe según el nivel de habilidad, pero si su habilidad de expedición es Nv. 3 o menos, usa Chenko.',
+      troopBan: 'Nada de tropas por debajo de T7 en los rallies',
+      checkTitle: 'Revisa tus formaciones rápidas',
+      checkSteps: [
+        'Guarda cada formación de una en una y envíala a una casilla de recursos para ver las tropas que te quedan.',
+        'Envía las formaciones 1 → 2 → 3 → 4 en orden y comprueba que no se solapen (que el total no pase de tus tropas).',
+      ],
+      checkExample: `p. ej. Chenko + Diana + Howard · ${STD_ES} → enviar a una casilla de recursos`,
     }
   return {
     whyTitle: `Join march rule — ${CAP} max per march`,
