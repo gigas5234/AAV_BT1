@@ -1,13 +1,15 @@
 import { useMemo, useState } from 'react'
 import { useT } from '../i18n'
+import { JOIN_CAP_K, joinMarch, rallyMarch } from '../data/rallyRules'
 
 /**
- * Standalone planner for the 8/8/56 rally rule. It is deliberately separate from
- * the Main/Support/General calculator: the mix is fixed, so the only real
- * question is "do I own enough archers for N marches?".
+ * Standalone planner for the join-cap rally rule (data/rallyRules). It is
+ * deliberately separate from the Main/Support/General calculator: the march
+ * shape is fixed, so the only real question is "do I own enough archers for N
+ * marches?".
  *
- *  - host: your own rally opens at 10/10/80, every other march is 8/8/56
- *  - join: you never open a rally — every march is 8/8/56
+ *  - host: your own rally fills your march, plus a standard join to every other rally
+ *  - join: you never open a rally — every march is a standard join
  */
 export type R856Mode = 'host' | 'join'
 
@@ -17,40 +19,11 @@ const KIND_COLOR: Record<Kind, string> = { inf: '#8b98a5', cav: '#4c9be8', arc: 
 
 export const R856_ACCENT: Record<R856Mode, string> = { host: '#a78bfa', join: '#22d3ee' }
 
-/**
- * Each entry is a PERCENT of your march capacity, not a share of a whole.
- * 10 + 10 + 80 = 100, so your own rally fills the march. 8 + 8 + 56 = 72, so a
- * join march deliberately leaves 28% of the capacity empty — that is the rule,
- * not rounding: at 100K you send 72K, not 100K.
- */
-const RALLY_PCT: [number, number, number] = [10, 10, 80]
-const JOIN_PCT: [number, number, number] = [8, 8, 56]
-const JOIN_FILL = (JOIN_PCT[0] + JOIN_PCT[1] + JOIN_PCT[2]) / 100 // 0.72
-
 const DEFAULT_CAPACITY_K = 100
-const DEFAULT_LIMIT_K = 80
 
 const sum = (r: Record<Kind, number>) => r.inf + r.cav + r.arc
-const to100 = (n: number) => Math.round(n / 100) * 100
-
-/** One march: take each percentage straight off the capacity. */
-function march(capacityK: number, pct: [number, number, number]): Record<Kind, number> {
-  const cap = Math.max(0, Math.round(capacityK)) * 1000
-  return { inf: to100((cap * pct[0]) / 100), cav: to100((cap * pct[1]) / 100), arc: to100((cap * pct[2]) / 100) }
-}
-
-/** Trim a march to a hard cap, keeping its shape. No-op when it already fits. */
-function capTo(m: Record<Kind, number>, limitK: number | null): Record<Kind, number> {
-  if (limitK == null) return m
-  const limit = Math.max(0, Math.round(limitK)) * 1000
-  const total = sum(m)
-  if (total <= limit || total === 0) return m
-  const f = limit / total
-  const inf = to100(m.inf * f)
-  const cav = to100(m.cav * f)
-  return { inf, cav, arc: Math.max(0, limit - inf - cav) }
-}
 const fmt = (n: number) => Math.round(n).toLocaleString('en-US')
+const shape = (m: Record<Kind, number>) => `${fmt(m.inf / 1000)}K / ${fmt(m.cav / 1000)}K / ${fmt(m.arc / 1000)}K`
 
 export default function RallyRatioCalc({ mode }: { mode: R856Mode }) {
   const t = useT()
@@ -58,16 +31,15 @@ export default function RallyRatioCalc({ mode }: { mode: R856Mode }) {
   const [marches, setMarches] = useState(6)
   const [owned, setOwned] = useState<Record<Kind, number>>({ inf: 0, cav: 0, arc: 0 })
   const [capacityK, setCapacityK] = useState(DEFAULT_CAPACITY_K)
-  const [limitOn, setLimitOn] = useState(false)
-  const [limitK, setLimitK] = useState(DEFAULT_LIMIT_K)
+  const [limitK, setLimitK] = useState(JOIN_CAP_K)
   const [unitK, setUnitK] = useState(false)
   const [howto, setHowto] = useState(false)
   const [shown, setShown] = useState(false)
 
-  // Your own rally fills the march (10+10+80 = 100%). A join is 8+8+56 = 72% of
-  // it, and a cap — when the rally sets one — trims that further.
-  const rally = march(capacityK, RALLY_PCT)
-  const join = capTo(march(capacityK, JOIN_PCT), limitOn ? limitK : null)
+  // Your own rally fills your march. A join is capped by the host's join limit,
+  // and never more than your march holds anyway.
+  const rally = rallyMarch(Math.round(capacityK) * 1000)
+  const join = joinMarch(Math.min(Math.round(capacityK), Math.round(limitK)) * 1000)
   const rallyTotal = sum(rally)
   const joinTotal = sum(join)
 
@@ -114,13 +86,11 @@ export default function RallyRatioCalc({ mode }: { mode: R856Mode }) {
         </div>
         <p className="mt-1.5 text-[12.5px] leading-relaxed text-slate-300">{t(`r856.${mode}Desc`)}</p>
         <div className="mt-2.5 flex flex-wrap gap-1.5">
-          {mode === 'host' && <Chip label={t('r856.chipRally')} value={`10 / 10 / 80 · ${fmt(rallyTotal)}`} color={accent} />}
-          <Chip label={t('r856.chipJoin')} value={`8 / 8 / 56 · ${fmt(joinTotal)}`} color={accent} />
+          {mode === 'host' && <Chip label={t('r856.chipRally')} value={`${shape(rally)} · ${fmt(rallyTotal)}`} color={accent} />}
+          <Chip label={t('r856.chipJoin')} value={`${shape(join)} · ${fmt(joinTotal)}`} color={accent} />
         </div>
-        {/* the part everyone gets wrong: a join march is not a full march */}
-        <p className="mt-2 rounded-lg bg-black/30 px-2.5 py-2 text-[12px] font-semibold leading-relaxed text-amber-200">
-          {t('r856.fill72', { cap: fmt(Math.round(capacityK) * 1000), join: fmt(Math.round(capacityK) * 1000 * JOIN_FILL) })}
-        </p>
+        {/* the rule every joiner has to hit */}
+        <p className="mt-2 rounded-lg bg-black/30 px-2.5 py-2 text-[12px] font-semibold leading-relaxed text-amber-200">{t('r856.rule')}</p>
       </section>
 
       {/* march size: full capacity, and the cap that trims join marches */}
@@ -171,40 +141,25 @@ export default function RallyRatioCalc({ mode }: { mode: R856Mode }) {
         </label>
         <p className="mt-1 text-[11px] leading-relaxed text-slate-500">{t('r856.capacityHint')}</p>
 
-        {/* optional cap on join marches */}
+        {/* the host's join cap — always in force */}
         <div className="mt-3 border-t border-white/5 pt-3">
-          <div className="flex items-center justify-between gap-3">
-            <button
-              onClick={() => setLimitOn((v) => !v)}
-              aria-pressed={limitOn}
-              className="flex min-w-0 items-center gap-2 text-left"
-            >
-              <span
-                className="flex h-5 w-9 shrink-0 items-center rounded-full p-0.5 transition-colors"
-                style={{ background: limitOn ? accent : 'rgba(255,255,255,0.15)' }}
-              >
-                <span className={`h-4 w-4 rounded-full bg-white transition-transform ${limitOn ? 'translate-x-4' : ''}`} />
-              </span>
-              <span className={`text-[13px] ${limitOn ? 'font-semibold text-white' : 'text-slate-400'}`}>{t('r856.limit')}</span>
-            </button>
+          <label className="flex items-center justify-between gap-3">
+            <span className="min-w-0 text-[13px] font-semibold text-white">{t('r856.limit')}</span>
             <span className="flex shrink-0 items-center gap-1">
               <input
                 type="number"
                 inputMode="numeric"
                 value={limitK || ''}
-                placeholder="80"
-                disabled={!limitOn}
+                placeholder={String(JOIN_CAP_K)}
                 onFocus={(e) => e.currentTarget.select()}
                 onChange={(e) => setLimitK(Math.max(0, Math.min(999, Math.round(Number(e.target.value) || 0))))}
-                className={`w-20 rounded-lg border px-2 py-1.5 text-right text-[13px] font-semibold outline-none ${
-                  limitOn ? 'border-white/10 bg-white/5 text-white focus:border-white/40' : 'border-white/5 bg-white/[0.02] text-slate-600'
-                }`}
+                className="w-20 rounded-lg border border-white/10 bg-white/5 px-2 py-1.5 text-right text-[13px] font-semibold text-white outline-none focus:border-white/40"
               />
-              <span className={`text-[12px] ${limitOn ? 'text-slate-400' : 'text-slate-600'}`}>K</span>
+              <span className="text-[12px] text-slate-400">K</span>
             </span>
-          </div>
+          </label>
           <p className="mt-1 text-[11px] leading-relaxed text-slate-500">{t('r856.limitHint')}</p>
-          {limitOn && limitK * 1000 >= Math.round(capacityK) * 1000 * JOIN_FILL && <p className="mt-1 text-[11px] font-medium text-amber-300">{t('r856.limitNoop')}</p>}
+          {limitK >= capacityK && <p className="mt-1 text-[11px] font-medium text-amber-300">{t('r856.limitNoop')}</p>}
         </div>
       </section>
 

@@ -1,3 +1,5 @@
+import { JOIN_ARC_K, JOIN_CAV_K, JOIN_INF_K } from './rallyRules'
+
 /**
  * Hero roster for the deployment simulator.
  *
@@ -70,13 +72,27 @@ export type Preset = {
   accent: string
 }
 
-const BT_TROOPS: [number, number, number] = [20_000, 30_000, 50_000]
+/** The bear-trap presets are the standard join march, so they follow the rule. */
+const BT_TROOPS: [number, number, number] = [JOIN_INF_K * 1000, JOIN_CAV_K * 1000, JOIN_ARC_K * 1000]
 
 export const PRESETS: Preset[] = [
   { key: 'bt1', label: 'BT1', heroes: ['chenko', 'diana', 'howard'], troops: BT_TROOPS, accent: '#a78bfa' },
   { key: 'bt2', label: 'BT2', heroes: ['yeonwoo', 'fahd', 'seth'], troops: BT_TROOPS, accent: '#818cf8' },
-  { key: 'bt3', label: 'BT3', heroes: ['amane', 'gordon', 'edwin'], troops: BT_TROOPS, accent: '#60a5fa' },
+  { key: 'bt3', label: 'BT3', heroes: ['amane', 'gordon', 'forrest'], troops: BT_TROOPS, accent: '#60a5fa' },
   { key: 'bt4', label: 'BT4', heroes: [], troops: BT_TROOPS, accent: '#38bdf8' },
   { key: 'attack', label: 'A', heroes: ['chenko', 'howard', 'quinn'], ratio: [50, 20, 30], accent: '#f87171' },
-  { key: 'defense', label: 'D', heroes: ['howard', 'diana', 'gordon'], ratio: [60, 40, 0], accent: '#34d399' },
+  { key: 'defense', label: 'D', heroes: ['gordon', 'diana', 'howard'], ratio: [60, 40, 0], accent: '#34d399' },
 ]
+
+/**
+ * Who may lead a rally join. Joiners only contribute hero slot 1's first
+ * expedition skill, so slot 1 must be one of these; the conditional pair is
+ * fine once their expedition skill is high enough; every other hero belongs in
+ * slots 2–3.
+ */
+export type LeadVerdict = 'allowed' | 'conditional' | 'banned'
+const LEAD_ALLOWED = ['chenko', 'yeonwoo', 'amane']
+const LEAD_CONDITIONAL = ['amadeus', 'hilde']
+export const leadVerdict = (id: string): LeadVerdict =>
+  LEAD_ALLOWED.includes(id) ? 'allowed' : LEAD_CONDITIONAL.includes(id) ? 'conditional' : 'banned'
+export const LEAD_RANK: Record<LeadVerdict, number> = { allowed: 0, conditional: 1, banned: 2 }

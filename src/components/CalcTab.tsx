@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { calcGuide, useLang, useT } from '../i18n'
 import RallyRatioCalc, { R856_ACCENT, type R856Mode } from './RallyRatioCalc'
+import { JOIN_CAP_K, JOIN_INF_K, joinMarch, rallyMarch, type March } from '../data/rallyRules'
 import chenkoImg from '../assets/heroes/chenko.png'
 import yeonwooImg from '../assets/heroes/yeonwoo.png'
 import amaneImg from '../assets/heroes/amane.png'
@@ -23,28 +24,21 @@ type Pool = Record<Kind, Record<number, number>>
 const emptyTier = () => ({ 10: 0, 9: 0, 8: 0, 7: 0 })
 const emptyPool = (): Pool => ({ inf: emptyTier(), cav: emptyTier(), arc: emptyTier() })
 
-// Per-slot target ratios [inf, cav, arc] %, kept in sync with the Quick Slots
-// examples (i18n cards). Main concentrates archers at 10/10/80 while they last,
-// then fills the rest with CAVALRY (10/90/0) — infantry stays pinned at 10%, we
-// never force extra infantry in. Support/General cannot sustain 10/10/80, so
-// every slot uses the balanced 20/40/40.
-const ROLE_RATIOS: Record<Role, [number, number, number][]> = {
-  main: [
-    [10, 10, 80],
-    [10, 10, 80],
-    [10, 90, 0],
-  ],
-  support: [[20, 40, 40]],
-  general: [[20, 40, 40]],
+/**
+ * Every slot follows the alliance march rule (data/rallyRules): a join slot is
+ * the standard join march — infantry pinned at the floor, archers at their
+ * share, cavalry the rest — and a host's own-rally slot keeps the same
+ * infantry floor with archers pushed higher. Role only decides whether slot 1
+ * is that own rally.
+ */
+function slotSpec(role: Role, i: number): { auto: boolean } {
+  return { auto: i === 0 && role !== 'general' } // slot 1 is the auto host for main/support
 }
 
-/** target ratio [inf, cav, arc] % per role/slot, and whether slot 1 is the auto host. */
-function slotSpec(role: Role, i: number): { ratio: [number, number, number]; auto: boolean } {
-  const arr = ROLE_RATIOS[role]
-  const ratio = arr[Math.min(i, arr.length - 1)]
-  const auto = i === 0 && role !== 'general' // slot 1 is the auto host for main/support
-  return { ratio, auto }
-}
+/** What a slot of `cap` troops should hold, in troops. */
+const slotTarget = (cap: number, host: boolean): March => (host ? rallyMarch(cap, STEP) : joinMarch(cap, STEP))
+
+const fmtK = (n: number) => `${Math.round(n / 100) / 10}K`
 
 const fmt = (n: number) => Math.round(n).toLocaleString('en-US')
 
@@ -139,11 +133,11 @@ export default function CalcTab() {
   const t = useT()
   const lang = useLang()
   const [role, setRole] = useState<Role>('main')
-  // The 8/8/56 tabs are a separate calculator: null = the role calculator below.
+  // The join-cap tabs are a separate calculator: null = the role calculator below.
   const [r856, setR856] = useState<R856Mode | null>(null)
   const [owned, setOwned] = useState<Pool>(emptyPool)
   const [slots, setSlots] = useState(4)
-  const [capacity, setCapacity] = useState(100000)
+  const [capacity, setCapacity] = useState(JOIN_CAP_K * 1000)
   const [capBySlot, setCapBySlot] = useState<Record<number, number>>({})
   const [heroBySlot, setHeroBySlot] = useState<Record<number, string>>({})
   const [showGuide, setShowGuide] = useState(false)
@@ -211,30 +205,23 @@ export default function CalcTab() {
     return drawn
   }
 
-  // Auto-fill: build sensible marches for the bear trap, not a blind ratio split.
-  //  - Damage troops fill each slot: archers go in first (concentrated per the
-  //    role ratio), then cavalry backfills the rest of the capacity — so when
-  //    archers run out a slot is completed with cavalry, never left half-empty.
-  //  - Infantry deals little damage, so we deploy at most HALF of what we own
-  //    and only as a small filler. It is never sent alone or as the majority of
-  //    a march (a slot with no archers/cavalry gets no infantry at all).
+  // Standard fill: build each slot to the march rule, not a blind ratio split.
+  //  - Archers go in first up to the slot's archer target, then cavalry fills
+  //    the rest of the damage share — so when archers run out a slot is
+  //    completed with cavalry, never left half-empty.
+  //  - Infantry is a fixed floor per slot (under the infantry limit), never a
+  //    share of what you own, and only added where real troops went in.
   //  - Strongest (highest-tier) troops are drawn first; slot 1 fills first.
   const autoFill = () => {
     const next: Alloc = {}
     const rem = freshRem()
-    let infBudget = Math.floor(ownedTotal.inf / 2 / STEP) * STEP // only half our infantry
     for (let s = 0; s < slots; s++) {
       const cap = slotCap(s)
-      const [ri, , ra] = slotSpec(role, s).ratio
-      const infPortion = Math.round((cap * ri) / 100 / STEP) * STEP
-      const damageTarget = cap - infPortion // archers + cavalry should fill this
-      const arcDrawn = drawTroops(next, rem, s, 'arc', Math.min(damageTarget, Math.round((cap * ra) / 100 / STEP) * STEP))
+      const target = slotTarget(cap, slotSpec(role, s).auto)
+      const damageTarget = cap - target.inf // archers + cavalry should fill this
+      const arcDrawn = drawTroops(next, rem, s, 'arc', Math.min(target.arc, damageTarget))
       const cavDrawn = drawTroops(next, rem, s, 'cav', damageTarget - arcDrawn) // cavalry absorbs the archer shortfall
-      const damage = arcDrawn + cavDrawn
-      // infantry only where there are real troops, capped by budget and never the majority
-      if (damage > 0 && infBudget > 0) {
-        infBudget -= drawTroops(next, rem, s, 'inf', Math.min(infPortion, infBudget, damage))
-      }
+      if (arcDrawn + cavDrawn > 0) drawTroops(next, rem, s, 'inf', target.inf)
     }
     setAlloc(next)
     showToast(t('calc.filled'))
@@ -242,14 +229,13 @@ export default function CalcTab() {
 
   // Even split: divide your own troops equally across the slots — every slot
   // mirrors your army (each kind's total ÷ slots), capped at slot capacity.
-  // Infantry is deliberately deployed at only HALF of what you own (it deals
-  // little), so the even mix leans lighter on infantry. Damage troops go in
-  // first so capacity pressure trims infantry, not archers.
+  // Infantry still never passes the per-march floor, however much you own.
+  // Damage troops go in first so capacity pressure trims infantry, not archers.
   const evenFill = () => {
     const next: Alloc = {}
     const rem = freshRem()
     const share: Record<Kind, number> = {
-      inf: Math.floor(ownedTotal.inf / 2 / slots / STEP) * STEP, // only half our infantry
+      inf: Math.min(JOIN_INF_K * 1000, Math.floor(ownedTotal.inf / slots / STEP) * STEP),
       cav: Math.floor(ownedTotal.cav / slots / STEP) * STEP,
       arc: Math.floor(ownedTotal.arc / slots / STEP) * STEP,
     }
@@ -364,7 +350,7 @@ export default function CalcTab() {
           })}
         </div>
 
-        {/* the 8/8/56 rally rule gets its own two tabs — a separate calculator, not a role */}
+        {/* the join-cap rally rule gets its own two tabs — a separate calculator, not a role */}
         <div className="mt-1.5 grid grid-cols-2 gap-1.5">
           {(['host', 'join'] as R856Mode[]).map((m) => {
             const on = r856 === m
@@ -516,6 +502,7 @@ export default function CalcTab() {
         ) : (
           Array.from({ length: slots }, (_, i) => {
             const spec = slotSpec(role, i)
+            const target = slotTarget(slotCap(i), spec.auto)
             const total = slotTotal(i)
             const kt: Record<Kind, number> = { inf: slotKind(i, 'inf'), cav: slotKind(i, 'cav'), arc: slotKind(i, 'arc') }
             const pct = (k: Kind) => (total > 0 ? Math.round((kt[k] / total) * 100) : 0)
@@ -611,7 +598,7 @@ export default function CalcTab() {
                     ))}
                   </div>
                   <p className="mt-1 text-[10px] text-slate-500">
-                    {t('calc.target')} {spec.ratio[0]}/{spec.ratio[1]}/{spec.ratio[2]} ({t('calc.inf')}/{t('calc.cav')}/{t('calc.arc')})
+                    {t('calc.target')} {fmtK(target.inf)} / {fmtK(target.cav)} / {fmtK(target.arc)} ({t('calc.inf')}/{t('calc.cav')}/{t('calc.arc')})
                   </p>
                 </div>
               </section>

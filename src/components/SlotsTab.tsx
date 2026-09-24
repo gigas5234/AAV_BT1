@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { slotsContent, useLang, useT, type Slot } from '../i18n'
 import tierImg from '../assets/guide/beartrap-hero-tier.webp'
+import LeadHeroChecker from './LeadHeroChecker'
 
 const INF = '#8b98a5'
 const CAV = '#4c9be8'
@@ -175,7 +176,7 @@ export default function SlotsTab() {
             <span className="text-base leading-none">🎯</span>
             {content.whyTitle}
           </h3>
-          {/* mirrors the Guide's "Troop ratio (20/40/40)" section — keep in sync */}
+          {/* mirrors the Guide's join-march section — both read from data/rallyRules */}
           <div className="mb-2.5 flex items-start gap-2 rounded-xl border-2 border-amber-300 bg-amber-400 px-3 py-2.5 text-[13px] font-semibold text-[#3a2600] shadow-md shadow-amber-500/25">
             <svg viewBox="0 0 24 24" className="mt-0.5 h-4 w-4 shrink-0" fill="currentColor" aria-hidden="true">
               <path d="M13 2 3 14h7l-1 8 10-12h-7z" />
@@ -215,7 +216,10 @@ export default function SlotsTab() {
 
       {panel === 'ban' && (
         <div className="accopen space-y-3">
-          {/* hero tier list — quick reference at the top of the ban panel */}
+          {/* tap-to-check first: the quickest way to know if your lead is allowed */}
+          <LeadHeroChecker />
+
+          {/* hero tier list — quick reference */}
           <figure className="m-0 overflow-hidden rounded-xl border border-white/10">
             <figcaption className="flex items-center gap-1.5 bg-white/[0.06] px-3 py-2 text-[12px] font-semibold text-slate-200">
               <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" />

@@ -32,21 +32,15 @@ export const EVENTS: EventMeta[] = [
   { id: 'swordland', accent: '#f87171', ready: true, sections: ['overview', 'build', 'timeline', 'tips'] },
   { id: 'championship', accent: '#f5b301', ready: true, sections: ['tips'] },
   { id: 'mystic', accent: '#a78bfa', ready: true, sections: [] },
-  { id: 'governor', accent: '#e2a13a', ready: true, sections: ['overview', 'daily', 'items', 'castle', 'enemy'] },
+  { id: 'governor', accent: '#e2a13a', ready: true, sections: ['overview', 'daily', 'items', 'castle'] },
 ]
 
 export const eventMeta = (id: EventId) => EVENTS.find((e) => e.id === id)!
 
 export const BEARTRAP_ACCENT = '#f5b301'
-/** Bear Trap's own bottom-bar sections (its planner tools). */
-export const BEARTRAP_SECTIONS = ['plan', 'guide', 'slots', 'calc'] as const
+/** Bear Trap's own bottom-bar sections. */
+export const BEARTRAP_SECTIONS = ['guide', 'slots', 'calc'] as const
 export type BearSection = (typeof BEARTRAP_SECTIONS)[number]
 
-// ── Temporarily hidden ──────────────────────────────────────────────────────
-// The code stays in place; empty these to bring the features back.
-/** Bear Trap tabs hidden from the bottom bar. */
-export const BEARTRAP_HIDDEN: BearSection[] = ['plan']
-/** Show the alliance discussion floating button on Bear Trap. */
+/** Show the alliance discussion floating button on Bear Trap (hidden for now; code kept). */
 export const SHOW_BEAR_DISCUSSION = false
-
-export const BEARTRAP_VISIBLE = BEARTRAP_SECTIONS.filter((s) => !BEARTRAP_HIDDEN.includes(s))

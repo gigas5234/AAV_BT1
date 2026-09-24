@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { EVENTS, type EventId, type EventMeta } from '../events'
+import { EVENTS, type EventId, type EventMeta, BEARTRAP_SECTIONS } from '../events'
 import { SOON_WINDOW_MS, countdownLabel, eventStatus } from '../data/schedule'
 import { useT, type Lang } from '../i18n'
 import beartrapImg from '../assets/events/beartrap.webp'
@@ -169,7 +169,7 @@ export default function EventHome({
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0b1220] via-[#0b1220]/25 to-transparent p-4">
           <h2 className="text-2xl font-bold text-white drop-shadow">{t('home.beartrap')}</h2>
           <div className="mt-2 flex flex-wrap gap-1.5">
-            {['plan', 'guide', 'slots', 'calc'].map((s) => (
+            {BEARTRAP_SECTIONS.map((s) => (
               <span key={s} className="rounded-md bg-white/15 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm">
                 {t(`tab.${s}`)}
               </span>
