@@ -1,0 +1,303 @@
+{
+ "p01": {
+  "full": "layers/p01_full.webp",
+  "plate": "layers/p01_plate.webp",
+  "w": 941,
+  "h": 1672,
+  "layers": {
+   "plaque": {
+    "src": "layers/p01_plaque.webp",
+    "x": 140,
+    "y": 85,
+    "w": 660,
+    "h": 181
+   },
+   "ribbon": {
+    "src": "layers/p01_ribbon.webp",
+    "x": 12,
+    "y": 250,
+    "w": 868,
+    "h": 138
+   },
+   "title": {
+    "src": "layers/p01_title.webp",
+    "x": 52,
+    "y": 352,
+    "w": 832,
+    "h": 386
+   },
+   "bear": {
+    "src": "layers/p01_bear.webp",
+    "x": 150,
+    "y": 760,
+    "w": 592,
+    "h": 692
+   },
+   "bang": {
+    "src": "layers/p01_bang.webp",
+    "x": 588,
+    "y": 762,
+    "w": 154,
+    "h": 143
+   }
+  }
+ },
+ "p02": {
+  "full": "layers/p02_full.webp",
+  "plate": "layers/p02_plate.webp",
+  "w": 941,
+  "h": 1672,
+  "layers": {
+   "banner": {
+    "src": "layers/p02_banner.webp",
+    "x": 28,
+    "y": 292,
+    "w": 884,
+    "h": 230
+   },
+   "sign": {
+    "src": "layers/p02_sign.webp",
+    "x": 118,
+    "y": 468,
+    "w": 754,
+    "h": 610
+   },
+   "bear": {
+    "src": "layers/p02_bear.webp",
+    "x": 0,
+    "y": 1040,
+    "w": 722,
+    "h": 632
+   },
+   "troopsL": {
+    "src": "layers/p02_troopsL.webp",
+    "x": 0,
+    "y": 1160,
+    "w": 175,
+    "h": 360
+   },
+   "troopsR": {
+    "src": "layers/p02_troopsR.webp",
+    "x": 560,
+    "y": 1170,
+    "w": 381,
+    "h": 360
+   }
+  }
+ },
+ "p03": {
+  "full": "layers/p03_full.webp",
+  "plate": "layers/p03_plate.webp",
+  "w": 941,
+  "h": 1672,
+  "layers": {
+   "sign": {
+    "src": "layers/p03_sign.webp",
+    "x": 92,
+    "y": 282,
+    "w": 740,
+    "h": 356
+   },
+   "bear": {
+    "src": "layers/p03_bear.webp",
+    "x": 18,
+    "y": 598,
+    "w": 384,
+    "h": 287
+   },
+   "fg": {
+    "src": "layers/p03_fg.webp",
+    "x": 0,
+    "y": 1030,
+    "w": 941,
+    "h": 642
+   },
+   "cav": {
+    "src": "layers/p03_cav.webp",
+    "x": 380,
+    "y": 640,
+    "w": 561,
+    "h": 510
+   },
+   "flagR": {
+    "src": "layers/p03_flagR.webp",
+    "x": 780,
+    "y": 780,
+    "w": 150,
+    "h": 165
+   },
+   "flagL": {
+    "src": "layers/p03_flagL.webp",
+    "x": 0,
+    "y": 380,
+    "w": 150,
+    "h": 270
+   }
+  }
+ },
+ "p04": {
+  "full": "layers/p04_full.webp",
+  "plate": "layers/p04_plate.webp",
+  "w": 941,
+  "h": 1672,
+  "layers": {
+   "sign": {
+    "src": "layers/p04_sign.webp",
+    "x": 38,
+    "y": 372,
+    "w": 834,
+    "h": 346
+   },
+   "bear": {
+    "src": "layers/p04_bear.webp",
+    "x": 88,
+    "y": 700,
+    "w": 524,
+    "h": 622
+   },
+   "qq": {
+    "src": "layers/p04_qq.webp",
+    "x": 515,
+    "y": 728,
+    "w": 175,
+    "h": 157
+   },
+   "stars": {
+    "src": "layers/p04_stars.webp",
+    "x": 150,
+    "y": 712,
+    "w": 155,
+    "h": 100
+   },
+   "soldier": {
+    "src": "layers/p04_soldier.webp",
+    "x": 606,
+    "y": 1236,
+    "w": 218,
+    "h": 238
+   },
+   "bang": {
+    "src": "layers/p04_bang.webp",
+    "x": 686,
+    "y": 1136,
+    "w": 129,
+    "h": 100
+   }
+  }
+ },
+ "p05": {
+  "full": "layers/p05_full.webp",
+  "plate": "layers/p05_plate.webp",
+  "w": 941,
+  "h": 1672,
+  "layers": {
+   "banner": {
+    "src": "layers/p05_banner.webp",
+    "x": 38,
+    "y": 248,
+    "w": 860,
+    "h": 224
+   },
+   "bear": {
+    "src": "layers/p05_bear.webp",
+    "x": 198,
+    "y": 1078,
+    "w": 544,
+    "h": 384
+   },
+   "bpg": {
+    "src": "layers/p05_bpg.webp",
+    "x": 22,
+    "y": 1428,
+    "w": 896,
+    "h": 200
+   }
+  }
+ },
+ "p06": {
+  "full": "layers/p06_full.webp",
+  "plate": "layers/p06_plate.webp",
+  "w": 941,
+  "h": 1672,
+  "layers": {
+   "sign": {
+    "src": "layers/p06_sign.webp",
+    "x": 48,
+    "y": 282,
+    "w": 830,
+    "h": 476
+   },
+   "disc": {
+    "src": "layers/p06_disc.webp",
+    "x": 392,
+    "y": 702,
+    "w": 492,
+    "h": 516
+   },
+   "bear": {
+    "src": "layers/p06_bear.webp",
+    "x": 0,
+    "y": 738,
+    "w": 452,
+    "h": 604
+   },
+   "bar": {
+    "src": "layers/p06_bar.webp",
+    "x": 0,
+    "y": 1332,
+    "w": 941,
+    "h": 270
+   }
+  }
+ },
+ "p07": {
+  "full": "layers/p07_full.webp",
+  "plate": "layers/p07_plate.webp",
+  "w": 941,
+  "h": 1672,
+  "layers": {
+   "emblem": {
+    "src": "layers/p07_emblem.webp",
+    "x": 118,
+    "y": 268,
+    "w": 700,
+    "h": 384
+   },
+   "ribbon": {
+    "src": "layers/p07_ribbon.webp",
+    "x": 52,
+    "y": 902,
+    "w": 836,
+    "h": 150
+   },
+   "chest": {
+    "src": "layers/p07_chest.webp",
+    "x": 458,
+    "y": 1028,
+    "w": 460,
+    "h": 344
+   },
+   "win": {
+    "src": "layers/p07_win.webp",
+    "x": 384,
+    "y": 1306,
+    "w": 548,
+    "h": 242
+   },
+   "prize": {
+    "src": "layers/p07_prize.webp",
+    "x": 394,
+    "y": 1518,
+    "w": 504,
+    "h": 116
+   },
+   "bear": {
+    "src": "layers/p07_bear.webp",
+    "x": 36,
+    "y": 1058,
+    "w": 416,
+    "h": 614
+   }
+  }
+ }
+}

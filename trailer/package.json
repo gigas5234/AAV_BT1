@@ -1,0 +1,25 @@
+{
+  "name": "crazy-bear-trap-trailer",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Crazy Bear Trap \u2014 AAV (Kingdom 1974) fan-made event trailer",
+  "scripts": {
+    "audio": "python audio/make_audio.py",
+    "studio": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts Trailer out/Crazy_Bear_Trap_AAV_1974_master.mp4 --codec=h264 --audio-codec=aac --crf=18",
+    "share": "node scripts/share.mjs",
+    "cover": "remotion still src/index.ts Cover out/Crazy_Bear_Trap_Cover.png",
+    "build": "npm run audio && npm run render && npm run share && npm run cover"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.541",
+    "@remotion/google-fonts": "^4.0.541",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.541"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.31",
+    "typescript": "^5.9.3"
+  }
+}
