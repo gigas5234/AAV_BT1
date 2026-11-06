@@ -40,6 +40,18 @@ const STR: Record<string, Entry> = {
   'home.deploy': { en: 'Quick Slot Setup', ko: '퀵슬롯 병력 설정', es: 'Configurar formaciones' },
   'home.deployBadge': { en: 'SIMULATOR', ko: '시뮬레이터', es: 'SIMULADOR' },
 
+  // ── temporary event page (/event) ──
+  'promo.badge': { en: 'EVENT', ko: '이벤트', es: 'EVENTO' },
+  'promo.home': { en: 'Open AAV BT1', ko: 'AAV BT1 홈으로', es: 'Ir a AAV BT1' },
+  'promo.videoSoon': { en: 'Video coming soon', ko: '영상 준비 중', es: 'Video próximamente' },
+  'promo.share': { en: 'Copy link', ko: '링크 복사', es: 'Copiar enlace' },
+  'promo.copied': { en: 'Copied!', ko: '복사됨!', es: '¡Copiado!' },
+  'promo.sound': { en: 'Tap for sound', ko: '소리 켜기', es: 'Toca para el sonido' },
+  'promo.mute': { en: 'Mute', ko: '소리 끄기', es: 'Silenciar' },
+  'promo.details': { en: 'Event details', ko: '이벤트 안내 보기', es: 'Detalles del evento' },
+  'promo.watch': { en: 'Watch the trailer', ko: '영상 보기', es: 'Ver el tráiler' },
+  'promo.replay': { en: 'Replay', ko: '다시 보기', es: 'Repetir' },
+
   // ── deployment simulator (mirrors the in-game march form) ──
   'deploy.inf': { en: 'Infantry', ko: '보병', es: 'Infantería' },
   'deploy.cav': { en: 'Cavalry', ko: '기병', es: 'Caballería' },

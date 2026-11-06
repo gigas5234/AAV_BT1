@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { LangProvider, type Lang } from './i18n'
 import { loadLang, saveLang } from './langStore'
 import { BEARTRAP_ACCENT, BEARTRAP_SECTIONS, SHOW_BEAR_DISCUSSION, eventMeta, type BearSection, type EventId, type Screen } from './events'
@@ -11,16 +11,43 @@ import SlotsTab from './components/SlotsTab'
 import CalcTab from './components/CalcTab'
 import DeployTab from './components/DeployTab'
 import BearDiscussion from './components/BearDiscussion'
+import PromoPage from './components/PromoPage'
+import { PROMO_PATH, promoLive } from './data/promo'
+
+/** A shared `/event` link opens the event page directly, skipping the landing. */
+const atPromo = () => location.pathname.replace(/\/+$/, '') === PROMO_PATH
 
 export default function App() {
-  const [started, setStarted] = useState(false)
-  const [screen, setScreen] = useState<Screen>('home')
+  const [started, setStarted] = useState(() => atPromo() && promoLive())
+  const [screen, setScreen] = useState<Screen>(() => (atPromo() && promoLive() ? 'promo' : 'home'))
   const [tab, setTab] = useState<BearSection>(BEARTRAP_SECTIONS[0])
   const [eventSection, setEventSection] = useState<string>('overview')
   const [lang, setLangState] = useState<Lang>(loadLang)
   const setLang = (l: Lang) => {
     setLangState(l)
     saveLang(l)
+  }
+
+  // `/event` is the only screen with its own URL. Keep the address bar in step
+  // with it so the link can be shared and the phone's back button works.
+  useEffect(() => {
+    if (atPromo() && !promoLive()) history.replaceState(null, '', '/')
+    const onPop = () => {
+      if (atPromo() && promoLive()) {
+        setStarted(true)
+        setScreen('promo')
+      } else setScreen((s) => (s === 'promo' ? 'home' : s))
+    }
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
+  const openPromo = () => {
+    if (!atPromo()) history.pushState(null, '', PROMO_PATH)
+    setScreen('promo')
+  }
+  const leavePromo = () => {
+    if (atPromo()) history.pushState(null, '', '/')
+    setScreen('home')
   }
 
   const openEvent = (id: EventId) => {
@@ -64,6 +91,7 @@ export default function App() {
             onSetLang={setLang}
             onBearTrap={() => setScreen('beartrap')}
             onDeploy={() => setScreen('deploy')}
+            onPromo={openPromo}
             onOpenEvent={openEvent}
           />
         </div>
@@ -71,6 +99,15 @@ export default function App() {
     )
 
   const goHome = () => setScreen('home')
+
+  if (screen === 'promo')
+    return (
+      <LangProvider lang={lang}>
+        <div key="promo" className="evententer scroll-dark mx-auto h-[100dvh] max-w-[480px] overflow-y-auto bg-[#0b1220]">
+          <PromoPage lang={lang} onSetLang={setLang} onHome={leavePromo} />
+        </div>
+      </LangProvider>
+    )
 
   // Deployment simulator — its own screen, opened from the home list
   if (screen === 'deploy') {

@@ -23,13 +23,17 @@ npm run preview    # serve the production build locally
 
 ## Deploy (static hosting)
 
-`vite.config.ts` sets `base: './'`, so the built `dist/` is fully relative and
-works from any host or sub-path — no routing rewrites needed (single view, no
-history routing).
+Deployed on Vercel at the site root. `vite.config.ts` sets `base: '/'` and
+`vercel.json` rewrites every path to `index.html`, so `/event` (the temporary
+event page) loads directly and survives a refresh. Hosting under a sub-path
+would need `base` changed to match.
 
-- Drag-and-drop `dist/` onto Netlify / Cloudflare Pages, or
-- push `dist/` to GitHub Pages, or
-- serve it with any static file server.
+## Temporary event page (`/event`)
+
+- Video: `src/assets/promo/intro.mp4` (optional still: `promo/poster.webp`)
+- Text and end date: `src/data/promo.ts` (`PROMO_TEXT`, `PROMO.until`)
+- While live it shows as a banner on the home screen; after `until` the banner
+  hides and `/event` falls back to home. `PROMO.enabled = false` turns it off.
 
 First load is ~230 KB (JS + CSS + hero image), all cached afterwards.
 

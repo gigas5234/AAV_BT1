@@ -5,7 +5,7 @@ import { type EventSchedule } from './data/schedule'
 export type EventId = 'governor' | 'championship' | 'viking' | 'mystic' | 'brawl' | 'eternity' | 'swordland' | 'triclash'
 
 /** What the app is currently showing: the home hub, Bear Trap, or a specific event. */
-export type Screen = 'home' | 'beartrap' | 'deploy' | EventId
+export type Screen = 'home' | 'beartrap' | 'deploy' | 'promo' | EventId
 
 export type EventMeta = {
   id: EventId

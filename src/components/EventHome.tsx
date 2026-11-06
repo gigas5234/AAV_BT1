@@ -12,6 +12,7 @@ import eternityImg from '../assets/events/eternity.webp'
 import governorImg from '../assets/events/governor.webp'
 import brawlImg from '../assets/events/brawl.webp'
 import triclashImg from '../assets/events/triclash.webp'
+import { PROMO, PROMO_BANNER, PROMO_TEXT, promoLive } from '../data/promo'
 
 // Event artwork (banners). Events without art fall back to an accent gradient.
 const EVENT_IMG: Partial<Record<EventId, string>> = {
@@ -92,12 +93,14 @@ export default function EventHome({
   onSetLang,
   onBearTrap,
   onDeploy,
+  onPromo,
   onOpenEvent,
 }: {
   lang: Lang
   onSetLang: (l: Lang) => void
   onBearTrap: () => void
   onDeploy: () => void
+  onPromo: () => void
   onOpenEvent: (id: EventId) => void
 }) {
   const t = useT()
@@ -164,6 +167,36 @@ export default function EventHome({
           ))}
         </div>
       </div>
+
+      {/* the event page (/event) — the poster banner, shown while the event is live */}
+      {promoLive(now) && (
+        <button
+          onClick={onPromo}
+          className="popin group relative mt-4 block w-full cursor-pointer overflow-hidden rounded-3xl border-2 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-amber-500/20 active:scale-[0.98]"
+          style={{ animationDelay: '50ms', borderColor: `${PROMO.accent}aa`, background: '#0d1320', boxShadow: `0 0 0 1px ${PROMO.accent}33, 0 10px 30px -10px ${PROMO.accent}66` }}
+        >
+          {PROMO_BANNER ? (
+            <img src={PROMO_BANNER} alt={PROMO_TEXT[lang].title} className="block h-auto w-full transition-transform duration-300 group-hover:scale-[1.02]" />
+          ) : (
+            <div className="aspect-[553/466] w-full" />
+          )}
+          <span
+            className="absolute left-3 top-3 rounded-full px-2.5 py-0.5 text-[11px] font-extrabold tracking-wide text-[#3a2600] shadow-md ring-1 ring-amber-200/60"
+            style={{ background: PROMO.accent }}
+          >
+            {t('promo.badge')} · {t('home.hot')}
+          </span>
+          <span className="absolute right-3 top-3 flex items-center gap-1.5 rounded-full bg-black/60 py-1.5 pl-3 pr-2 text-[12.5px] font-bold text-white ring-1 ring-white/30 backdrop-blur-sm transition-all group-hover:bg-amber-400 group-hover:text-[#3a2600]">
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+              <path d="M8 5.5v13l10.5-6.5z" />
+            </svg>
+            {t('promo.watch')}
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.6" aria-hidden="true">
+              <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+        </button>
+      )}
 
       {/* Bear Trap — big hero banner (16:9). Image goes in the background layer. */}
       <button
