@@ -51,6 +51,15 @@ const STR: Record<string, Entry> = {
   'promo.details': { en: 'Event details', ko: '이벤트 안내 보기', es: 'Detalles del evento' },
   'promo.watch': { en: 'Watch the trailer', ko: '영상 보기', es: 'Ver el tráiler' },
   'promo.replay': { en: 'Replay', ko: '다시 보기', es: 'Repetir' },
+  'promo.special': { en: 'SPECIAL EVENT', ko: '특별 이벤트', es: 'EVENTO ESPECIAL' },
+  'promo.soundHint': { en: '👆 Tap for sound', ko: '👆 소리를 켜 보세요', es: '👆 Toca para el sonido' },
+  'facts.target': { en: 'TARGET SCORE', ko: '목표 점수', es: 'PUNTAJE OBJETIVO' },
+  'facts.closest': { en: 'Closest final score wins', ko: '가장 가까운 최종 점수가 우승', es: 'Gana el puntaje final más cercano' },
+  'facts.prize': { en: 'PRIZE', ko: '상금', es: 'PREMIO' },
+  'facts.by': { en: 'Provided by {name}', ko: '{name} 제공', es: 'Aportado por {name}' },
+  'facts.date': { en: 'DATE & TIME', ko: '날짜·시간', es: 'FECHA Y HORA' },
+  'facts.tba': { en: 'TBA', ko: '추후 공지', es: 'Por anunciar' },
+  'facts.utc': { en: 'UTC · announced soon', ko: 'UTC · 곧 공지', es: 'UTC · se anuncia pronto' },
 
   // ── deployment simulator (mirrors the in-game march form) ──
   'deploy.inf': { en: 'Infantry', ko: '보병', es: 'Infantería' },

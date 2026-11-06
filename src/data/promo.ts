@@ -15,6 +15,23 @@ export const PROMO = {
   accent: '#f5b301',
 }
 
+/**
+ * The event's hard facts, in one place. The summary panel, the stat boxes in
+ * the post, the home badge and the OG description all read from here.
+ * (The rules themselves — closest score wins, never cancel — live in the texts.)
+ */
+export const PROMO_FACTS = {
+  targetScore: 1234567890,
+  prizeUsd: '19.99',
+  prizeBy: 'Zhapa',
+  /** ISO date-time (UTC) once announced; `null` = TBA */
+  dateTime: null as string | null,
+}
+
+/** 1234567890 → "1,234,567,890" (es: "1.234.567.890") */
+export const formatScore = (lang: Lang, n = PROMO_FACTS.targetScore) => n.toLocaleString(lang === 'es' ? 'es-ES' : 'en-US')
+export const prizeLabel = () => `US$${PROMO_FACTS.prizeUsd}`
+
 /** One piece of the event post. Rendered in order. */
 export type PromoBlock =
   | { kind: 'p'; text: string }
@@ -22,8 +39,9 @@ export type PromoBlock =
   | { kind: 'check'; items: { head: string; text?: string }[] } // ✅ list
   | { kind: 'bad'; text: string } // ❌ line
   | { kind: 'warn'; text: string } // ⚠️ box
-  | { kind: 'stat'; icon: string; label: string; value: string } // 🏆 TARGET SCORE / 💰 prize
+  | { kind: 'stat'; icon: string; label: string; fact: 'target' | 'prize' } // 🏆 TARGET SCORE / 💰 prize — values come from PROMO_FACTS
   | { kind: 'notice'; icon: string; title: string; text: string[] } // 📅 date box
+  | { kind: 'tip'; title: string; text: string[] } // 💡 strategy tip (last line of the post)
 
 export type PromoSection = { icon: string; title: string; blocks: PromoBlock[] }
 
@@ -96,7 +114,7 @@ export const PROMO_TEXT: Record<Lang, PromoText> = {
         title: 'RULE 3 — THE LUCKY SCORE CHALLENGE!',
         blocks: [
           { kind: 'p', text: 'This time, the highest score DOES NOT win!' },
-          { kind: 'stat', icon: '🏆', label: 'TARGET SCORE', value: '1,234,567,890' },
+          { kind: 'stat', icon: '🏆', label: 'TARGET SCORE', fact: 'target' },
           { kind: 'p', text: 'The player whose final individual Bear Trap score is closest to this number wins!' },
           {
             kind: 'check',
@@ -109,7 +127,7 @@ export const PROMO_TEXT: Record<Lang, PromoText> = {
         icon: '🎁',
         title: 'THE PRIZE!',
         blocks: [
-          { kind: 'stat', icon: '💰', label: 'PRIZE', value: 'US$19.99' },
+          { kind: 'stat', icon: '💰', label: 'PRIZE', fact: 'prize' },
           { kind: 'check', items: [{ head: '🏆 ONE WINNER' }, { head: '🎁 Prize personally provided by Zhapa!' }] },
           { kind: 'p', text: 'You don’t need to be the strongest player.' },
           { kind: 'lead', text: 'You just need to get the CLOSEST score!' },
@@ -122,6 +140,14 @@ export const PROMO_TEXT: Record<Lang, PromoText> = {
       { kind: 'p', text: '😂 Let’s see what happens when AAV goes completely crazy!' },
       { kind: 'lead', text: 'CRAZY BEAR TRAP! 🔥 LET THE CHAOS BEGIN! 🔥' },
       { kind: 'notice', icon: '📢', title: 'Official date and time will be announced soon.', text: ['Stay tuned!'] },
+      {
+        kind: 'tip',
+        title: 'TIP — Predict the damage, don’t just max it out',
+        text: [
+          'The winner is the CLOSEST score, not the HIGHEST. Check the rally leader’s heroes and troops, estimate the damage, and fine-tune the size of your own rally.',
+          'To land on the target, sometimes you’ll have to send MAX troops — and sometimes just 1 troop!',
+        ],
+      },
     ],
   },
 
@@ -183,7 +209,7 @@ export const PROMO_TEXT: Record<Lang, PromoText> = {
         title: 'REGLA 3 — ¡EL DESAFÍO DEL PUNTAJE DE LA SUERTE!',
         blocks: [
           { kind: 'p', text: '¡Esta vez el puntaje más alto NO gana!' },
-          { kind: 'stat', icon: '🏆', label: 'PUNTAJE OBJETIVO', value: '1.234.567.890' },
+          { kind: 'stat', icon: '🏆', label: 'PUNTAJE OBJETIVO', fact: 'target' },
           { kind: 'p', text: '¡Gana el jugador cuyo puntaje individual final de la Cacería del Oso quede más cerca de este número!' },
           {
             kind: 'check',
@@ -196,7 +222,7 @@ export const PROMO_TEXT: Record<Lang, PromoText> = {
         icon: '🎁',
         title: '¡EL PREMIO!',
         blocks: [
-          { kind: 'stat', icon: '💰', label: 'PREMIO', value: 'US$19.99' },
+          { kind: 'stat', icon: '💰', label: 'PREMIO', fact: 'prize' },
           { kind: 'check', items: [{ head: '🏆 UN GANADOR' }, { head: '🎁 ¡Premio aportado personalmente por Zhapa!' }] },
           { kind: 'p', text: 'No necesitas ser el jugador más fuerte.' },
           { kind: 'lead', text: '¡Solo necesitas el puntaje MÁS CERCANO!' },
@@ -209,6 +235,14 @@ export const PROMO_TEXT: Record<Lang, PromoText> = {
       { kind: 'p', text: '😂 ¡Veamos qué pasa cuando AAV se vuelve completamente loca!' },
       { kind: 'lead', text: '¡CRAZY BEAR TRAP! 🔥 ¡QUE EMPIECE EL CAOS! 🔥' },
       { kind: 'notice', icon: '📢', title: 'La fecha y hora oficiales se anunciarán pronto.', text: ['¡Estén atentos!'] },
+      {
+        kind: 'tip',
+        title: 'CONSEJO — Calcula el daño, no solo envíes el máximo',
+        text: [
+          'Gana el puntaje MÁS CERCANO, no el más alto. Fíjate en los héroes y las tropas del líder del rally, estima el daño y ajusta con detalle el tamaño de tu propio rally.',
+          'Para acertar al objetivo, a veces tendrás que enviar el MÁXIMO de tropas… ¡y a veces solo 1 tropa!',
+        ],
+      },
     ],
   },
 
@@ -264,7 +298,7 @@ export const PROMO_TEXT: Record<Lang, PromoText> = {
         title: '규칙 3 — 행운의 점수 챌린지!',
         blocks: [
           { kind: 'p', text: '이번엔 최고 점수가 이기는 게 아닙니다!' },
-          { kind: 'stat', icon: '🏆', label: '목표 점수', value: '1,234,567,890' },
+          { kind: 'stat', icon: '🏆', label: '목표 점수', fact: 'target' },
           { kind: 'p', text: '개인 최종 곰덫 점수가 이 숫자에 가장 가까운 사람이 우승합니다!' },
           { kind: 'check', items: [{ head: '목표보다 높아도 OK!' }, { head: '목표보다 낮아도 OK!' }, { head: '차이가 가장 작은 사람이 이깁니다!' }] },
           { kind: 'p', text: '두 명이 똑같이 가까우면, 점수가 더 낮은 쪽이 이깁니다.' },
@@ -274,7 +308,7 @@ export const PROMO_TEXT: Record<Lang, PromoText> = {
         icon: '🎁',
         title: '보상!',
         blocks: [
-          { kind: 'stat', icon: '💰', label: '상금', value: 'US$19.99' },
+          { kind: 'stat', icon: '💰', label: '상금', fact: 'prize' },
           { kind: 'check', items: [{ head: '🏆 우승자 1명' }, { head: '🎁 Zhapa가 직접 제공하는 상품!' }] },
           { kind: 'p', text: '가장 강할 필요 없습니다.' },
           { kind: 'lead', text: '가장 가까운 점수만 내면 됩니다!' },
@@ -287,6 +321,14 @@ export const PROMO_TEXT: Record<Lang, PromoText> = {
       { kind: 'p', text: '😂 AAV가 완전히 미치면 어떻게 되는지 봅시다!' },
       { kind: 'lead', text: 'CRAZY BEAR TRAP! 🔥 혼돈을 시작하라! 🔥' },
       { kind: 'notice', icon: '📢', title: '공식 날짜와 시간은 곧 공지합니다.', text: ['기대해 주세요!'] },
+      {
+        kind: 'tip',
+        title: 'TIP — 최대가 아니라 데미지를 예측하세요',
+        text: [
+          '가장 높은 점수가 아니라 목표 점수에 가장 가까워야 이깁니다. 렐리장의 영웅과 병력 규모를 파악해 데미지를 예측하고, 내 집결 규모를 디테일하게 설정하세요.',
+          '점수를 맞추려면 어쩔 때는 최대 규모로, 어쩔 때는 병력 1의 규모로 참여해야 할 수도 있습니다!',
+        ],
+      },
     ],
   },
 }
