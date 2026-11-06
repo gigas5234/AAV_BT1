@@ -291,13 +291,21 @@ export const PROMO_TEXT: Record<Lang, PromoText> = {
   },
 }
 
-const MEDIA = import.meta.glob('../assets/promo/*.{mp4,webm,webp,jpg,png}', { eager: true, import: 'default' }) as Record<string, string>
-const media = (name: string) => Object.entries(MEDIA).find(([k]) => k.split('/').pop()?.startsWith(name + '.'))?.[1]
+const MEDIA = import.meta.glob('../assets/promo/*.{mp4,webm,webp,gif,jpg,png}', { eager: true, import: 'default' }) as Record<string, string>
+/** `banner` → the first of banner.webp / banner.gif / … that exists, in the order given. */
+const media = (name: string, exts = ['webp', 'gif', 'png', 'jpg', 'mp4', 'webm']) => {
+  const files = Object.entries(MEDIA).map(([k, v]) => [k.split('/').pop() ?? '', v] as const)
+  for (const e of exts) {
+    const hit = files.find(([f]) => f === `${name}.${e}`)
+    if (hit) return hit[1]
+  }
+  return undefined
+}
 
 export const PROMO_VIDEO = media('intro')
 export const PROMO_POSTER = media('poster')
-/** Landscape banner for the home screen (553×466). */
-export const PROMO_BANNER = media('banner')
+/** Landscape banner for the home screen (553×466). An animated webp/gif animates as-is in the <img>. */
+export const PROMO_BANNER = media('banner', ['webp', 'gif', 'png', 'jpg'])
 
 export const PROMO_PATH = '/event'
 
