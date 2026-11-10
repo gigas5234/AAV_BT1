@@ -1,6 +1,19 @@
 import { useRef, useState } from 'react'
 import { LANGS, useT, type Lang } from '../i18n'
-import { PROMO, PROMO_FACTS, PROMO_PATH, PROMO_POSTER, PROMO_TEXT, PROMO_VIDEO, formatScore, prizeLabel, type PromoBlock } from '../data/promo'
+import {
+  PROMO,
+  PROMO_FACTS,
+  PROMO_PATH,
+  PROMO_POSTER,
+  PROMO_RESULT,
+  PROMO_RESULT_IMG,
+  PROMO_TEXT,
+  PROMO_VIDEO,
+  formatScore,
+  prizeLabel,
+  resultBoard,
+  type PromoBlock,
+} from '../data/promo'
 
 /**
  * The event page (`/event`): the trailer fills the first screen, the event
@@ -152,6 +165,8 @@ export default function PromoPage({ lang, onSetLang, onHome }: { lang: Lang; onS
           ))}
         </div>
 
+        {PROMO_RESULT && <Results lang={lang} />}
+
         {/* the three facts people ask about, before the full post */}
         <div className="mt-3 rounded-2xl border-2 border-amber-400 bg-gradient-to-b from-[#1d2f6b] to-[#0a1436] px-4 py-4 text-center shadow-lg shadow-amber-500/15">
           <p className="text-[12px] font-bold tracking-[0.2em] text-amber-300">🏆 {t('facts.target')}</p>
@@ -168,8 +183,8 @@ export default function PromoPage({ lang, onSetLang, onHome }: { lang: Lang; onS
           </div>
           <div className="rounded-2xl border border-sky-400/50 bg-white/[0.05] px-3 py-3 text-center">
             <p className="text-[11px] font-bold tracking-[0.18em] text-sky-300">📅 {t('facts.date')}</p>
-            <p className="mt-0.5 text-[24px] font-black leading-tight text-white">{PROMO_FACTS.dateTime ?? t('facts.tba')}</p>
-            <p className="mt-0.5 text-[12px] text-slate-300">{t('facts.utc')}</p>
+            <p className="mt-0.5 text-[24px] font-black leading-tight text-white">{PROMO_RESULT ? t('facts.ended') : (PROMO_FACTS.dateTime ?? t('facts.tba'))}</p>
+            <p className="mt-0.5 text-[12px] text-slate-300">{PROMO_RESULT ? t('facts.resultsIn') : t('facts.utc')}</p>
           </div>
         </div>
 
@@ -209,6 +224,85 @@ export default function PromoPage({ lang, onSetLang, onHome }: { lang: Lang; onS
           </button>
         </div>
       </div>
+    </div>
+  )
+}
+
+/** the 1st champion card + the closest-score board; shown once PROMO_RESULT is set */
+function Results({ lang }: { lang: Lang }) {
+  const t = useT()
+  const result = PROMO_RESULT
+  if (!result) return null
+  const board = resultBoard()
+  const winner = board.find((e) => e.name === result.winner) ?? board[0]
+  const gap = (n: number) => `${n < 0 ? '−' : '+'}${formatScore(lang, Math.abs(n))}`
+  return (
+    <div className="mt-3">
+      {/* the crown card */}
+      <div className="winner-glow relative overflow-hidden rounded-3xl border-2 border-amber-400 bg-gradient-to-b from-[#3b2a05] via-[#1a1a2e] to-[#0a1436] px-4 pb-5 pt-4 text-center">
+        <div className="gold-fall pointer-events-none absolute inset-0" aria-hidden="true">
+          {Array.from({ length: 14 }, (_, i) => (
+            <i
+              key={i}
+              style={{
+                left: `${(i * 7.3 + 3) % 100}%`,
+                width: 4 + (i % 3) * 2,
+                height: 4 + (i % 3) * 2,
+                animationDelay: `${(i * 0.37) % 2.6}s`,
+                animationDuration: `${5 + (i % 4) * 1.2}s`,
+                ['--dx' as string]: `${(i % 2 ? 1 : -1) * (10 + (i % 5) * 6)}px`,
+              }}
+            />
+          ))}
+        </div>
+        <p className="relative text-[11px] font-extrabold tracking-[0.22em] text-amber-300">{t('result.kicker')}</p>
+        <div className="crown relative mt-1 text-[64px] leading-none" aria-hidden="true">
+          👑
+        </div>
+        <p className="relative mt-1 text-[13px] font-extrabold tracking-[0.3em] text-amber-200">{t('result.champion')}</p>
+        <p className="relative mt-1 break-words text-[clamp(34px,11vw,46px)] font-black leading-none text-white drop-shadow-[0_3px_0_rgba(0,0,0,0.6)]">{winner.name}</p>
+        <p className="relative mt-3 text-[11px] font-bold tracking-[0.18em] text-slate-300">{t('result.final')}</p>
+        <p className="relative mt-0.5 whitespace-nowrap text-[clamp(26px,8.6vw,36px)] font-black leading-none tabular-nums tracking-tight text-amber-300">
+          {formatScore(lang, winner.score)}
+        </p>
+        <p className="relative mt-1 text-[13px] font-semibold text-emerald-300">{t('result.gap', { n: gap(winner.diff) })}</p>
+        <p className="relative mx-auto mt-3 inline-block rounded-full bg-amber-400 px-3.5 py-1.5 text-[13.5px] font-extrabold text-[#3a2600] shadow-lg shadow-amber-500/30">
+          💰 {t('result.prize', { prize: prizeLabel(), name: winner.name })}
+        </p>
+      </div>
+
+      {/* the board, closest first */}
+      <div className="mt-2 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+        <p className="text-[11px] font-bold tracking-[0.18em] text-amber-300">🏅 {t('result.board')}</p>
+        <ol className="mt-2 space-y-1.5">
+          {board.map((e, i) => {
+            const win = e.name === winner.name
+            return (
+              <li
+                key={e.name}
+                className={`flex items-center gap-2.5 rounded-xl px-2.5 py-2 ${win ? 'bg-amber-400 text-[#3a2600]' : 'bg-white/[0.04] text-slate-100'}`}
+              >
+                <span className={`w-6 shrink-0 text-center text-[15px] font-black ${win ? '' : 'text-slate-400'}`}>{win ? '👑' : i + 1}</span>
+                <span className="min-w-0 flex-1 truncate text-[15px] font-extrabold">{e.name}</span>
+                <span className="text-right">
+                  <span className="block whitespace-nowrap text-[14px] font-black tabular-nums">{formatScore(lang, e.score)}</span>
+                  <span className={`block text-[11px] font-semibold tabular-nums ${win ? 'text-[#5a3d00]' : 'text-slate-400'}`}>{gap(e.diff)}</span>
+                </span>
+              </li>
+            )
+          })}
+        </ol>
+        <p className="mt-2 text-[11.5px] text-slate-400">{t('result.boardNote', { target: formatScore(lang) })}</p>
+      </div>
+
+      {PROMO_RESULT_IMG && (
+        <figure className="mt-2 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
+          <img src={PROMO_RESULT_IMG} alt={t('result.proof')} className="block w-full" loading="lazy" />
+          <figcaption className="px-3 py-2 text-center text-[11.5px] text-slate-400">📸 {t('result.proof')}</figcaption>
+        </figure>
+      )}
+
+      <p className="mt-3 text-center text-[13.5px] font-semibold text-slate-200">{t('result.thanks')}</p>
     </div>
   )
 }

@@ -28,6 +28,28 @@ export const PROMO_FACTS = {
   dateTime: null as string | null,
 }
 
+/**
+ * Final result (set once the event has run; `null` while it is open).
+ * `entries` = the in-game damage ranking as read off the screenshot; the page
+ * re-sorts them by distance to the target, since that is what decides the winner.
+ */
+export const PROMO_RESULT = {
+  winner: 'Williams',
+  entries: [
+    { name: 'NO MOON', score: 1246986768 },
+    { name: '●○Morillo○●', score: 1238629900 },
+    { name: 'Williams', score: 1234269296 },
+    { name: 'Gray', score: 1231751794 },
+    { name: 'Kenia', score: 1230862051 },
+  ],
+} as { winner: string; entries: { name: string; score: number }[] } | null
+
+/** entries ordered by closeness to the target, with the signed gap */
+export const resultBoard = () =>
+  (PROMO_RESULT?.entries ?? [])
+    .map((e) => ({ ...e, diff: e.score - PROMO_FACTS.targetScore }))
+    .sort((a, b) => Math.abs(a.diff) - Math.abs(b.diff))
+
 /** 1234567890 → "1,234,567,890" (es: "1.234.567.890") */
 export const formatScore = (lang: Lang, n = PROMO_FACTS.targetScore) => n.toLocaleString(lang === 'es' ? 'es-ES' : 'en-US')
 export const prizeLabel = () => `US$${PROMO_FACTS.prizeUsd}`
@@ -348,6 +370,8 @@ export const PROMO_VIDEO = media('intro')
 export const PROMO_POSTER = media('poster')
 /** Landscape banner for the home screen (553×466). An animated webp/gif animates as-is in the <img>. */
 export const PROMO_BANNER = media('banner', ['webp', 'gif', 'png', 'jpg'])
+/** screenshot of the in-game damage ranking (proof for the result) */
+export const PROMO_RESULT_IMG = media('result', ['webp', 'png', 'jpg'])
 
 export const PROMO_PATH = '/event'
 

@@ -12,7 +12,7 @@ import eternityImg from '../assets/events/eternity.webp'
 import governorImg from '../assets/events/governor.webp'
 import brawlImg from '../assets/events/brawl.webp'
 import triclashImg from '../assets/events/triclash.webp'
-import { PROMO, PROMO_BANNER, PROMO_FACTS, PROMO_TEXT, promoLive } from '../data/promo'
+import { PROMO, PROMO_BANNER, PROMO_FACTS, PROMO_RESULT, PROMO_TEXT, promoLive } from '../data/promo'
 
 // Event artwork (banners). Events without art fall back to an accent gradient.
 const EVENT_IMG: Partial<Record<EventId, string>> = {
@@ -188,13 +188,17 @@ export default function EventHome({
             className="absolute left-3 top-3 rounded-full px-2.5 py-0.5 text-[11px] font-extrabold tracking-wide text-[#3a2600] shadow-md ring-1 ring-amber-200/60"
             style={{ background: PROMO.accent }}
           >
-            {PROMO_FACTS.dateTime ? `${t('promo.badge')} · ${t('home.hot')}` : t('promo.special')}
+            {PROMO_RESULT
+              ? t('home.winner', { name: PROMO_RESULT.winner })
+              : PROMO_FACTS.dateTime
+                ? `${t('promo.badge')} · ${t('home.hot')}`
+                : t('promo.special')}
           </span>
           <span className="absolute right-3 top-3 flex items-center gap-1.5 rounded-full bg-black/60 py-1.5 pl-3 pr-2 text-[12.5px] font-bold text-white ring-1 ring-white/30 backdrop-blur-sm transition-all group-hover:bg-amber-400 group-hover:text-[#3a2600]">
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
               <path d="M8 5.5v13l10.5-6.5z" />
             </svg>
-            {t('promo.watch')}
+            {PROMO_RESULT ? t('home.results') : t('promo.watch')}
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.6" aria-hidden="true">
               <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
